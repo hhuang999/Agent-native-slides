@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<!-- @dsCard group="N — Retro/Historical" -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N02 — Retro Modern 50s | Design Museum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Color tokens (OKLCH) ── */
+:root {
+  --bg:           oklch(0.96 0.018 72);
+  --surface:      oklch(0.93 0.022 72);
+  --text:         oklch(0.22 0.018 50);
+  --text-sec:     oklch(0.42 0.022 50);
+  --text-muted:   oklch(0.58 0.018 55);
+  --accent:       oklch(0.52 0.22 22);
+  --accent-dk:    oklch(0.38 0.20 22);
+  --accent-lt:    oklch(0.82 0.08 22);
+  --teal:         oklch(0.62 0.14 192);
+  --teal-dk:      oklch(0.48 0.14 192);
+  --rule:         oklch(0.22 0.018 50);
+  --rule-lt:      oklch(0.82 0.018 72);
+  --font-display: 'Bebas Neue', 'Arial Black', sans-serif;
+  --font-body:    'Nunito', 'Trebuchet MS', sans-serif;
+}
+
+/* ── Viewport wrapper ── */
+body {
+  background: oklch(0.18 0.01 50);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ── Stage: fixed 1920×1080 ── */
+#stage-wrapper {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+}
+.stage {
+  width: 1920px;
+  height: 1080px;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Slide base ── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  
+  flex-direction: column;
+  background: var(--bg);
+  z-index: 1;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+
+/* ── Background layer ── */
+.bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ── Typography ── */
+.bebas {
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+  line-height: 0.95;
+}
+.nunito { font-family: var(--font-body); }
+
+/* ── Slide content wrapper ── */
+.slide-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 64px 96px 80px;
+}
+
+/* ── Header bar ── */
+.slide-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+.org-label {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-sec);
+}
+.circle-sm {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.circle-teal {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--teal);
+  flex-shrink: 0;
+}
+
+/* ── Rules ── */
+.rule-double {
+  width: 100%;
+  height: 7px;
+  background: linear-gradient(to bottom, var(--rule) 0, var(--rule) 4px, transparent 4px, transparent 3px, var(--accent) 3px);
+  margin-bottom: 36px;
+}
+.rule-accent-line {
+  width: 80px;
+  height: 4px;
+  background: var(--accent);
+  margin-bottom: 20px;
+}
+
+/* ── Section marker ── */
+.section-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.section-marker-bar {
+  width: 6px;
+  height: 28px;
+  background: var(--accent);
+}
+.section-marker-label {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-sec);
+}
+
+/* ── Hero headline ── */
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 5.8rem;
+  line-height: 0.92;
+  color: var(--text);
+  letter-spacing: 0.025em;
+  max-width: 1400px;
+  margin-bottom: 28px;
+}
+.h1-title {
+  font-family: var(--font-display);
+  font-size: 3.8rem;
+  line-height: 0.95;
+  color: var(--text);
+  letter-spacing: 0.025em;
+  max-width: 1400px;
+  margin-bottom: 32px;
+}
+
+/* ── Abstract ── */
+.abstract {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--text-sec);
+  max-width: 900px;
+  margin-bottom: 36px;
+  font-weight: 400;
+}
+
+/* ── Detail row (slide 1) ── */
+.detail-row {
+  display: flex;
+  gap: 0;
+  border-top: 3px solid var(--rule);
+  margin-top: auto;
+}
+.detail-col {
+  flex: 1;
+  padding: 22px 28px;
+  border-right: 1px solid var(--rule-lt);
+}
+.detail-col:last-child { border-right: none; }
+.detail-col-label {
+  font-family: var(--font-body);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.detail-col-value {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--text);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ── Stat + aside row ── */
+.evidence-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 28px 26px;
+  background: var(--surface);
+  border-top: 5px solid var(--accent);
+  flex: 1;
+}
+.stat-number {
+  font-family: var(--font-display);
+  font-size: 5.2rem;
+  line-height: 0.9;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.stat-marker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stat-label {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-sec);
+  line-height: 1.4;
+}
+.aside-panel {
+  background: var(--text);
+  color: var(--bg);
+  padding: 32px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 300px;
+  max-width: 320px;
+}
+.aside-stat {
+  font-family: var(--font-display);
+  font-size: 3.8rem;
+  line-height: 1;
+  color: var(--teal);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.aside-label {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bg);
+  opacity: 0.65;
+}
+.aside-body {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--bg);
+  opacity: 0.88;
+}
+
+/* ── Evidence paragraph ── */
+.evidence-para {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text-sec);
+  max-width: 1100px;
+  margin-top: auto;
+}
+
+/* ── Comparison table ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-variant-numeric: lining-nums tabular-nums;
+  margin-bottom: 20px;
+}
+.data-table th {
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  padding: 14px 18px;
+  text-align: left;
+  border: 1px solid var(--text);
+}
+.data-table td {
+  padding: 13px 18px;
+  border: 1px solid var(--rule-lt);
+  color: var(--text);
+  font-weight: 600;
+}
+.data-table tr:nth-child(even) td {
+  background: var(--surface);
+}
+.data-table tr.highlight td {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+}
+.data-table tr.highlight td:first-child {
+  border-left: 5px solid var(--accent-dk);
+}
+
+/* ── Footnote ── */
+.footnote {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: auto;
+}
+
+/* ── Folio ── */
+.folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-variant-numeric: lining-nums tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 2;
+}
+.folio::before {
+  content: '';
+  display: inline-block;
+  width: 22px;
+  height: 2px;
+  background: var(--accent);
+}
+
+/* ── Nav bar ── */
+#nav-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: oklch(0.18 0.01 50 / 0.88);
+  backdrop-filter: blur(8px);
+  border-radius: 999px;
+  padding: 10px 20px;
+  z-index: 9999;
+}
+#nav-bar button {
+  background: none;
+  border: none;
+  color: oklch(0.90 0.01 72);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  line-height: 1;
+}
+#nav-bar button:hover { background: oklch(0.35 0.01 50); }
+#nav-bar button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.nav-dots { display: flex; gap: 8px; align-items: center; }
+.nav-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: oklch(0.55 0.01 72);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  transition: background 0.15s, transform 0.15s;
+}
+.nav-dot.active {
+  background: var(--accent);
+  transform: scale(1.35);
+}
+.nav-dot:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* ── Decorative background shapes ── */
+.bg-circle-lg {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.bg-diag {
+  position: absolute;
+  height: 5px;
+  background: var(--accent);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+
+<div id="stage-wrapper">
+<div class="stage" id="stage">
+
+<!-- ══════════════════════════════════════════════════════
+     SLIDE 1 — TITLE
+══════════════════════════════════════════════════════ -->
+<section class="slide is-active" data-slide="1" id="slide-1" aria-label="Slide 1: Title">
+
+  <!-- Background decorative layer z-index:0 -->
+  <div class="bg-layer">
+    <!-- Large circle accent, top-right corner -->
+    <div class="bg-circle-lg" style="width:340px;height:340px;background:oklch(0.52 0.22 22 / 0.07);top:-100px;right:-60px;z-index:0;"></div>
+    <!-- Small turquoise circle -->
+    <div class="bg-circle-lg" style="width:120px;height:120px;background:oklch(0.62 0.14 192 / 0.13);bottom:160px;right:260px;z-index:0;"></div>
+    <!-- Diagonal accent rule -->
+    <div class="bg-diag" style="width:280px;top:168px;right:160px;transform:rotate(-14deg);opacity:0.55;z-index:0;"></div>
+  </div>
+
+  <div class="slide-el active-content">
+    <!-- Header -->
+    <div class="slide-header">
+      <div class="circle-sm"></div>
+      <span class="org-label">Design Museum</span>
+      <div class="circle-teal"></div>
+      <span class="org-label" style="color:var(--teal-dk);">Mid-Century Retrospective</span>
+    </div>
+
+    <!-- Double rule -->
+    <div class="rule-double"></div>
+
+    <!-- Hero headline -->
+    <h1 class="hero-title bebas">
+      Mid-Century American Commercial Design<br>
+      Generated an Estimated $2.1 Billion in<br>
+      Measurable Brand Premium Value
+    </h1>
+
+    <!-- Red accent line -->
+    <div class="rule-accent-line"></div>
+
+    <!-- Abstract -->
+    <p class="abstract">
+      Between 1950 and 1965, the twenty largest clients of American design consultancies accrued documented brand premium exceeding $2.1 billion in aggregate — establishing design as a recognized line item in corporate investment portfolios for the first time in business history.
+      This retrospective quantifies that era's economic and cultural legacy through archival financial records, brand equity studies, and primary documentation from the offices of Bass, Rand, and their contemporaries.
+    </p>
+
+    <!-- 4-col detail row -->
+    <div class="detail-row">
+      <div class="detail-col">
+        <div class="detail-col-label">Period Covered</div>
+        <div class="detail-col-value">1950–1965</div>
+      </div>
+      <div class="detail-col">
+        <div class="detail-col-label">Clients Studied</div>
+        <div class="detail-col-value" style="font-variant-numeric:lining-nums tabular-nums;">20 Firms</div>
+      </div>
+      <div class="detail-col">
+        <div class="detail-col-label">Brand Premium</div>
+        <div class="detail-col-value" style="color:var(--accent);font-variant-numeric:lining-nums tabular-nums;">$2.1B</div>
+      </div>
+      <div class="detail-col">
+        <div class="detail-col-label">Design Category</div>
+        <div class="detail-col-value">Corporate Investment</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="folio" aria-label="Slide 1 of 3">01 / 03</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     SLIDE 2 — EVIDENCE
+══════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="2" id="slide-2" aria-label="Slide 2: Evidence">
+
+  <div class="bg-layer">
+    <div class="bg-circle-lg" style="width:220px;height:220px;background:oklch(0.62 0.14 192 / 0.09);top:60px;right:80px;z-index:0;"></div>
+    <div class="bg-diag" style="width:200px;bottom:200px;left:900px;transform:rotate(-10deg);opacity:0.40;z-index:0;"></div>
+  </div>
+
+  <div class="slide-content">
+    <!-- Section marker -->
+    <div class="section-marker">
+      <div class="section-marker-bar"></div>
+      <span class="section-marker-label">Evidence</span>
+    </div>
+
+    <!-- Headline -->
+    <h2 class="h1-title bebas">
+      Companies That Retained Dedicated Design Directors Between<br>
+      1952 and 1968 Achieved Stock Price Appreciation 28 Percent<br>
+      Above S&amp;P 500 Average Over the Same Period
+    </h2>
+
+    <!-- Stat + aside row -->
+    <div class="evidence-row">
+      <!-- Stat 1 -->
+      <div class="stat-col">
+        <div class="stat-number">+28%</div>
+        <div class="stat-marker">
+          <div class="circle-teal"></div>
+          <span class="stat-label">Stock Price Appreciation<br>vs S&amp;P 500 Baseline</span>
+        </div>
+      </div>
+      <!-- Stat 2 -->
+      <div class="stat-col">
+        <div class="stat-number">16 Yr</div>
+        <div class="stat-marker">
+          <div class="circle-teal"></div>
+          <span class="stat-label">Study Window<br>1952 – 1968</span>
+        </div>
+      </div>
+      <!-- Stat 3 -->
+      <div class="stat-col">
+        <div class="stat-number">47</div>
+        <div class="stat-marker">
+          <div class="circle-teal"></div>
+          <span class="stat-label">Companies in<br>Longitudinal Sample</span>
+        </div>
+      </div>
+      <!-- Aside panel -->
+      <div class="aside-panel">
+        <div class="aside-label">Supplementary Finding</div>
+        <div class="aside-stat">3.4×</div>
+        <div class="aside-label">Brand Recall Multiplier</div>
+        <div class="aside-body">Firms with dedicated design direction reported 3.4× higher unaided brand recall in independent consumer surveys compared to peer companies without a design function, per 1963 Harris Research archive.</div>
+      </div>
+    </div>
+
+    <!-- Evidence paragraph -->
+    <p class="evidence-para">
+      Analysis of SEC filings, annual reports, and Dow Jones historical price data for 47 publicly traded firms from 1952 to 1968 reveals a statistically significant correlation between sustained design investment and market outperformance.
+      The cohort that employed a full-time design director for a minimum of eight consecutive years outperformed the S&amp;P 500 composite by a cumulative 28 percentage points — a finding that held after controlling for industry sector, company size, and general advertising expenditure.
+      This market premium aligns with contemporaneous evidence that design-led firms achieved greater price elasticity and lower customer acquisition costs across the same period.
+    </p>
+  </div>
+
+  <div class="folio" aria-label="Slide 2 of 3">02 / 03</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     SLIDE 3 — COMPARISON TABLE
+══════════════════════════════════════════════════════ -->
+<section class="slide" data-slide="3" id="slide-3" aria-label="Slide 3: Comparison">
+
+  <div class="bg-layer">
+    <div class="bg-circle-lg" style="width:180px;height:180px;background:oklch(0.52 0.22 22 / 0.07);bottom:80px;left:60px;z-index:0;"></div>
+    <div class="bg-diag" style="width:240px;top:140px;right:120px;transform:rotate(-16deg);opacity:0.35;z-index:0;"></div>
+  </div>
+
+  <div class="slide-content">
+    <!-- Section marker -->
+    <div class="section-marker">
+      <div class="section-marker-bar"></div>
+      <span class="section-marker-label">Comparison</span>
+    </div>
+
+    <!-- Headline -->
+    <h2 class="h1-title bebas">
+      Integrated Brand Systems Outperformed Single-Discipline<br>
+      Design Engagements on Every Measurable Brand Equity Metric<br>
+      Across All 34 Documented Mid-Century Case Studies
+    </h2>
+
+    <!-- Comparison table -->
+    <table class="data-table" role="table" aria-label="Brand equity metric comparison across design engagement types">
+      <thead>
+        <tr>
+          <th scope="col">Engagement Type</th>
+          <th scope="col">Brand Recall Score</th>
+          <th scope="col">Price Premium %</th>
+          <th scope="col">Customer Loyalty Index</th>
+          <th scope="col">Media Efficiency Ratio</th>
+          <th scope="col">Net Promoter Proxy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Logo / Identity Only</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">38</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">+4.1%</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">0.52</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">1.08×</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">+12</td>
+        </tr>
+        <tr class="highlight">
+          <td>Integrated Brand System *</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">74</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">+18.7%</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">0.81</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">2.34×</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">+41</td>
+        </tr>
+        <tr>
+          <td>Product Design Only</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">45</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">+9.2%</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">0.61</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">1.41×</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">+22</td>
+        </tr>
+        <tr>
+          <td>Communications Design Only</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">42</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">+5.8%</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">0.57</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">1.62×</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">+18</td>
+        </tr>
+        <tr>
+          <td>Environmental / Spatial Only</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">31</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">+3.4%</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">0.48</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">0.94×</td>
+          <td style="font-variant-numeric:lining-nums tabular-nums;">+9</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="footnote">
+      * Integrated Brand System: concurrent engagement across corporate identity, product design, and communications architecture by a single coordinating design office. Scores indexed to industry-average baseline of 50.
+      Source: Design Museum Archive, primary case-study analysis across 34 documented mid-century engagements, 1950–1968.
+    </p>
+  </div>
+
+  <div class="folio" aria-label="Slide 3 of 3">03 / 03</div>
+</section>
+
+</div><!-- /.stage -->
+</div><!-- /#stage-wrapper -->
+
+<!-- ══════════════════════════════════════════════════════
+     NAV BAR
+══════════════════════════════════════════════════════ -->
+<nav id="nav-bar" aria-label="Slide navigation">
+  <button id="btn-prev" aria-label="Previous slide" title="Previous">&#8592;</button>
+  <div class="nav-dots" role="tablist" aria-label="Slides">
+    <button class="nav-dot active" role="tab" aria-selected="true"  aria-label="Slide 1" data-slide="1"></button>
+    <button class="nav-dot"        role="tab" aria-selected="false" aria-label="Slide 2" data-slide="2"></button>
+    <button class="nav-dot"        role="tab" aria-selected="false" aria-label="Slide 3" data-slide="3"></button>
+  </div>
+  <button id="btn-next" aria-label="Next slide" title="Next">&#8594;</button>
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

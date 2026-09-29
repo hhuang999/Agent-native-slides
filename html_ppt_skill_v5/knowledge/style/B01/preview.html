@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>B01 — dark-glassmorphism · Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --color-bg:             oklch(0.07 0.020 265);
+  --color-surface:        oklch(0.18 0.015 260 / 0.45);
+  --color-raised-surface: oklch(0.24 0.014 260 / 0.55);
+  --color-border:         oklch(0.55 0.010 260 / 0.18);
+  --color-border-solid:   oklch(0.22 0.016 262);
+  --color-glass-rim:      oklch(0.80 0.010 260 / 0.12);
+  --color-heading:        oklch(0.97 0.005 260);
+  --color-body:           oklch(0.82 0.012 255);
+  --color-muted:          oklch(0.56 0.014 258);
+  --color-accent:         oklch(0.72 0.22 265);
+  --color-accent-dim:     oklch(0.54 0.18 265);
+  --color-accent-glow:    oklch(0.72 0.22 265 / 0.18);
+  --color-accent-light:   oklch(0.86 0.16 265);
+  --color-accent-2:       oklch(0.76 0.20 200);
+  --color-accent-2-dim:   oklch(0.56 0.16 200);
+  --color-positive:       oklch(0.72 0.20 160);
+  --color-negative:       oklch(0.64 0.22 25);
+  --blob-1: oklch(0.30 0.26 268 / 0.55);
+  --blob-2: oklch(0.26 0.22 198 / 0.45);
+  --blob-3: oklch(0.28 0.24 285 / 0.35);
+  --type-display: 'Plus Jakarta Sans', sans-serif;
+  --type-body:    'Plus Jakarta Sans', sans-serif;
+  --type-label:   'Space Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--type-body); font-size: 19px;
+  color: var(--color-body); line-height: 1.6;
+  letter-spacing: -0.01em;
+}
+
+.deck-stage { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+
+/* ── Glassmorphism background ────────────────────────── */
+#glass-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: var(--color-bg);
+}
+#glass-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 60% at 82% 12%, var(--blob-1) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 55% at 18% 88%, var(--blob-2) 0%, transparent 70%),
+    radial-gradient(ellipse 38% 42% at 46% 52%, var(--blob-3) 0%, transparent 65%);
+}
+#glass-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle, oklch(0.90 0.00 0 / 0.025) 1px, transparent 1px),
+    radial-gradient(circle, oklch(0.72 0.10 265 / 0.015) 1px, transparent 1px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 1px 1px;
+}
+
+/* ── Slides ──────────────────────────────────────────── */
+.slide {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; padding: 70px 96px;
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+
+/* ── Shared ──────────────────────────────────────────── */
+.glass-card {
+  background: var(--color-surface);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow:
+    inset 0 1px 0 var(--color-glass-rim),
+    0 4px 24px oklch(0.07 0.020 265 / 0.60);
+  padding: 28px 26px;
+}
+.glass-card--raised {
+  background: var(--color-raised-surface);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  box-shadow:
+    inset 0 1px 0 oklch(0.90 0.010 260 / 0.16),
+    0 8px 40px oklch(0.07 0.020 265 / 0.80);
+}
+.accent-rule {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-border-solid) 55%, transparent 100%);
+}
+.counter {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-accent-2); letter-spacing: 0.10em;
+  margin-bottom: 12px;
+}
+.glass-tag {
+  display: inline-flex; align-items: center;
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-accent); letter-spacing: 0.10em; text-transform: uppercase;
+  background: var(--color-surface);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid var(--color-border);
+  padding: 4px 14px; border-radius: 6px; width: fit-content;
+}
+
+/* ── Slide 1: Title ──────────────────────────────────── */
+.s1-headline {
+  font-family: var(--type-display); font-size: 72px; font-weight: 800;
+  color: var(--color-heading); line-height: 1.06; letter-spacing: -0.02em;
+  max-width: 1300px; margin-bottom: 26px;
+}
+.s1-sub {
+  font-size: 22px; font-weight: 400; color: var(--color-muted);
+  max-width: 900px; line-height: 1.7; margin-bottom: 52px;
+}
+.s1-badges { display: flex; gap: 12px; flex-wrap: wrap; }
+.badge {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-body); letter-spacing: 0.06em;
+  background: var(--color-surface);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border: 1px solid var(--color-border);
+  padding: 5px 16px; border-radius: 8px;
+}
+.s1-corner {
+  position: absolute; top: 70px; right: 96px;
+  font-family: var(--type-label); font-size: 11px;
+  color: var(--color-muted); letter-spacing: 0.10em; text-transform: uppercase;
+}
+.s1-floor {
+  position: absolute; bottom: 64px; left: 96px; right: 96px; height: 1px;
+  background: var(--color-border-solid);
+}
+
+/* ── Slide 2: Stats ──────────────────────────────────── */
+.s2-headline {
+  font-family: var(--type-display); font-size: 50px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.1; letter-spacing: -0.015em;
+  max-width: 1580px; margin-bottom: 22px;
+}
+.s2-body {
+  display: grid; grid-template-columns: 1fr 360px; gap: 48px;
+  flex: 1; margin-top: 8px; overflow: hidden;
+}
+.s2-main { display: flex; flex-direction: column; gap: 24px; }
+.s2-text { font-size: 19px; line-height: 1.75; color: var(--color-body); }
+.stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.stat-card { display: flex; flex-direction: column; gap: 10px; }
+.stat-card__value {
+  font-family: var(--type-label); font-size: 44px; font-weight: 700;
+  color: var(--color-accent-light); line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums; letter-spacing: -0.02em;
+}
+.stat-card__label {
+  font-family: var(--type-label); font-size: 11px;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.10em;
+  line-height: 1.4;
+}
+.aside-list { display: flex; flex-direction: column; justify-content: center; }
+.aside-item { padding: 16px 0; border-bottom: 1px solid var(--color-border); }
+.aside-item:first-child { border-top: 1px solid var(--color-border); }
+.aside-item__title {
+  font-family: var(--type-display); font-size: 15px; font-weight: 600;
+  color: var(--color-heading); margin-bottom: 5px;
+}
+.aside-item__body {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-muted); line-height: 1.6;
+}
+
+/* ── Slide 3: Table ──────────────────────────────────── */
+.s3-headline {
+  font-family: var(--type-display); font-size: 46px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.1; letter-spacing: -0.015em;
+  max-width: 1520px; margin-bottom: 18px;
+}
+.s3-body { flex: 1; display: flex; flex-direction: column; margin-top: 14px; overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.08em;
+  text-align: left; padding: 10px 16px;
+  border-bottom: 2px solid var(--color-border-solid);
+}
+.data-table th:not(:first-child) { text-align: right; }
+.data-table td {
+  font-size: 18px; color: var(--color-body); padding: 14px 16px;
+  border-bottom: 1px solid var(--color-border-solid);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table td:not(:first-child) { text-align: right; font-family: var(--type-label); }
+.data-table tr.highlight td {
+  background: oklch(0.72 0.22 265 / 0.06);
+}
+.data-table tr.highlight td:first-child { font-weight: 700; color: var(--color-heading); }
+.win { color: var(--color-accent-light); font-weight: 700; }
+.good { color: var(--color-positive); }
+.footnote {
+  font-family: var(--type-label); font-size: 11px;
+  color: var(--color-muted); border-top: 1px solid var(--color-border-solid);
+  padding-top: 10px; margin-top: auto; letter-spacing: 0.02em; line-height: 1.6;
+}
+
+/* ── Nav ─────────────────────────────────────────────── */
+#nav { position: fixed; bottom: 16px; right: 20px; z-index: 100; display: flex; gap: 8px; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 8px;
+  background: var(--color-surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border);
+  color: var(--color-body); font-family: var(--type-label); font-size: 13px; cursor: pointer;
+}
+.nav-btn:hover { background: var(--color-raised-surface); }
+#slide-info {
+  position: fixed; bottom: 16px; left: 20px; z-index: 100;
+  font-family: var(--type-label); font-size: 12px; color: var(--color-muted);
+}
+
+/* ── Preview / print modes ───────────────────────────── */
+.preview-mode #nav, .preview-mode #slide-info { display: none; }
+
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { margin: 0; width: 1920px; height: auto !important; overflow: visible !important; background: var(--color-bg); }
+  .deck-stage { position: static !important; transform: none !important; width: 1920px !important; height: auto !important; overflow: visible !important; }
+  .slide {
+    position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important;
+    visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+    break-after: page; page-break-after: always; overflow: hidden;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  #nav, #slide-info { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="deck-stage">
+  <div id="glass-bg"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide is-active" data-slide="1">
+    <div class="glass-tag" style="margin-bottom:18px">Revenue Intelligence · Q4 2025</div>
+    <div class="accent-rule" style="margin-bottom:30px"></div>
+    <div class="s1-corner">MERIDIAN ANALYTICS · INVESTOR BRIEF</div>
+    <h1 class="s1-headline">Revenue Intelligence Has<br>Moved From Reporting<br>to Prediction.</h1>
+    <p class="s1-sub">Meridian replaces the quarterly spreadsheet with a live revenue graph: pipeline accuracy at 94%, forecast variance under 4%, and every renewal risk surfaced 90 days before it becomes a churn event.</p>
+    <div class="s1-badges">
+      <div class="badge">Pipeline intelligence</div>
+      <div class="badge">Forecast automation</div>
+      <div class="badge">Churn prediction</div>
+      <div class="badge">CRM-native integration</div>
+      <div class="badge">SOC 2 Type II</div>
+    </div>
+    <div class="s1-floor"></div>
+  </div>
+
+  <!-- Slide 2: Stats -->
+  <div class="slide" data-slide="2">
+    <div class="counter">02 / 04 — PLATFORM OUTCOMES</div>
+    <h2 class="s2-headline">Meridian customers close 31% faster and retain 18% more revenue in year one — with no additional headcount.</h2>
+    <div class="accent-rule" style="margin-bottom:0"></div>
+    <div class="s2-body" style="margin-top:22px">
+      <div class="s2-main">
+        <p class="s2-text">Across 210 enterprise deployments in 2024, Meridian's signal layer — trained on 4.2B activity events from sales, support, and product — reduced forecast variance from an industry median of 22% to under 4%. The same signal surface that predicts close dates also flags renewal risk: customers using the churn-prevention module retained a median of $840K in ARR in the 12 months post-deployment.</p>
+        <div class="stat-row">
+          <div class="glass-card glass-card--raised stat-card">
+            <div class="stat-card__value">94%</div>
+            <div class="stat-card__label">Pipeline forecast accuracy (median)</div>
+          </div>
+          <div class="glass-card glass-card--raised stat-card">
+            <div class="stat-card__value">−31%</div>
+            <div class="stat-card__label">Time-to-close vs. pre-deployment baseline</div>
+          </div>
+          <div class="glass-card glass-card--raised stat-card">
+            <div class="stat-card__value">$840K</div>
+            <div class="stat-card__label">Median ARR retained via churn alerts</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card aside-list" style="padding:0; background:var(--color-surface); backdrop-filter:blur(24px) saturate(180%); -webkit-backdrop-filter:blur(24px) saturate(180%); padding:0 24px; border-radius:12px;">
+        <div class="aside-item">
+          <div class="aside-item__title">Salesforce · HubSpot · Dynamics</div>
+          <div class="aside-item__body">Syncs bidirectionally with all three CRMs. No rip-and-replace — Meridian layers on top.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Signal sources</div>
+          <div class="aside-item__body">Email, calendar, call recordings, product usage, support tickets, LinkedIn activity — unified into one risk score.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Time-to-value</div>
+          <div class="aside-item__body">First forecast live in 14 days. Full signal coverage deployed in under 30 days for teams under 500 reps.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Security &amp; compliance</div>
+          <div class="aside-item__body">SOC 2 Type II, GDPR, CCPA. Zero data retention after contract end. EU data residency option.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Comparison table -->
+  <div class="slide" data-slide="3">
+    <div class="counter">03 / 04 — COMPETITIVE LANDSCAPE</div>
+    <h2 class="s3-headline">Meridian leads on forecast accuracy and time-to-value — the two metrics that drive CFO purchasing decisions.</h2>
+    <div class="accent-rule" style="margin-bottom:0; margin-top:10px"></div>
+    <div class="s3-body">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Forecast accuracy</th>
+            <th>Deployment time</th>
+            <th>Churn prediction</th>
+            <th>CRM integrations</th>
+            <th>Starting price / yr</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Clari</td><td>87%</td><td>60–90 days</td><td>Add-on module</td><td>2</td><td>$120K</td></tr>
+          <tr><td>Gong Forecast</td><td>85%</td><td>45–60 days</td><td>Limited</td><td>3</td><td>$95K</td></tr>
+          <tr><td>Salesforce Einstein</td><td>81%</td><td>90–120 days</td><td>Basic</td><td>1 (native)</td><td>$80K</td></tr>
+          <tr><td>Boostup</td><td>89%</td><td>30–45 days</td><td>Yes</td><td>2</td><td>$110K</td></tr>
+          <tr class="highlight"><td>Meridian Analytics</td><td class="win">94%</td><td class="good">14–30 days</td><td class="win">Native, 90-day lead</td><td class="good">3 + webhook</td><td>$88K</td></tr>
+        </tbody>
+      </table>
+      <div class="footnote">Forecast accuracy: median across customer base, defined as (1 − |actual − forecast| / forecast). Deployment time: days to first live forecast. Churn prediction: native indicates built-in without add-on purchase. Clari/Gong data from published case studies and G2 reviews, 2024. Meridian data: internal cohort analysis, 210 enterprise deployments, FY2024.</div>
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn" id="prev">◀</button>
+  <button class="nav-btn" id="next">▶</button>
+</div>
+<div id="slide-info">B01 dark-glassmorphism · <span id="cur">1</span> / 3</div>
+
+<script>
+const slideEls = Array.from(document.querySelectorAll('.slide'))
+const total = slideEls.length
+
+function goTo(n) {
+  n = Math.min(Math.max(1, Math.round(+n) || 1), total)
+  slideEls.forEach((s, i) => s.classList.toggle('is-active', i === n - 1))
+  window.__currentSlide = n
+  const info = document.getElementById('cur')
+  if (info) info.textContent = n
+}
+window.__goToSlide = goTo
+window.__currentSlide = 1
+
+document.getElementById('next').onclick = () => goTo(window.__currentSlide + 1)
+document.getElementById('prev').onclick = () => goTo(window.__currentSlide - 1)
+document.addEventListener('keydown', e => {
+  const k = e.key
+  if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') { e.preventDefault(); goTo(window.__currentSlide + 1) }
+  else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); goTo(window.__currentSlide - 1) }
+  else if (k === 'Home') goTo(1)
+  else if (k === 'End') goTo(total)
+})
+
+window.__deckPlan = {
+  title: 'Revenue Intelligence Has Moved From Reporting to Prediction.',
+  style_id: 'B01',
+  total_slides: total,
+  slides: [
+    { index: 1, assertion: 'Revenue Intelligence Has Moved From Reporting to Prediction.', type: 'title',
+      speaker_notes: { purpose: 'Frame the category shift before introducing Meridian.', key_points: ['94% forecast accuracy', 'Churn surfaced 90 days early', 'CRM-native — no rip-and-replace'], timing: '~1 min', tone: 'Confident, data-grounded, enterprise' } },
+    { index: 2, assertion: 'Meridian customers close 31% faster and retain 18% more revenue in year one — with no additional headcount.', type: 'evidence',
+      speaker_notes: { purpose: 'Anchor outcomes to CFO-legible numbers before showing product depth.', key_points: ['94% pipeline forecast accuracy', '−31% time-to-close', '$840K median ARR retained via churn alerts', '210 enterprise deployments FY2024'], transition: 'How does this compare to what the market offers today?', timing: '~2.5 min' } },
+    { index: 3, assertion: 'Meridian leads on forecast accuracy and time-to-value — the two metrics that drive CFO purchasing decisions.', type: 'comparison',
+      speaker_notes: { purpose: 'Close the competitive frame — accuracy and speed, not features.', key_points: ['94% vs. 81–89% for closest competitors', '14–30 days deployment vs. 45–120 days', 'Native churn prediction, no add-on cost'], timing: '~2 min' } }
+  ]
+}
+
+const q = new URLSearchParams(location.search)
+if (q.has('print')) document.documentElement.classList.add('print-mode')
+if (q.has('preview')) document.documentElement.classList.add('preview-mode')
+goTo(q.has('preview') ? parseInt(q.get('preview'), 10) || 1 : 1)
+</script>
+</body>
+</html>

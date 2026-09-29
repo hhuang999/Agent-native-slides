@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M01 watercolor-wash — Museum of Contemporary Art</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── COLOR TOKENS ─── */
+:root {
+  --color-surface:         oklch(0.97 0.010 65);
+  --color-surface-raised:  oklch(0.95 0.012 65);
+  --color-border:          oklch(0.88 0.012 65);
+  --color-text-primary:    oklch(0.18 0.010 50);
+  --color-text-secondary:  oklch(0.42 0.010 55);
+  --color-text-muted:      oklch(0.62 0.008 60);
+  --color-accent:          oklch(0.58 0.14  10);
+  --color-accent-subtle:   oklch(0.94 0.018 10);
+  --color-accent-dim:      oklch(0.72 0.080 10);
+  --color-highlight-row:   oklch(0.94 0.018 10);
+  --color-rule:            oklch(0.85 0.012 65);
+  --pool-pink:             oklch(0.90 0.030 10);
+  --pool-lilac:            oklch(0.88 0.025 300);
+  --pool-gold:             oklch(0.92 0.025 72);
+}
+
+/* ─── TYPOGRAPHY TOKENS ─── */
+:root {
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body:    'Lato', system-ui, sans-serif;
+  --text-xs:   13px;
+  --text-sm:   16px;
+  --text-base: 20px;
+  --text-md:   26px;
+  --text-lg:   36px;
+  --text-xl:   48px;
+  --text-2xl:  68px;
+  --text-3xl:  88px;
+  --lh-tight:   1.15;
+  --lh-heading: 1.25;
+  --lh-body:    1.6;
+}
+
+/* ─── OUTER SHELL ─── */
+body {
+  background: oklch(0.90 0.008 65);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: var(--font-body);
+}
+
+/* ─── SCALE WRAPPER ─── */
+#scale-root {
+  position: relative;
+  transform-origin: top center;
+}
+
+/* ─── DECK STAGE 1920×1080 ─── */
+.deck-stage {
+  width:  1920px;
+  height: 1080px;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-surface);
+}
+
+/* ─── WATERCOLOR WASH LAYER z-index 0 ─── */
+.deck-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 900px 600px at 15% 20%,
+      color-mix(in oklch, var(--pool-pink) 22%, transparent) 0%,
+      transparent 70%),
+    radial-gradient(ellipse 700px 500px at 85% 75%,
+      color-mix(in oklch, var(--pool-lilac) 18%, transparent) 0%,
+      transparent 65%),
+    radial-gradient(ellipse 600px 400px at 60% 15%,
+      color-mix(in oklch, var(--pool-gold) 20%, transparent) 0%,
+      transparent 60%);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+/* ─── SLIDES ─── */
+.slide {
+  display: flex;
+  flex-direction: column;
+  padding: 80px 120px 100px;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+/* Slide 2 shifts wash pools */
+.slide-2::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 800px 550px at 80% 10%,
+      color-mix(in oklch, var(--pool-pink) 20%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 650px 450px at 10% 80%,
+      color-mix(in oklch, var(--pool-lilac) 16%, transparent) 0%, transparent 65%),
+    radial-gradient(ellipse 500px 380px at 50% 50%,
+      color-mix(in oklch, var(--pool-gold) 18%, transparent) 0%, transparent 60%);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+/* Slide 3 shifts wash pools */
+.slide-3::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 750px 520px at 20% 75%,
+      color-mix(in oklch, var(--pool-gold) 20%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 700px 480px at 75% 20%,
+      color-mix(in oklch, var(--pool-pink) 18%, transparent) 0%, transparent 65%),
+    radial-gradient(ellipse 550px 400px at 90% 60%,
+      color-mix(in oklch, var(--pool-lilac) 16%, transparent) 0%, transparent 60%);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+/* Ensure all slide children are above wash */
+.slide > * { position: relative; z-index: 1; }
+
+/* ─── SECTION MARKER ─── */
+.section-marker {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  margin-bottom: 4px;
+}
+
+/* ─── RULE ─── */
+.rule {
+  width: 48px;
+  height: 2px;
+  background: var(--color-accent);
+  border: none;
+  margin: 14px 0 28px;
+  border-radius: 1px;
+}
+
+/* ─── HEADLINE ─── */
+.headline {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: var(--lh-heading);
+}
+.headline--hero {
+  font-size: var(--text-2xl);
+  max-width: 1300px;
+}
+.headline--section {
+  font-size: var(--text-xl);
+  max-width: 1280px;
+}
+
+/* ─── ABSTRACT ─── */
+.abstract {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: var(--text-md);
+  color: var(--color-text-secondary);
+  line-height: var(--lh-body);
+  max-width: 900px;
+  margin-top: 28px;
+}
+
+/* ─── DETAIL ROW ─── */
+.detail-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--color-border);
+  margin-top: auto;
+}
+.detail-cell {
+  padding: 22px 32px 22px 0;
+  border-right: 1px solid var(--color-border);
+}
+.detail-cell:first-child { padding-left: 0; }
+.detail-cell:not(:first-child) { padding-left: 32px; }
+.detail-cell:last-child { border-right: none; }
+.detail-label {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 6px;
+}
+.detail-value {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 300;
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+/* ─── INSTITUTION LABEL ─── */
+.institution {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 300;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+}
+
+/* ─── STAT COLUMNS ─── */
+.stat-grid {
+  display: flex;
+  gap: 64px;
+  margin-top: 44px;
+  margin-bottom: 40px;
+  flex: 1;
+  align-items: flex-start;
+}
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+.stat-numeral {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-accent);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.stat-label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 300;
+  color: var(--color-text-secondary);
+  line-height: var(--lh-body);
+  max-width: 240px;
+}
+
+/* ─── ASIDE PANEL ─── */
+.aside-panel {
+  background: var(--color-accent-subtle);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 4px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 0 0 340px;
+  align-self: flex-start;
+  margin-top: 44px;
+}
+.aside-numeral {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-accent);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1;
+}
+.aside-text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-base);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  line-height: var(--lh-body);
+}
+
+/* ─── EVIDENCE PARAGRAPH ─── */
+.evidence-para {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 300;
+  color: var(--color-text-secondary);
+  line-height: var(--lh-body);
+  max-width: 1080px;
+}
+
+/* ─── STAT+ASIDE LAYOUT ─── */
+.stat-aside-row {
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+}
+.stat-aside-row .stat-grid {
+  flex: 1;
+  margin-top: 44px;
+}
+
+/* ─── DATA TABLE ─── */
+.table-wrap {
+  width: 100%;
+  overflow: hidden;
+  margin-top: 36px;
+  flex: 1;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+.data-table th {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  text-align: left;
+  padding: 10px 16px;
+  border-bottom: 1.5px solid var(--color-border);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.data-table th.num { text-align: right; }
+.data-table td {
+  padding: 14px 16px;
+  color: var(--color-text-primary);
+  font-weight: 300;
+  border-bottom: 1px solid var(--color-rule);
+  font-variant-numeric: lining-nums tabular-nums;
+  vertical-align: middle;
+}
+.data-table td.num { text-align: right; }
+.data-table tr.highlight td {
+  background: var(--color-highlight-row);
+  font-weight: 400;
+}
+.data-table tr.highlight td:first-child {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 13px;
+}
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent-dim);
+  border-radius: 3px;
+  padding: 2px 7px;
+  font-variant-numeric: lining-nums tabular-nums;
+  white-space: nowrap;
+}
+
+/* ─── FOOTNOTE ─── */
+.footnote {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 300;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-top: 16px;
+  max-width: 1100px;
+}
+
+/* ─── FOLIO ─── */
+.folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 300;
+  color: var(--color-text-muted);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: 0.04em;
+  z-index: 2;
+}
+
+/* ─── NAV BAR ─── */
+#nav-bar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: color-mix(in oklch, var(--color-text-primary) 88%, transparent);
+  border-radius: 999px;
+  padding: 10px 18px;
+  z-index: 9999;
+  backdrop-filter: blur(8px);
+}
+.nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: oklch(0.92 0.006 65);
+  display: flex;
+  align-items: center;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: opacity 0.15s;
+}
+.nav-btn:hover { opacity: 0.7; }
+.nav-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.nav-btn svg { width: 16px; height: 16px; }
+.nav-dots { display: flex; gap: 8px; align-items: center; }
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: oklch(0.60 0.006 65);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  transition: background 0.2s, transform 0.2s;
+}
+.dot.active {
+  background: oklch(0.92 0.006 65);
+  transform: scale(1.3);
+}
+.dot:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+/* ─── REDUCED MOTION ─── */
+@media (prefers-reduced-motion: reduce) {
+  .dot, .nav-btn { transition: none; }
+}
+
+/* ─── PRINT ─── */
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+
+<div id="scale-root">
+<div class="deck-stage">
+
+  <!-- ══════════════ SLIDE 1 — TITLE ══════════════ -->
+  <div class="slide slide-1 is-active" data-slide="1" id="slide-1">
+    <div class="institution">Museum of Contemporary Art &mdash; Audience Development &amp; Engagement Research 2024</div>
+    <h1 class="headline headline--hero">
+      Visitors Who Participated in Facilitated Gallery Conversations Reported 89 Percent Higher Likelihood to Return Within Six Months and Spent an Average of 47 More Minutes in the Museum Than Visitors on Self-Guided Visits.
+    </h1>
+    <p class="abstract">
+      A longitudinal study of 4,200 visitor interactions across eight exhibition cycles reveals that structured facilitated dialogue programs produce measurable gains in both emotional connection and behavioral return intent.
+      The effect holds consistently across age cohorts, membership tiers, and exhibition format, suggesting conversation facilitation as a scalable lever for audience development.
+    </p>
+    <div class="detail-row">
+      <div class="detail-cell">
+        <div class="detail-label">Study Period</div>
+        <div class="detail-value">January 2022 – December 2023</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Visitor Sample</div>
+        <div class="detail-value">4,200 participants across 8 exhibition cycles</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Facilitation Model</div>
+        <div class="detail-value">Trained gallery educators, 45-min structured dialogue</div>
+      </div>
+      <div class="detail-cell">
+        <div class="detail-label">Control Group</div>
+        <div class="detail-value">Self-guided visits, matched by entry ticket type</div>
+      </div>
+    </div>
+    <div class="folio">M01 &nbsp;·&nbsp; 01</div>
+  </div>
+
+  <!-- ══════════════ SLIDE 2 — EVIDENCE ══════════════ -->
+  <div class="slide slide-2" data-slide="2" id="slide-2">
+    <div class="section-marker">Key Findings</div>
+    <hr class="rule">
+    <h2 class="headline headline--section">
+      Each Additional Gallery Conversation Session Per Visitor Increases Long-Term Membership Conversion Rate by 12 Percentage Points and Reduces Lapsed Membership Rate by 18 Percent Over the Following 24 Months.
+    </h2>
+    <div class="stat-aside-row">
+      <div class="stat-grid">
+        <div class="stat-col">
+          <div class="stat-numeral">+12 pp</div>
+          <div class="stat-label">Membership conversion rate increase per additional facilitated session</div>
+        </div>
+        <div class="stat-col">
+          <div class="stat-numeral">−18%</div>
+          <div class="stat-label">Reduction in lapsed membership rate across 24-month follow-up period</div>
+        </div>
+        <div class="stat-col">
+          <div class="stat-numeral">3.4×</div>
+          <div class="stat-label">Greater likelihood to purchase gift membership after two or more sessions</div>
+        </div>
+      </div>
+      <div class="aside-panel">
+        <div class="aside-numeral">$184</div>
+        <div class="aside-text">Average incremental annual revenue per visitor who attended three or more facilitated conversations, compared to one-session participants — driven by renewals, donations, and event bookings.</div>
+      </div>
+    </div>
+    <p class="evidence-para">
+      Membership data matched to visit logs across a 24-month follow-up window show a dose-response relationship between facilitated session attendance and long-term retention. Visitors completing three or more sessions achieved membership renewal rates of 78 percent compared to 44 percent in the control cohort. The financial model indicates full program cost recovery at approximately 1.6 sessions per converted member.
+    </p>
+    <div class="folio">M01 &nbsp;·&nbsp; 02</div>
+  </div>
+
+  <!-- ══════════════ SLIDE 3 — COMPARISON TABLE ══════════════ -->
+  <div class="slide slide-3" data-slide="3" id="slide-3">
+    <div class="section-marker">Model Comparison</div>
+    <hr class="rule">
+    <h2 class="headline headline--section">
+      Facilitated Conversation Programs Combined With Community Partner Outreach Deliver the Highest Visitor Diversity, Strongest Long-Term Engagement, and Greatest Revenue per Visitor Across All Four Evaluated Audience Development Models.
+    </h2>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Audience Development Model</th>
+            <th class="num">Diversity Index</th>
+            <th class="num">Avg. Dwell Time</th>
+            <th class="num">12-Mo. Return Rate</th>
+            <th class="num">Revenue / Visitor</th>
+            <th>Program Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Self-Guided + Digital Audio</td>
+            <td class="num">0.52</td>
+            <td class="num">62 min</td>
+            <td class="num">31%</td>
+            <td class="num">$38</td>
+            <td>Low</td>
+          </tr>
+          <tr class="highlight">
+            <td>Facilitated Conversation + Community Outreach <span class="badge">Top Performer</span></td>
+            <td class="num">0.89</td>
+            <td class="num">109 min</td>
+            <td class="num">74%</td>
+            <td class="num">$127</td>
+            <td>Medium-High</td>
+          </tr>
+          <tr>
+            <td>Facilitated Conversation Only</td>
+            <td class="num">0.71</td>
+            <td class="num">98 min</td>
+            <td class="num">61%</td>
+            <td class="num">$96</td>
+            <td>Medium</td>
+          </tr>
+          <tr>
+            <td>Community Outreach Only</td>
+            <td class="num">0.80</td>
+            <td class="num">74 min</td>
+            <td class="num">48%</td>
+            <td class="num">$61</td>
+            <td>Medium</td>
+          </tr>
+          <tr>
+            <td>School Group Programme</td>
+            <td class="num">0.66</td>
+            <td class="num">55 min</td>
+            <td class="num">27%</td>
+            <td class="num">$29</td>
+            <td>Low-Medium</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="footnote">
+      Diversity Index = Simpson's Diversity Index across five self-reported demographic dimensions (age, household income, postcode deprivation decile, first language, prior museum attendance). Revenue per visitor = ticket, membership, retail, F&amp;B, and event revenue over a 12-month post-visit window. Program cost ratings are relative to total annual operating budget; absolute figures are available in Appendix C.
+    </p>
+    <div class="folio">M01 &nbsp;·&nbsp; 03</div>
+  </div>
+
+</div><!-- .deck-stage -->
+</div><!-- #scale-root -->
+
+<!-- ─── NAV BAR ─── -->
+<div id="nav-bar">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="10 4 6 8 10 12"/>
+    </svg>
+  </button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 4 10 8 6 12"/>
+    </svg>
+  </button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O01 Organic Moss — Global Biodiversity Research Foundation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Color tokens ── */
+:root {
+  --c-bg:            oklch(0.97 0.012 78);
+  --c-surface:       oklch(0.94 0.010 76);
+  --c-surface-alt:   oklch(0.92 0.009 75);
+  --c-text:          oklch(0.14 0.008 70);
+  --c-text-muted:    oklch(0.42 0.010 72);
+  --c-text-inverse:  oklch(0.97 0.008 78);
+  --c-accent:        oklch(0.38 0.14 152);
+  --c-accent-mid:    oklch(0.52 0.12 150);
+  --c-accent-light:  oklch(0.72 0.09 148);
+  --c-accent-dim:    oklch(0.38 0.14 152 / 0.12);
+  --c-border:        oklch(0.38 0.14 152 / 0.25);
+  --c-border-light:  oklch(0.14 0.008 70 / 0.10);
+  --c-highlight-bg:  oklch(0.38 0.14 152 / 0.10);
+  /* Typography */
+  --font-headline: 'Lora', Georgia, serif;
+  --font-body:     'Nunito', system-ui, sans-serif;
+}
+
+/* ── Wrapper & Stage ── */
+body {
+  margin: 0;
+  background: oklch(0.18 0.006 70);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  font-family: var(--font-body);
+}
+
+.deck-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.deck-stage {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  transform-origin: top left;
+  background: var(--c-bg);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Paper texture layer — z-index 0 */
+.deck-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 120% 60% at 15% 80%, oklch(0.82 0.04 80 / 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 80% at 85% 20%, oklch(0.72 0.06 120 / 0.04) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* ── Slides ── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+
+/* ── Folio ── */
+.folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--c-text-muted);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: 0.04em;
+  z-index: 2;
+}
+
+/* ── Section marker ── */
+.section-marker {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  border-left: 3px solid var(--c-accent);
+  padding-left: 10px;
+  line-height: 1.3;
+}
+
+/* ── Organic stat marker (8×8, border-radius:2px) ── */
+.stat-marker {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--c-accent);
+  flex-shrink: 0;
+}
+
+/* ── Nav bar ── */
+.nav-bar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: oklch(0.14 0.008 70 / 0.88);
+  backdrop-filter: blur(8px);
+  border-radius: 999px;
+  padding: 10px 20px;
+  z-index: 9999;
+  box-shadow: 0 2px 16px oklch(0 0 0 / 0.35);
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: oklch(0.80 0.008 78);
+  cursor: pointer;
+  font-size: 15px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.15s;
+  outline: none;
+}
+.nav-btn:hover { background: oklch(1 0 0 / 0.10); }
+.nav-btn:focus-visible { outline: 2px solid var(--c-accent-light); outline-offset: 2px; }
+
+.nav-dots {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: oklch(0.60 0.008 78 / 0.5);
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, transform 0.15s;
+  outline: none;
+}
+.nav-dot.active {
+  background: var(--c-accent-light);
+  transform: scale(1.25);
+}
+.nav-dot:focus-visible { outline: 2px solid var(--c-accent-light); outline-offset: 2px; }
+
+/* ── Slide 1: Title ── */
+
+.s1-band {
+  width: 8px;
+  height: 100%;
+  background: var(--c-accent);
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.s1-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 100px 140px 80px 110px;
+  position: relative;
+  z-index: 1;
+}
+
+.s1-org {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+  margin-bottom: 48px;
+}
+
+.s1-headline {
+  font-family: var(--font-headline);
+  font-size: 52px;
+  font-weight: 600;
+  color: var(--c-text);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  max-width: 1380px;
+  margin-bottom: 40px;
+}
+
+.s1-abstract {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--c-text-muted);
+  line-height: 1.70;
+  max-width: 820px;
+  margin-bottom: 60px;
+}
+
+.s1-hairline {
+  border: none;
+  border-top: 0.5px solid var(--c-border);
+  margin-bottom: 44px;
+  max-width: 1380px;
+}
+
+.s1-detail-row {
+  display: flex;
+  gap: 0;
+  max-width: 1380px;
+}
+
+.s1-detail-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 40px;
+  border-right: 0.5px solid var(--c-border-light);
+  padding-left: 4px;
+}
+.s1-detail-col:first-child { padding-left: 0; }
+.s1-detail-col:last-child { border-right: none; }
+
+.s1-detail-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.s1-detail-value {
+  font-family: var(--font-body);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--c-accent);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1;
+  padding-left: 15px;
+}
+
+.s1-detail-note {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--c-text-muted);
+  line-height: 1.5;
+  padding-left: 15px;
+}
+
+/* ── Slide 2: Evidence + Aside ── */
+
+.s2-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 80px 80px 120px;
+  position: relative;
+  z-index: 1;
+  border-right: 0.5px solid var(--c-border);
+}
+
+.s2-headline {
+  font-family: var(--font-headline);
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--c-text);
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  max-width: 1000px;
+  margin-bottom: 52px;
+  margin-top: 28px;
+}
+
+.s2-stats {
+  display: flex;
+  gap: 0;
+  margin-bottom: 40px;
+  border-top: 0.5px solid var(--c-border);
+}
+
+.s2-stat-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 28px 32px 20px 32px;
+  border-right: 0.5px solid var(--c-border-light);
+}
+.s2-stat-col:first-child { padding-left: 0; }
+.s2-stat-col:last-child { border-right: none; }
+
+.s2-stat-value {
+  font-family: var(--font-body);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--c-accent);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.s2-stat-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.s2-stat-note {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--c-text-muted);
+  line-height: 1.5;
+}
+
+.s2-evidence {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--c-text);
+  line-height: 1.72;
+  max-width: 900px;
+  border-top: 0.5px solid var(--c-border);
+  padding-top: 28px;
+}
+
+.s2-aside {
+  width: 380px;
+  flex-shrink: 0;
+  background: var(--c-surface-alt);
+  border-top: 3px solid var(--c-accent);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 50px;
+  gap: 18px;
+  z-index: 1;
+}
+
+.aside-stat {
+  font-family: var(--font-body);
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--c-accent);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1;
+}
+
+.aside-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.aside-body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--c-text);
+  line-height: 1.70;
+  border-top: 0.5px solid var(--c-border);
+  padding-top: 18px;
+}
+
+/* ── Slide 3: Comparison Table ── */
+
+.s3-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 72px 120px 72px 120px;
+  position: relative;
+  z-index: 1;
+}
+
+.s3-headline {
+  font-family: var(--font-headline);
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--c-text);
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  max-width: 1500px;
+  margin-bottom: 40px;
+  margin-top: 24px;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.comparison-table th {
+  background: var(--c-surface);
+  color: var(--c-text-muted);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 13px 22px;
+  text-align: left;
+  border-bottom: 0.5px solid var(--c-border);
+}
+
+.comparison-table td {
+  padding: 15px 22px;
+  color: var(--c-text);
+  border-bottom: 0.5px solid var(--c-border-light);
+  font-variant-numeric: lining-nums tabular-nums;
+  vertical-align: middle;
+}
+
+.comparison-table tr:nth-child(even) td {
+  background: oklch(0.96 0.010 76 / 0.55);
+}
+
+.comparison-table tr.highlighted td {
+  background: var(--c-highlight-bg);
+  font-weight: 600;
+}
+
+.comparison-table tr.highlighted td:first-child::before {
+  content: '★ ';
+  color: var(--c-accent);
+  font-size: 12px;
+}
+
+.comparison-table td:first-child { font-weight: 500; }
+
+.positive { color: oklch(0.38 0.14 152); }
+.negative { color: oklch(0.42 0.18 25); }
+
+.s3-footnote {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--c-text-muted);
+  line-height: 1.6;
+  border-top: 0.5px solid var(--c-border-light);
+  padding-top: 14px;
+  max-width: 1400px;
+}
+
+/* ── prefers-reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .nav-dot, .nav-btn { transition: none; }
+}
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+
+<div class="deck-wrapper">
+  <div class="deck-stage" id="deckStage">
+
+    <!-- ══════════════════════════════════════════
+         SLIDE 1 — Title
+    ══════════════════════════════════════════ -->
+    <div class="slide is-active" data-slide="1" id="slide-1" role="region" aria-label="Slide 1 of 3">
+      <div class="s1-band" aria-hidden="true"></div>
+      <div class="s1-body">
+        <div class="s1-org">Global Biodiversity Research Foundation &nbsp;·&nbsp; Ecosystem Services Valuation Study</div>
+
+        <h1 class="s1-headline">
+          Intact Boreal Forest Zones in Northern Canada and Siberia Provide Measurable Ecosystem Services Valued at $3,200 per Hectare per Year When Carbon Sequestration, Water Regulation, and Biodiversity Habitat Functions Are Priced at Current Market Rates.
+        </h1>
+
+        <p class="s1-abstract">
+          This study synthesizes field measurement data and market pricing frameworks across 6.2 million hectares of boreal forest to produce the first integrated per-hectare valuation spanning carbon, hydrological, and biodiversity dimensions. Findings establish baseline economic evidence for policy instruments targeting boreal conservation at national and international scales.
+        </p>
+
+        <hr class="s1-hairline" aria-hidden="true">
+
+        <div class="s1-detail-row">
+          <div class="s1-detail-col">
+            <div class="s1-detail-label"><span class="stat-marker" aria-hidden="true"></span>Study Area</div>
+            <div class="s1-detail-value">6.2 M ha</div>
+            <div class="s1-detail-note">Across 14 boreal zones, Canada &amp; Russia</div>
+          </div>
+          <div class="s1-detail-col">
+            <div class="s1-detail-label"><span class="stat-marker" aria-hidden="true"></span>Service Value</div>
+            <div class="s1-detail-value">$3,200 /ha/yr</div>
+            <div class="s1-detail-note">Combined carbon, water, biodiversity</div>
+          </div>
+          <div class="s1-detail-col">
+            <div class="s1-detail-label"><span class="stat-marker" aria-hidden="true"></span>Data Period</div>
+            <div class="s1-detail-value">2014–2024</div>
+            <div class="s1-detail-note">10-year longitudinal field dataset</div>
+          </div>
+          <div class="s1-detail-col">
+            <div class="s1-detail-label"><span class="stat-marker" aria-hidden="true"></span>Measurement Sites</div>
+            <div class="s1-detail-value">312</div>
+            <div class="s1-detail-note">Stratified random sample, 4 forest types</div>
+          </div>
+        </div>
+      </div>
+      <div class="folio" aria-label="Slide 1 of 3">01 / 03</div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SLIDE 2 — Evidence + Aside
+    ══════════════════════════════════════════ -->
+    <div class="slide" data-slide="2" id="slide-2" role="region" aria-label="Slide 2 of 3">
+      <div class="s2-main">
+        <div class="section-marker">Carbon &amp; Hydrological Evidence</div>
+        <h2 class="s2-headline">
+          Every Percentage Point Increase in Forest Canopy Continuity Above the 78 Percent Threshold Adds $180 per Hectare in Annual Carbon Sequestration Value and Reduces Watershed Disruption Risk Index by 0.4 Points Across the Full 6.2-Million-Hectare Study Area.
+        </h2>
+
+        <div class="s2-stats">
+          <div class="s2-stat-col">
+            <div class="s2-stat-value"><span class="stat-marker" aria-hidden="true" style="margin-top:8px"></span>$180</div>
+            <div class="s2-stat-label">Carbon gain per 1% canopy increase</div>
+            <div class="s2-stat-note">Above 78% continuity threshold, per ha/yr</div>
+          </div>
+          <div class="s2-stat-col">
+            <div class="s2-stat-value"><span class="stat-marker" aria-hidden="true" style="margin-top:8px"></span>−0.4 pts</div>
+            <div class="s2-stat-label">Watershed disruption risk reduction</div>
+            <div class="s2-stat-note">Per 1% canopy gain, study-area average</div>
+          </div>
+          <div class="s2-stat-col">
+            <div class="s2-stat-value"><span class="stat-marker" aria-hidden="true" style="margin-top:8px"></span>78%</div>
+            <div class="s2-stat-label">Canopy continuity threshold</div>
+            <div class="s2-stat-note">Below this, marginal gains drop sharply</div>
+          </div>
+        </div>
+
+        <p class="s2-evidence">
+          Field measurements across 312 stratified sites confirm a non-linear relationship between canopy continuity and ecosystem service delivery. Below 78% continuity, carbon sequestration rates plateau and hydrological regulation functions decline due to gap-driven turbulence effects. Above the threshold, every additional percentage point of intact canopy delivers a measurable and economically quantifiable increment in both carbon capture and watershed stability, with the strongest effects concentrated in zones experiencing seasonal freeze-thaw cycles.
+        </p>
+      </div>
+
+      <div class="s2-aside" aria-label="Supplementary statistics">
+        <div class="aside-label">Total Annual Value</div>
+        <div class="aside-stat">$19.8B</div>
+        <div class="aside-label">Across Full Study Area</div>
+        <div class="aside-body">
+          At current market pricing, the 6.2-million-hectare study area generates an estimated $19.8 billion in annual ecosystem service value — a figure that exceeds the GDP of several small nations and underlines the macroeconomic stakes of boreal conservation policy.
+        </div>
+      </div>
+
+      <div class="folio" aria-label="Slide 2 of 3">02 / 03</div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SLIDE 3 — Comparison Table
+    ══════════════════════════════════════════ -->
+    <div class="slide" data-slide="3" id="slide-3" role="region" aria-label="Slide 3 of 3">
+      <div class="s3-body">
+        <div class="section-marker">Protection Model Comparison</div>
+        <h2 class="s3-headline">
+          Full Ecosystem Service Pricing Combined With Indigenous Co-Management Delivers the Highest Per-Hectare Conservation Value, Lowest Annual Forest Loss Rate, and Greatest Biodiversity Index Score Across All Five Evaluated Forest Protection Models.
+        </h2>
+
+        <table class="comparison-table" aria-label="Forest protection model comparison">
+          <thead>
+            <tr>
+              <th scope="col">Protection Model</th>
+              <th scope="col" style="text-align:right">Value ($/ha/yr)</th>
+              <th scope="col" style="text-align:right">Forest Loss (%/yr)</th>
+              <th scope="col" style="text-align:right">Biodiversity Index</th>
+              <th scope="col" style="text-align:right">Carbon Capture (tCO₂/ha)</th>
+              <th scope="col" style="text-align:right">Implementation Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>State-managed reserve (no pricing)</td>
+              <td style="text-align:right">$1,240</td>
+              <td style="text-align:right; font-variant-numeric: lining-nums tabular-nums"><span class="negative">1.8%</span></td>
+              <td style="text-align:right">62.1</td>
+              <td style="text-align:right">4.2</td>
+              <td style="text-align:right">Low</td>
+            </tr>
+            <tr class="highlighted">
+              <td>Full ES pricing + Indigenous co-management</td>
+              <td style="text-align:right"><span class="positive">$3,200</span></td>
+              <td style="text-align:right"><span class="positive">0.2%</span></td>
+              <td style="text-align:right"><span class="positive">91.7</span></td>
+              <td style="text-align:right"><span class="positive">9.6</span></td>
+              <td style="text-align:right">Medium-High</td>
+            </tr>
+            <tr>
+              <td>Carbon-market only (REDD+ scheme)</td>
+              <td style="text-align:right">$1,890</td>
+              <td style="text-align:right"><span class="negative">0.9%</span></td>
+              <td style="text-align:right">71.4</td>
+              <td style="text-align:right">6.8</td>
+              <td style="text-align:right">Medium</td>
+            </tr>
+            <tr>
+              <td>Private conservation easement</td>
+              <td style="text-align:right">$2,100</td>
+              <td style="text-align:right">0.6%</td>
+              <td style="text-align:right">77.0</td>
+              <td style="text-align:right">7.1</td>
+              <td style="text-align:right">Medium</td>
+            </tr>
+            <tr>
+              <td>Unprotected managed timber zone</td>
+              <td style="text-align:right">$580</td>
+              <td style="text-align:right"><span class="negative">4.4%</span></td>
+              <td style="text-align:right">38.3</td>
+              <td style="text-align:right">1.9</td>
+              <td style="text-align:right">Low</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="s3-footnote">
+          Source: Global Biodiversity Research Foundation, Ecosystem Services Valuation Study 2014–2024. Forest loss rates are 10-year annualised means. Biodiversity Index is a composite of species richness, endemism, and functional diversity (scale 0–100). Carbon capture figures represent net sequestration after respiration losses. ES = Ecosystem Services. ★ denotes recommended policy target.
+        </p>
+      </div>
+      <div class="folio" aria-label="Slide 3 of 3">03 / 03</div>
+    </div>
+
+  </div><!-- /deck-stage -->
+</div><!-- /deck-wrapper -->
+
+<!-- Nav bar -->
+<nav class="nav-bar" id="navBar" aria-label="Slide navigation">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">&#8592;</button>
+  <div class="nav-dots" id="navDots" role="tablist" aria-label="Slide indicators"></div>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">&#8594;</button>
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

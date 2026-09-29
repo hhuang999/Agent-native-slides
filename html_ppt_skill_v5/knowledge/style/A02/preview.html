@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>A02 — ultraviolet-immersive · Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap');
+
+@property --mesh-x1 { syntax: '<percentage>'; inherits: false; initial-value: 20%; }
+@property --mesh-y1 { syntax: '<percentage>'; inherits: false; initial-value: 15%; }
+@property --mesh-x2 { syntax: '<percentage>'; inherits: false; initial-value: 80%; }
+@property --mesh-y2 { syntax: '<percentage>'; inherits: false; initial-value: 70%; }
+@property --mesh-x3 { syntax: '<percentage>'; inherits: false; initial-value: 55%; }
+@property --mesh-y3 { syntax: '<percentage>'; inherits: false; initial-value: 30%; }
+@property --mesh-x4 { syntax: '<percentage>'; inherits: false; initial-value: 30%; }
+@property --mesh-y4 { syntax: '<percentage>'; inherits: false; initial-value: 85%; }
+
+:root {
+  --color-bg:             oklch(0.09 0.022 285);
+  --color-surface:        oklch(0.13 0.020 285);
+  --color-raised-surface: oklch(0.17 0.018 285);
+  --color-border:         oklch(0.25 0.022 285);
+  --color-heading:        oklch(0.97 0.008 280);
+  --color-body:           oklch(0.80 0.015 280);
+  --color-muted:          oklch(0.54 0.020 280);
+  --color-accent:         oklch(0.72 0.24 295);
+  --color-accent-dim:     oklch(0.58 0.18 295);
+  --color-accent-glow:    oklch(0.72 0.24 295 / 0.20);
+  --color-accent-2:       oklch(0.68 0.22 340);
+  --color-positive:       oklch(0.64 0.18 145);
+  --type-display: 'Syne', sans-serif;
+  --type-body:    'Satoshi', sans-serif;
+  --type-label:   'Satoshi', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--type-body); font-size: 20px; color: var(--color-body);
+}
+
+.deck-stage { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+
+/* ── Mesh background ─────────────────────────────── */
+#mesh-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 900px 700px at var(--mesh-x1) var(--mesh-y1),
+      oklch(0.38 0.22 295 / 0.55), transparent 70%),
+    radial-gradient(ellipse 700px 600px at var(--mesh-x2) var(--mesh-y2),
+      oklch(0.28 0.18 340 / 0.45), transparent 65%),
+    radial-gradient(ellipse 600px 500px at var(--mesh-x3) var(--mesh-y3),
+      oklch(0.20 0.14 260 / 0.40), transparent 60%),
+    radial-gradient(ellipse 800px 600px at var(--mesh-x4) var(--mesh-y4),
+      oklch(0.30 0.20 310 / 0.35), transparent 65%),
+    var(--color-bg);
+  animation:
+    mesh-a 18s ease-in-out infinite alternate,
+    mesh-b 22s ease-in-out infinite alternate-reverse,
+    mesh-c 16s ease-in-out infinite alternate,
+    mesh-d 26s ease-in-out infinite alternate-reverse;
+}
+@keyframes mesh-a { to { --mesh-x1: 45%; --mesh-y1: 60%; } }
+@keyframes mesh-b { to { --mesh-x2: 25%; --mesh-y2: 20%; } }
+@keyframes mesh-c { to { --mesh-x3: 75%; --mesh-y3: 80%; } }
+@keyframes mesh-d { to { --mesh-x4: 70%; --mesh-y4: 35%; } }
+@media (prefers-reduced-motion: reduce) { #mesh-bg { animation: none; } }
+
+/* ── Slides ──────────────────────────────────────── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; padding: 64px 80px;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+
+
+.slide-num {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-accent); letter-spacing: 0.10em; margin-bottom: 10px;
+}
+.headline {
+  font-family: var(--type-display); font-weight: 800;
+  color: var(--color-heading); line-height: 1.05; letter-spacing: -0.02em;
+}
+.sub {
+  font-family: var(--type-body); font-size: 24px;
+  color: var(--color-muted); line-height: 1.55;
+}
+
+/* ── Slide 1: Title ──────────────────────────────── */
+.s1-inner {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  max-width: 1200px;
+}
+.s1-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px; margin-bottom: 24px;
+  padding: 5px 14px; border-radius: 20px;
+  background: var(--color-accent-glow);
+  border: 1px solid var(--color-accent-dim);
+  font-family: var(--type-label); font-size: 13px;
+  color: var(--color-accent); letter-spacing: 0.08em; text-transform: uppercase;
+  width: fit-content;
+}
+.s1-headline {
+  font-family: var(--type-display); font-size: 88px; font-weight: 800;
+  color: var(--color-heading); line-height: 1.0; letter-spacing: -0.025em;
+  margin-bottom: 28px;
+}
+.s1-sub {
+  font-size: 26px; color: var(--color-muted);
+  max-width: 800px; line-height: 1.55; margin-bottom: 48px;
+}
+.s1-tags { display: flex; gap: 12px; flex-wrap: wrap; }
+.tag {
+  padding: 7px 16px; border-radius: 20px;
+  background: oklch(0.17 0.018 285 / 0.80);
+  border: 1px solid var(--color-border);
+  font-family: var(--type-label); font-size: 14px; color: var(--color-body);
+}
+.s1-rule {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-2) 50%, transparent 100%);
+}
+
+/* ── Slide 2: Feature grid ───────────────────────── */
+.s2-body { flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 32px; }
+.feature-card {
+  background: oklch(0.13 0.020 285 / 0.75);
+  backdrop-filter: blur(12px) saturate(1.4);
+  border: 1px solid var(--color-border);
+  border-radius: 12px; padding: 28px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.feature-card__icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--color-accent-glow);
+  border: 1px solid var(--color-accent-dim);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.feature-card__title {
+  font-family: var(--type-display); font-size: 22px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.2;
+}
+.feature-card__body { font-size: 17px; color: var(--color-muted); line-height: 1.65; flex: 1; }
+.feature-card__stat {
+  font-family: var(--type-display); font-size: 36px; font-weight: 800;
+  color: var(--color-accent);
+}
+
+/* ── Slide 3: Comparison ─────────────────────────── */
+.s3-body { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 32px; }
+.compare-col {
+  background: oklch(0.13 0.020 285 / 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+  border-radius: 14px; padding: 32px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.compare-col.highlight { border-color: var(--color-accent-dim); }
+.compare-col__badge {
+  display: inline-flex; padding: 4px 12px; border-radius: 20px;
+  font-family: var(--type-label); font-size: 12px; width: fit-content;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.compare-col.highlight .compare-col__badge {
+  background: var(--color-accent-glow); color: var(--color-accent);
+  border: 1px solid var(--color-accent-dim);
+}
+.compare-col:not(.highlight) .compare-col__badge {
+  background: oklch(0.17 0.018 285); color: var(--color-muted);
+  border: 1px solid var(--color-border);
+}
+.compare-col__title {
+  font-family: var(--type-display); font-size: 28px; font-weight: 700; color: var(--color-heading);
+}
+.compare-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 0; border-bottom: 1px solid var(--color-border);
+  font-size: 17px; color: var(--color-body);
+}
+.compare-item:last-child { border-bottom: none; }
+.compare-item__dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px;
+}
+.compare-col.highlight .compare-item__dot { background: var(--color-accent); }
+.compare-col:not(.highlight) .compare-item__dot { background: var(--color-muted); }
+
+/* ── Nav ─────────────────────────────────────────── */
+#nav { position: fixed; bottom: 16px; right: 20px; z-index: 100; display: flex; gap: 8px; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 5px;
+  background: var(--color-raised-surface); border: 1px solid var(--color-border);
+  color: var(--color-body); font-family: var(--type-label); font-size: 13px; cursor: pointer;
+}
+.nav-btn:hover { background: var(--color-border); }
+#slide-info {
+  position: fixed; bottom: 16px; left: 20px; z-index: 100;
+  font-family: var(--type-label); font-size: 12px; color: var(--color-muted);
+}
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+<div class="deck-stage">
+  <div id="mesh-bg"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide is-active" data-slide="1">
+    <div class="s1-inner">
+      <div class="s1-eyebrow">Product Launch · Fall 2025</div>
+      <h1 class="s1-headline">Build faster.<br>Ship smarter.</h1>
+      <p class="s1-sub">Introducing the next generation of our developer platform — built for teams that ship production AI in days, not months.</p>
+      <div class="s1-tags">
+        <div class="tag">Real-time inference</div>
+        <div class="tag">Zero cold starts</div>
+        <div class="tag">Multi-modal</div>
+        <div class="tag">99.99% SLA</div>
+      </div>
+    </div>
+    <div class="s1-rule"></div>
+  </div>
+
+  <!-- Slide 2: Features -->
+  <div class="slide" data-slide="2">
+    <div class="slide-num">02 / PLATFORM</div>
+    <h2 class="headline" style="font-size:52px;margin-bottom:8px;">Three capabilities that change how you ship.</h2>
+    <div class="s2-body">
+      <div class="feature-card">
+        <div class="feature-card__icon">⚡</div>
+        <div class="feature-card__title">Edge Inference</div>
+        <div class="feature-card__body">Deploy models to 280+ edge nodes worldwide. Average latency drops to under 40ms — before the user finishes typing.</div>
+        <div class="feature-card__stat">&lt;40ms</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">🔄</div>
+        <div class="feature-card__title">Auto-Scaling</div>
+        <div class="feature-card__body">Zero cold starts. Capacity scales from 0 to 100k requests per second in under 200ms with no configuration required.</div>
+        <div class="feature-card__stat">0→100k rps</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">🧩</div>
+        <div class="feature-card__title">Unified SDK</div>
+        <div class="feature-card__body">One SDK for every modality: text, vision, audio, and structured output. No adapters, no glue code, no version drift.</div>
+        <div class="feature-card__stat">4 modalities</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Comparison -->
+  <div class="slide" data-slide="3">
+    <div class="slide-num">04 / COMPARISON</div>
+    <h2 class="headline" style="font-size:52px;margin-bottom:8px;">Switching from legacy platforms cuts infrastructure overhead by 60%.</h2>
+    <div class="s3-body">
+      <div class="compare-col">
+        <div class="compare-col__badge">Legacy platform</div>
+        <div class="compare-col__title">Old way</div>
+        <div class="compare-item">
+          <div class="compare-item__dot"></div>
+          <span>Manual scaling — engineers on-call for traffic spikes</span>
+        </div>
+        <div class="compare-item">
+          <div class="compare-item__dot"></div>
+          <span>Separate APIs for each modality, separate SDKs</span>
+        </div>
+        <div class="compare-item">
+          <div class="compare-item__dot"></div>
+          <span>Cold starts of 2–8 seconds on burst traffic</span>
+        </div>
+        <div class="compare-item">
+          <div class="compare-item__dot"></div>
+          <span>Avg. 340ms round-trip from US-East only</span>
+        </div>
+        <div class="compare-item">
+          <div class="compare-item__dot"></div>
+          <span>3-month onboarding for enterprise contracts</span>
+        </div>
+      </div>
+      <div class="compare-col highlight">
+        <div class="compare-col__badge">Our platform</div>
+        <div class="compare-col__title">New way</div>
+        <div class="compare-item">
+          <div class="compare-item__dot"></div>
+          <span>Auto-scaling to 100k rps in 200ms, no config</span>
+        </div>
+        <div class="compare-item">
+          <div class="compare-item__dot"></div>
+          <span>One unified SDK across all 4 modalities</span>
+        </div>
+        <div class="compare-item">
+          <div class="compare-item__dot"></div>
+          <span>Zero cold starts — capacity always warm</span>
+        </div>
+        <div class="compare-item">
+          <div class="compare-item__dot"></div>
+          <span>&lt;40ms avg from 280+ global edge nodes</span>
+        </div>
+        <div class="compare-item">
+          <div class="compare-item__dot"></div>
+          <span>Live in production same day with self-serve</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn" id="prev">◀</button>
+  <button class="nav-btn" id="next">▶</button>
+</div>
+<div id="slide-info">A02 ultraviolet-immersive · <span id="cur">1</span> / 3</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

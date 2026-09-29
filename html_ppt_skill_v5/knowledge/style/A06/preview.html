@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>A06 — deep-ocean · Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --color-bg:             oklch(0.08 0.022 230);
+  --color-surface:        oklch(0.12 0.020 232);
+  --color-raised-surface: oklch(0.16 0.018 234);
+  --color-border:         oklch(0.22 0.020 232);
+  --color-heading:        oklch(0.96 0.008 200);
+  --color-body:           oklch(0.78 0.012 220);
+  --color-muted:          oklch(0.52 0.016 230);
+  --color-accent:         oklch(0.76 0.18 188);
+  --color-accent-dim:     oklch(0.56 0.14 188);
+  --color-accent-glow:    oklch(0.76 0.18 188 / 0.14);
+  --color-accent-light:   oklch(0.88 0.12 188);
+  --color-accent-2:       oklch(0.52 0.20 268);
+  --color-positive:       oklch(0.68 0.18 158);
+  --type-display: 'Fraunces', serif;
+  --type-body:    'Fraunces', serif;
+  --type-label:   'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--type-body); font-size: 20px; color: var(--color-body);
+  font-optical-sizing: auto;
+}
+
+.deck-stage { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+
+/* ── Wave background ─────────────────────────────── */
+.wave-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.wave-band {
+  position: absolute; left: -100%; width: 300%; height: 100%;
+  background: var(--color-accent);
+}
+.wave-band--far {
+  opacity: 0.07;
+  clip-path: polygon(
+    0% 62%, 5% 60%, 10% 56%, 15% 52%, 20% 50%, 25% 52%, 30% 56%, 35% 60%,
+    40% 62%, 45% 60%, 50% 56%, 55% 52%, 60% 50%, 65% 52%, 70% 56%, 75% 60%,
+    80% 62%, 85% 60%, 90% 56%, 95% 52%, 100% 50%, 100% 100%, 0% 100%
+  );
+  animation: wave-scroll 28s linear infinite;
+}
+.wave-band--mid {
+  opacity: 0.07;
+  clip-path: polygon(
+    0% 70%, 4% 67%, 8% 62%, 13% 58%, 18% 56%, 23% 58%, 28% 62%, 33% 67%,
+    38% 70%, 43% 67%, 48% 62%, 53% 58%, 58% 56%, 63% 58%, 68% 62%, 73% 67%,
+    78% 70%, 83% 67%, 88% 62%, 93% 58%, 98% 56%, 100% 56%, 100% 100%, 0% 100%
+  );
+  animation: wave-scroll 18s linear infinite; animation-delay: -6s;
+}
+.wave-band--near {
+  opacity: 0.05;
+  clip-path: polygon(
+    0% 78%, 6% 74%, 12% 68%, 18% 64%, 24% 62%, 30% 64%, 36% 68%, 42% 74%,
+    48% 78%, 54% 74%, 60% 68%, 66% 64%, 72% 62%, 78% 64%, 84% 68%, 90% 74%,
+    96% 78%, 100% 76%, 100% 100%, 0% 100%
+  );
+  animation: wave-scroll 12s linear infinite; animation-delay: -3s;
+}
+@keyframes wave-scroll { from { transform: translateX(0); } to { transform: translateX(33.33%); } }
+@media (prefers-reduced-motion: reduce) {
+  .wave-band--far, .wave-band--mid, .wave-band--near { animation: none; }
+}
+
+/* ── Slides ──────────────────────────────────────── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; padding: 72px 96px;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+
+
+.accent-rule {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-border) 55%, transparent 100%);
+  margin-bottom: 32px;
+}
+.counter {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-accent); letter-spacing: 0.12em; margin-bottom: 12px;
+}
+.depth-tag {
+  display: inline-flex; align-items: center;
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-accent); letter-spacing: 0.12em; text-transform: uppercase;
+  border: 1px solid var(--color-accent-dim); background: var(--color-accent-glow);
+  padding: 3px 12px; border-radius: 3px; width: fit-content;
+}
+
+/* ── Slide 1: Title ──────────────────────────────── */
+.s1-headline {
+  font-family: var(--type-display); font-size: 72px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.06; letter-spacing: -0.01em;
+  max-width: 1350px; margin-bottom: 24px;
+}
+.s1-sub {
+  font-size: 24px; color: var(--color-muted); font-weight: 400;
+  max-width: 920px; line-height: 1.6; margin-bottom: 56px;
+}
+.s1-meta {
+  display: flex; gap: 40px;
+  font-family: var(--type-label); font-size: 15px; color: var(--color-muted);
+}
+.s1-meta span { display: flex; align-items: center; gap: 10px; }
+.s1-meta span::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--color-accent); flex-shrink: 0;
+}
+.s1-bottom {
+  position: absolute; bottom: 64px; left: 96px; right: 96px;
+  height: 1px; background: var(--color-border);
+}
+
+/* ── Slide 2: Data ───────────────────────────────── */
+.s2-headline {
+  font-family: var(--type-display); font-size: 50px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.1; margin-bottom: 24px;
+  max-width: 1600px;
+}
+.s2-body { display: grid; grid-template-columns: 1fr 420px; gap: 56px; flex: 1; margin-top: 4px; }
+.s2-main { display: flex; flex-direction: column; gap: 28px; }
+.s2-text { font-size: 20px; line-height: 1.7; color: var(--color-body); }
+
+.stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.depth-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 2px solid var(--color-accent-dim);
+  border-radius: 6px; padding: 18px 22px;
+}
+.depth-card__value {
+  font-family: var(--type-label); font-size: 40px; font-weight: 500;
+  color: var(--color-accent-light); line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums; margin-bottom: 8px;
+}
+.depth-card__label {
+  font-family: var(--type-label); font-size: 11px;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.10em;
+}
+
+.aside-list { display: flex; flex-direction: column; gap: 0; justify-content: center; }
+.aside-item {
+  padding: 18px 0; border-bottom: 1px solid var(--color-border);
+}
+.aside-item:first-child { border-top: 1px solid var(--color-border); }
+.aside-item__title {
+  font-family: var(--type-display); font-size: 15px; font-weight: 600;
+  color: var(--color-heading); margin-bottom: 5px;
+}
+.aside-item__body { font-family: var(--type-label); font-size: 13px; color: var(--color-muted); line-height: 1.55; }
+
+/* ── Slide 3: Table ──────────────────────────────── */
+.s3-headline {
+  font-family: var(--type-display); font-size: 46px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.1; margin-bottom: 20px;
+  max-width: 1500px;
+}
+.s3-body { flex: 1; display: flex; flex-direction: column; margin-top: 16px; overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.08em;
+  text-align: left; padding: 10px 16px;
+  border-bottom: 2px solid var(--color-border);
+}
+.data-table th:not(:first-child) { text-align: right; }
+.data-table td {
+  font-size: 18px; color: var(--color-body); padding: 14px 16px;
+  border-bottom: 1px solid var(--color-border);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table td:not(:first-child) { text-align: right; font-family: var(--type-label); }
+.data-table tr:hover td { background: var(--color-accent-glow); }
+.data-table tr.highlight td { background: oklch(0.76 0.18 188 / 0.07); }
+.data-table tr.highlight td:first-child { font-weight: 600; color: var(--color-heading); }
+.positive { color: var(--color-positive); }
+.footnote {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-muted); border-top: 1px solid var(--color-border);
+  padding-top: 10px; margin-top: auto;
+}
+
+/* ── Nav ─────────────────────────────────────────── */
+#nav { position: fixed; bottom: 16px; right: 20px; z-index: 100; display: flex; gap: 8px; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 4px;
+  background: var(--color-raised-surface); border: 1px solid var(--color-border);
+  color: var(--color-body); font-family: var(--type-label); font-size: 13px; cursor: pointer;
+}
+.nav-btn:hover { background: var(--color-border); }
+#slide-info {
+  position: fixed; bottom: 16px; left: 20px; z-index: 100;
+  font-family: var(--type-label); font-size: 12px; color: var(--color-muted);
+}
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+<div class="deck-stage">
+  <div class="wave-bg">
+    <div class="wave-band wave-band--far"></div>
+    <div class="wave-band wave-band--mid"></div>
+    <div class="wave-band wave-band--near"></div>
+  </div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide is-active" data-slide="1">
+    <div class="depth-tag" style="margin-bottom:16px">Climate · Oceanography · 2025 Annual Report</div>
+    <div class="accent-rule" style="margin-bottom:28px"></div>
+    <h1 class="s1-headline">Global Ocean Heat Content<br>Has Reached a Record High<br>for the Fifth Consecutive Year.</h1>
+    <p class="s1-sub">New Argo float data from 4,000+ profiling buoys confirms continued acceleration of upper-ocean warming — with implications for storm intensity, sea-level rise, and marine ecosystem viability.</p>
+    <div class="s1-meta">
+      <span>NOAA · Scripps Institution of Oceanography</span>
+      <span>Synthesis period 1958–2024</span>
+      <span>doi:10.1175/BAMS-D-24-0190.1</span>
+    </div>
+    <div class="s1-bottom"></div>
+  </div>
+
+  <!-- Slide 2: Evidence -->
+  <div class="slide" data-slide="2">
+    <div class="counter">03 / 07 — KEY FINDINGS</div>
+    <h2 class="s2-headline">The upper 2000m warmed by 15 ZJ in 2024 — roughly 40 times humanity's annual energy consumption.</h2>
+    <div class="accent-rule" style="margin-bottom:0"></div>
+    <div class="s2-body" style="margin-top:28px">
+      <div class="s2-main">
+        <p class="s2-text">Argo profiling floats sampled 3.9 million temperature–salinity profiles in 2024, providing full-depth ocean coverage for the first time since the program's inception. Upper-ocean heat content anomalies show consistent poleward migration of the 20°C isotherm, with tropical Pacific deep mixing events increasingly rare as stratification strengthens.</p>
+        <div class="stat-row">
+          <div class="depth-card">
+            <div class="depth-card__value">+15 ZJ</div>
+            <div class="depth-card__label">Upper-2000m heat gain, 2024</div>
+          </div>
+          <div class="depth-card">
+            <div class="depth-card__value">+0.34°C</div>
+            <div class="depth-card__label">Mean sea-surface anomaly</div>
+          </div>
+          <div class="depth-card">
+            <div class="depth-card__value">3.9M</div>
+            <div class="depth-card__label">Argo profiles collected</div>
+          </div>
+        </div>
+      </div>
+      <div class="aside-list">
+        <div class="aside-item">
+          <div class="aside-item__title">Atlantic</div>
+          <div class="aside-item__body">OHC anomaly +4.8 ZJ; AMOC index at 10-year low in Q3.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Pacific</div>
+          <div class="aside-item__body">Persistent warm anomaly in the central-west basin; La Niña onset delayed.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Indian Ocean</div>
+          <div class="aside-item__body">Strongest positive dipole on record; coral bleaching alerts across 68% of reef area.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Southern Ocean</div>
+          <div class="aside-item__body">Sea-ice extent 2.1σ below climatology; deep-water formation rate declining.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Comparison table -->
+  <div class="slide" data-slide="3">
+    <div class="counter">05 / 07 — BASIN COMPARISON</div>
+    <h2 class="s3-headline">Every major ocean basin warmed in 2024 — the Indian Ocean and Southern Ocean are warming fastest on a per-decade basis.</h2>
+    <div class="accent-rule" style="margin-bottom:0; margin-top:12px"></div>
+    <div class="s3-body">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Basin</th>
+            <th>2024 OHC anomaly (ZJ)</th>
+            <th>10-yr trend (ZJ/dec)</th>
+            <th>SST anomaly (°C)</th>
+            <th>Sea-ice departure (σ)</th>
+            <th>Risk level</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>North Atlantic</td><td>+4.8</td><td>+3.1</td><td>+0.41</td><td>−1.2</td><td>High</td></tr>
+          <tr><td>North Pacific</td><td>+3.2</td><td>+2.4</td><td>+0.29</td><td>−0.8</td><td>Elevated</td></tr>
+          <tr><td>Tropical Pacific</td><td>+2.1</td><td>+1.9</td><td>+0.18</td><td>—</td><td>Moderate</td></tr>
+          <tr class="highlight"><td>Indian Ocean</td><td>+3.7</td><td class="positive">+4.2</td><td class="positive">+0.52</td><td>—</td><td class="positive">Very High</td></tr>
+          <tr class="highlight"><td>Southern Ocean</td><td>+1.2</td><td class="positive">+3.8</td><td>+0.23</td><td class="positive">−2.1</td><td class="positive">Very High</td></tr>
+        </tbody>
+      </table>
+      <div class="footnote">OHC = Ocean Heat Content; ZJ = zettajoules; anomaly vs. 1981–2010 baseline. Sea-ice departure in standard deviations from 1979–2023 climatology. Source: NOAA NCEI OHC product v6.0.</div>
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn" id="prev">◀</button>
+  <button class="nav-btn" id="next">▶</button>
+</div>
+<div id="slide-info">A06 deep-ocean · <span id="cur">1</span> / 3</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

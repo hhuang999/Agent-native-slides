@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>C02 — dark-editorial-cinema · Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Space+Grotesk:wght@300;400;500;700&display=swap');
+
+:root {
+  --color-bg:             oklch(0.06 0.008 250);
+  --color-surface:        oklch(0.10 0.008 248);
+  --color-raised-surface: oklch(0.14 0.008 245);
+  --color-border:         oklch(0.24 0.006 250);
+  --color-border-light:   oklch(0.16 0.006 248);
+  --color-shadow:         oklch(0.03 0.006 245 / 0.80);
+  --color-heading:        oklch(0.97 0.005 80);
+  --color-body:           oklch(0.80 0.010 70);
+  --color-muted:          oklch(0.52 0.010 68);
+  --color-dim:            oklch(0.34 0.008 62);
+  --color-accent:         oklch(0.82 0.10 88);
+  --color-accent-dim:     oklch(0.60 0.08 86);
+  --color-accent-glow:    oklch(0.82 0.10 88 / 0.16);
+  --color-accent-light:   oklch(0.90 0.08 90);
+  --color-positive:       oklch(0.70 0.18 145);
+  --color-negative:       oklch(0.62 0.22 22);
+  --color-warn:           oklch(0.74 0.18 78);
+  --type-display: 'Cormorant Garamond', serif;
+  --type-body:    'Space Grotesk', sans-serif;
+  --type-label:   'Space Grotesk', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--type-body); font-size: 18px;
+  color: var(--color-body); line-height: 1.70;
+  letter-spacing: 0.00em;
+}
+
+.deck-stage { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+
+/* ── Background: pure cool dark, zero decoration ────────── */
+#cinema-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: var(--color-bg);
+}
+
+/* ── Slides ──────────────────────────────────────────────── */
+.slide {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; padding: 80px 120px;
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+
+/* ── Shared ──────────────────────────────────────────────── */
+.eyebrow {
+  font-family: var(--type-label); font-size: 11px; font-weight: 500;
+  color: var(--color-accent); letter-spacing: 0.18em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.accent-rule {
+  width: 100%; height: 1px;
+  background: var(--color-accent);
+  opacity: 0.55;
+  margin-bottom: 0;
+}
+.hairline {
+  width: 100%; height: 1px;
+  background: var(--color-border);
+}
+
+/* ── Slide 1: Title ──────────────────────────────────────── */
+.s1-headline {
+  font-family: var(--type-display); font-style: italic; font-weight: 600;
+  font-size: 88px; color: var(--color-heading);
+  line-height: 0.96; letter-spacing: -0.01em;
+  max-width: 1400px; margin: 20px 0 28px;
+}
+.s1-sub {
+  font-family: var(--type-body); font-size: 21px; font-weight: 400;
+  color: var(--color-muted); max-width: 1000px; line-height: 1.68;
+  margin-bottom: 56px;
+}
+.s1-meta-row {
+  display: flex; gap: 52px; align-items: baseline;
+}
+.s1-meta-item {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.s1-meta-label {
+  font-family: var(--type-label); font-size: 10px; font-weight: 500;
+  color: var(--color-dim); text-transform: uppercase; letter-spacing: 0.16em;
+}
+.s1-meta-value {
+  font-family: var(--type-label); font-size: 14px; font-weight: 400;
+  color: var(--color-muted);
+}
+.s1-footer {
+  position: absolute; bottom: 52px; left: 120px; right: 120px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.s1-footer-text {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-dim); letter-spacing: 0.08em;
+}
+
+/* ── Slide 2: Stats ──────────────────────────────────────── */
+.s2-headline {
+  font-family: var(--type-display); font-style: italic; font-weight: 600;
+  font-size: 48px; color: var(--color-heading);
+  line-height: 1.10; letter-spacing: -0.01em;
+  max-width: 1540px; margin: 16px 0 18px;
+}
+.s2-stat-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  padding: 28px 0; gap: 0;
+}
+.stat-block {
+  display: flex; flex-direction: column; padding: 0 48px 0 0;
+  border-right: 1px solid var(--color-border-light);
+}
+.stat-block:first-child { padding-left: 0; }
+.stat-block:last-child { border-right: none; padding-right: 0; padding-left: 48px; }
+.stat-block:nth-child(2) { padding-left: 48px; }
+.stat-block__line {
+  width: 36px; height: 1px; background: var(--color-accent);
+  margin-bottom: 12px; opacity: 0.70;
+}
+.stat-block__value {
+  font-family: var(--type-display); font-size: 80px; font-style: italic;
+  color: var(--color-heading); line-height: 0.9; letter-spacing: -0.01em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.stat-block__label {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.12em;
+  margin-top: 14px; line-height: 1.55;
+}
+.s2-body {
+  display: grid; grid-template-columns: 1fr 400px; gap: 56px;
+  flex: 1; overflow: hidden; margin-top: 4px;
+}
+.s2-text { font-size: 17px; line-height: 1.82; color: var(--color-body); }
+.s2-aside { display: flex; flex-direction: column; }
+.aside-item {
+  padding: 14px 0; border-bottom: 1px solid var(--color-border-light);
+}
+.aside-item:first-child { border-top: 1px solid var(--color-border-light); }
+.aside-item__title {
+  font-family: var(--type-label); font-size: 12px; font-weight: 500;
+  color: var(--color-heading); letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.aside-item__body {
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-muted); line-height: 1.60;
+}
+
+/* ── Slide 3: Table ──────────────────────────────────────── */
+.s3-headline {
+  font-family: var(--type-display); font-style: italic; font-weight: 600;
+  font-size: 44px; color: var(--color-heading);
+  line-height: 1.10; letter-spacing: -0.01em;
+  max-width: 1500px; margin: 16px 0 16px;
+}
+.s3-body { flex: 1; display: flex; flex-direction: column; margin-top: 10px; overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--type-label); font-size: 11px; font-weight: 500;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.10em;
+  text-align: left; padding: 11px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+.data-table th:not(:first-child) { text-align: right; }
+.data-table td {
+  font-family: var(--type-body); font-size: 16px; font-weight: 400;
+  color: var(--color-body); padding: 14px 16px;
+  border-bottom: 1px solid var(--color-border-light);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table td:not(:first-child) {
+  text-align: right;
+  font-family: var(--type-label); font-weight: 300; font-size: 15px;
+}
+.data-table tr.highlight td { background: oklch(0.82 0.10 88 / 0.04); }
+.data-table tr.highlight td:first-child { color: var(--color-heading); font-weight: 500; }
+.win { color: var(--color-accent-light); font-weight: 500; }
+.good { color: var(--color-positive); }
+.footnote {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-dim); border-top: 1px solid var(--color-border-light);
+  padding-top: 10px; margin-top: auto; letter-spacing: 0.02em; line-height: 1.65;
+}
+
+/* ── Nav ─────────────────────────────────────────────────── */
+#nav { position: fixed; bottom: 16px; right: 20px; z-index: 100; display: flex; gap: 8px; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 3px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-body); font-family: var(--type-label); font-size: 13px;
+  font-weight: 400; cursor: pointer; letter-spacing: 0.04em;
+}
+.nav-btn:hover { background: var(--color-raised-surface); }
+#slide-info {
+  position: fixed; bottom: 16px; left: 20px; z-index: 100;
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-muted);
+}
+.preview-mode #nav, .preview-mode #slide-info { display: none; }
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { margin: 0; width: 1920px; height: auto !important; overflow: visible !important; background: var(--color-bg); }
+  .deck-stage { position: static !important; transform: none !important; width: 1920px !important; height: auto !important; overflow: visible !important; }
+  .slide {
+    position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important;
+    visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+    break-after: page; page-break-after: always; overflow: hidden;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  #nav, #slide-info { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="deck-stage">
+  <div id="cinema-bg"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide is-active" data-slide="1">
+    <div class="eyebrow">Feature Documentary · Production Strategy · 2026</div>
+    <div class="accent-rule"></div>
+    <h1 class="s1-headline">Streaming Platforms<br>Greenlight Prestige Docs<br>They Can't Finish Building.</h1>
+    <p class="s1-sub">Aperture Films analyzed 340 long-form documentary commissions across six major platforms over five years. In every case where a prestige project stalled after greenlight, the breakdown traced to a single shared structural failure: the platform's editorial model was built for scripted series, not the non-linear discovery process that makes a great documentary.</p>
+    <div class="s1-meta-row">
+      <div class="s1-meta-item">
+        <div class="s1-meta-label">Projects analyzed</div>
+        <div class="s1-meta-value">340 commissions</div>
+      </div>
+      <div class="s1-meta-item">
+        <div class="s1-meta-label">Platforms</div>
+        <div class="s1-meta-value">6 major streamers</div>
+      </div>
+      <div class="s1-meta-item">
+        <div class="s1-meta-label">Study period</div>
+        <div class="s1-meta-value">2021–2025</div>
+      </div>
+      <div class="s1-meta-item">
+        <div class="s1-meta-label">Classification</div>
+        <div class="s1-meta-value">Internal strategy</div>
+      </div>
+    </div>
+    <div class="s1-footer">
+      <div class="s1-footer-text">Aperture Films · Strategy &amp; Development · Confidential Working Document</div>
+      <div class="s1-footer-text">Not for External Distribution</div>
+    </div>
+  </div>
+
+  <!-- Slide 2: Stats -->
+  <div class="slide" data-slide="2">
+    <div class="eyebrow">02 / 04 — Structural Findings</div>
+    <div class="accent-rule"></div>
+    <h2 class="s2-headline">Editorial misalignment — not budget overrun — is the primary driver of prestige documentary failure: 71% of stalled projects had full financing in place when the commission collapsed.</h2>
+    <div class="hairline"></div>
+    <div class="s2-stat-row">
+      <div class="stat-block">
+        <div class="stat-block__line"></div>
+        <div class="stat-block__value">71%</div>
+        <div class="stat-block__label">Of stalled prestige docs were fully financed — editorial structure, not money, was the breakdown point</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block__line"></div>
+        <div class="stat-block__value">2.4×</div>
+        <div class="stat-block__label">Higher completion rate for docs with a dedicated field-producer role separate from the platform's development executive</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block__line"></div>
+        <div class="stat-block__value">18M</div>
+        <div class="stat-block__label">Median months from greenlight to delivery failure — consistent across platform tier and budget level</div>
+      </div>
+    </div>
+    <div class="hairline" style="margin-bottom:16px"></div>
+    <div class="s2-body">
+      <p class="s2-text">Across all 340 commissions, 241 (70.9%) stalled or were quietly cancelled after greenlight. In 171 of those cases — 71% — the production entity had full or near-full financing secured at the time of collapse. The recurring pattern: a platform development executive with a scripted-series background attempted to impose act-break structure onto material that was still being discovered in the field. When access to a key subject was lost or the central story evolved, the scripted model had no recovery protocol. Productions without a dedicated editorial partner who understood non-linear discovery were five times more likely to miss delivery.</p>
+      <div class="s2-aside">
+        <div class="aside-item">
+          <div class="aside-item__title">The 18-month window</div>
+          <div class="aside-item__body">Projects that survived the first 18 months had a 78% completion rate. Those that collapsed did so at a median of 18 months — consistently, regardless of subject or budget. Access loss was cited in 62% of those cases.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Scripted-model imposition</div>
+          <div class="aside-item__body">83% of collapsed projects were overseen by executives whose prior commissions were exclusively scripted narrative. Only 4% of those executives had greenlit a completed long-form doc before this commission.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Field producer separation</div>
+          <div class="aside-item__body">Projects with a field producer role structurally separate from platform development (i.e., hired and managed by the production entity, not embedded by the platform) completed at 2.4× the rate of those without.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Comparison table -->
+  <div class="slide" data-slide="3">
+    <div class="eyebrow">03 / 04 — Platform Structural Comparison</div>
+    <div class="accent-rule"></div>
+    <h2 class="s3-headline">Platforms with a dedicated documentary editorial track complete prestige docs at 3× the rate of those routing them through scripted development pipelines.</h2>
+    <div class="s3-body">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Platform editorial model</th>
+            <th>Commissions (n)</th>
+            <th>Completion rate</th>
+            <th>Median delivery (mo)</th>
+            <th>Field producer autonomy</th>
+            <th>Avg. festival entry rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Dedicated doc track, autonomous field producer</td><td>48</td><td>81%</td><td>22</td><td>Full</td><td>68%</td></tr>
+          <tr><td>Dedicated doc track, platform-embedded EP</td><td>62</td><td>64%</td><td>28</td><td>Partial</td><td>51%</td></tr>
+          <tr><td>Shared scripted/doc track, doc-experienced exec</td><td>74</td><td>44%</td><td>34</td><td>Limited</td><td>29%</td></tr>
+          <tr><td>Scripted pipeline, no doc-specific process</td><td>156</td><td>22%</td><td>—</td><td>None</td><td>8%</td></tr>
+          <tr class="highlight"><td>Aperture Films production model</td><td class="win">—</td><td class="win">89%</td><td class="win">20</td><td class="good">Full + editorial independence</td><td class="win">74%</td></tr>
+        </tbody>
+      </table>
+      <div class="footnote">Completion rate: percentage of greenlit projects delivered to platform at agreed specification within 24 months of greenlight. Delivery months: median calendar months from greenlight to delivery for completed projects only; — indicates insufficient completions for median. Field producer autonomy: degree to which field producer hiring, day-to-day direction, and subject access decisions are controlled by the production entity rather than platform development. Festival entry rate: percentage of delivered projects submitted to a major international documentary festival (Sundance, IDFA, True/False, HotDocs, Sheffield) within 18 months of delivery. Aperture Films data: internal management tracking, 2021–2025. Platform data: public commission records, industry databases, and anonymized interviews with 38 production entities, 2025.</div>
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn" id="prev">◀</button>
+  <button class="nav-btn" id="next">▶</button>
+</div>
+<div id="slide-info">C02 dark-editorial-cinema · <span id="cur">1</span> / 3</div>
+
+<script>
+const slideEls = Array.from(document.querySelectorAll('.slide'))
+const total = slideEls.length
+
+function goTo(n) {
+  n = Math.min(Math.max(1, Math.round(+n) || 1), total)
+  slideEls.forEach((s, i) => s.classList.toggle('is-active', i === n - 1))
+  window.__currentSlide = n
+  const info = document.getElementById('cur')
+  if (info) info.textContent = n
+}
+window.__goToSlide = goTo
+window.__currentSlide = 1
+
+document.getElementById('next').onclick = () => goTo(window.__currentSlide + 1)
+document.getElementById('prev').onclick = () => goTo(window.__currentSlide - 1)
+document.addEventListener('keydown', e => {
+  const k = e.key
+  if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') { e.preventDefault(); goTo(window.__currentSlide + 1) }
+  else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); goTo(window.__currentSlide - 1) }
+  else if (k === 'Home') goTo(1)
+  else if (k === 'End') goTo(total)
+})
+
+window.__deckPlan = {
+  title: 'Streaming Platforms Greenlight Prestige Docs They Can\'t Finish Building.',
+  style_id: 'C02',
+  total_slides: 3,
+  slides: [
+    { index: 1, assertion: 'Streaming Platforms Greenlight Prestige Docs They Can\'t Finish Building.', type: 'title',
+      speaker_notes: { purpose: 'Frame the structural claim before the data — this is an industry-pattern finding, not a critique of any single platform.', key_points: ['340 commissions, 6 major streamers, 5-year window', '70.9% stalled or cancelled after greenlight', 'Breakdown point is editorial structure, not financing', 'Scripted-model imposition as the recurring failure pattern'], timing: '~1 min', tone: 'Measured, editorial, authoritative — the voice of a production company that has done the analysis' } },
+    { index: 2, assertion: 'Editorial misalignment — not budget overrun — is the primary driver of prestige documentary failure: 71% of stalled projects had full financing in place when the commission collapsed.', type: 'evidence',
+      speaker_notes: { purpose: 'Stack the structural proof: financing was present; editorial model was not. The 18-month window and field-producer role are the two quantifiable levers.', key_points: ['71% of collapsed projects: fully financed at time of collapse', '2.4× completion rate with autonomous field producer role', '18-month median window to failure — consistent across budget tiers', '83% of overseeing executives had exclusively scripted prior commissions'], transition: 'How does this break down across platform editorial models?', timing: '~3 min' } },
+    { index: 3, assertion: 'Platforms with a dedicated documentary editorial track complete prestige docs at 3× the rate of those routing them through scripted development pipelines.', type: 'comparison',
+      speaker_notes: { purpose: 'Quantify the structural gap — dedicated doc track with autonomous field producer is the single most predictive factor for completion and festival placement.', key_points: ['Dedicated doc track + full autonomy: 81% completion, 68% festival entry', 'Scripted pipeline: 22% completion, 8% festival entry', 'Aperture model: 89% completion, 74% festival entry, 20-month median delivery', 'Implication: platform editorial structure is a producibility variable, not just a creative preference'], timing: '~2 min' } }
+  ]
+}
+
+const q = new URLSearchParams(location.search)
+if (q.has('print')) document.documentElement.classList.add('print-mode')
+if (q.has('preview')) document.documentElement.classList.add('preview-mode')
+goTo(q.has('preview') ? parseInt(q.get('preview'), 10) || 1 : 1)
+</script>
+</body>
+</html>

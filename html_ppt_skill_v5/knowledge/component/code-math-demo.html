@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Attention: equation, code, derivation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/styles/github-dark-dimmed.min.css">
+  <style>
+    /* === TOKEN SYSTEM === */
+    :root {
+      --stage-bg: oklch(0.14 0.018 253);
+      --slide-bg: var(--color-bg);
+      --color-bg: oklch(0.16 0.02 253);
+      --color-surface: oklch(0.205 0.025 253);
+      --color-raised-surface: oklch(0.245 0.028 253);
+      --color-border: oklch(0.38 0.025 253);
+      --color-muted: oklch(0.69 0.025 244);
+      --color-body: oklch(0.91 0.014 244);
+      --color-heading: oklch(0.97 0.008 94);
+      --color-accent: oklch(0.81 0.16 158);
+      --color-accent-warm: oklch(0.79 0.12 79);
+      --color-accent-cool: oklch(0.77 0.11 227);
+      --color-code: oklch(0.12 0.017 252);
+      --space-xs: 8px;
+      --space-sm: 16px;
+      --space-md: 32px;
+      --space-lg: 64px;
+      --space-xl: 96px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 16px;
+      --type-display: "Fraunces", Georgia, serif;
+      --type-body: "DM Mono", monospace;
+      --type-label: var(--type-body);
+      --text-kicker: 18px;
+      --text-title: 76px;
+      --text-subtitle: 28px;
+      --text-body: 23px;
+      --text-caption: 16px;
+      --text-code: 19px;
+      --line: 1px;
+      --ease-out: cubic-bezier(.16, 1, .3, 1);
+      --duration: 520ms;
+    }
+
+    /* === FIXED 1920 X 1080 VIEWPORT BASE === */
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg); }
+    body { color: var(--color-body); font-family: var(--type-body); font-variant-numeric: lining-nums tabular-nums; }
+    button { font: inherit; }
+    .deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg); }
+    .deck-stage { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--slide-bg); }
+    .slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease; position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;  background: var(--slide-bg); }
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+    img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+
+    /* === COMMON GRAMMAR === */
+    .slide-content { position: relative; z-index: 2; width: 100%; height: 100%; padding: 76px 104px 70px; }
+    .slide::before { content: ""; position: absolute; z-index: 0; inset: 0; pointer-events: none; background-image: linear-gradient(var(--color-border) var(--line), transparent var(--line)), linear-gradient(90deg, var(--color-border) var(--line), transparent var(--line)); background-size: 96px 96px; opacity: .17; }
+    .slide::after { content: ""; position: absolute; z-index: 1; right: -110px; bottom: -155px; width: 530px; height: 530px; border: var(--line) solid var(--color-border); border-radius: 50%; box-shadow: 0 0 0 58px color-mix(in oklch, var(--color-border) 35%, transparent), 0 0 0 116px color-mix(in oklch, var(--color-border) 20%, transparent); opacity: .55; pointer-events: none; }
+    .eyebrow { color: var(--color-accent); font-size: var(--text-kicker); font-weight: 500; letter-spacing: .13em; text-transform: uppercase; }
+    .title { color: var(--color-heading); font-family: var(--type-display); font-size: var(--text-title); font-weight: 600; letter-spacing: 0; line-height: .98; margin: 0; }
+    .subhead { color: var(--color-muted); font-size: var(--text-subtitle); line-height: 1.5; }
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity var(--duration) var(--ease-out), transform var(--duration) var(--ease-out); }
+    .active .reveal { opacity: 1; transform: translateY(0); }
+    .active .reveal:nth-child(2) { transition-delay: 90ms; }
+    .active .reveal:nth-child(3) { transition-delay: 180ms; }
+
+    /* === SLIDE 1: ATTENTION EQUATION === */
+    .equation-slide .slide-content { display: grid; grid-template-columns: 1fr 1.08fr; grid-template-rows: auto 1fr auto; gap: var(--space-md) var(--space-xl); }
+    .intro { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: end; border-bottom: var(--line) solid var(--color-border); padding-bottom: 32px; }
+    .intro .title { max-width: 850px; }
+    .intro-copy { max-width: 440px; margin: 0 0 6px; }
+    .equation-notes { display: flex; flex-direction: column; justify-content: center; gap: 26px; padding-right: 24px; }
+    .note-row { display: grid; grid-template-columns: 54px 1fr; gap: var(--space-sm); align-items: start; }
+    .note-index { color: var(--color-bg); background: var(--color-accent); width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; font-size: var(--text-caption); font-weight: 500; }
+    .note-row:nth-child(2) .note-index { background: var(--color-accent-warm); }
+    .note-row:nth-child(3) .note-index { background: var(--color-accent-cool); }
+    .note-row h2 { color: var(--color-heading); margin: 0 0 6px; font-size: var(--text-body); font-weight: 500; }
+    .note-row p { color: var(--color-muted); margin: 0; font-size: 18px; line-height: 1.55; }
+    .formula-hero { align-self: center; padding: 66px 54px; border: var(--line) solid var(--color-border); border-radius: var(--radius-lg); background: color-mix(in oklch, var(--color-surface) 91%, transparent); box-shadow: inset 0 1px 0 color-mix(in oklch, var(--color-heading) 8%, transparent); }
+    .formula-label { display: flex; justify-content: space-between; margin-bottom: 52px; color: var(--color-muted); font-size: var(--text-caption); letter-spacing: .08em; text-transform: uppercase; }
+    .formula-block { min-height: 156px; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--color-heading); font-size: 30px; line-height: 1.5; }
+    .formula-block .katex { color: var(--color-heading); font-size: 1.26em; }
+    .formula-block .katex .hl { color: var(--color-accent); }
+    .formula-caption { margin: 46px 0 0; color: var(--color-muted); font-size: 17px; line-height: 1.55; text-align: center; }
+    .formula-caption strong { color: var(--color-accent-warm); font-weight: 500; }
+    .equation-footer { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; color: var(--color-muted); font-size: var(--text-caption); }
+    .signal-line { display: flex; align-items: center; gap: 12px; color: var(--color-accent); }
+    .signal-line::before { content: ""; width: 48px; height: var(--line); background: currentColor; }
+
+    /* === SLIDE 2: PYTHON IMPLEMENTATION === */
+    .code-slide .slide-content { display: grid; grid-template-columns: 1.62fr .78fr; grid-template-rows: auto 1fr; gap: 44px 54px; }
+    .header { display: flex; align-items: end; justify-content: space-between; border-bottom: var(--line) solid var(--color-border); padding-bottom: 32px; }
+    .code-slide .header { grid-column: 1 / -1; }
+    .header .subhead { width: 520px; margin: 0; }
+    .code-block { min-height: 684px; overflow: hidden; border: var(--line) solid var(--color-border); border-radius: var(--radius-md); background: var(--color-code); box-shadow: 18px 18px 0 color-mix(in oklch, var(--color-border) 38%, transparent); }
+    .code-block__header { display: flex; align-items: center; min-height: 62px; padding: 0 24px; border-bottom: var(--line) solid var(--color-border); background: var(--color-surface); }
+    .code-block__dots { display: flex; gap: 7px; margin-right: 18px; }
+    .code-block__dots span { display: block; width: 10px; height: 10px; border-radius: 50%; background: var(--color-muted); }
+    .code-block__dots span:nth-child(1) { background: var(--color-accent-warm); }
+    .code-block__dots span:nth-child(2) { background: var(--color-accent); }
+    .code-block__dots span:nth-child(3) { background: var(--color-accent-cool); }
+    .code-block__lang { color: var(--color-accent); font-size: var(--text-caption); font-weight: 500; letter-spacing: .1em; text-transform: uppercase; }
+    .code-block__filename { margin-left: auto; color: var(--color-muted); font-size: var(--text-caption); }
+    .code-block pre { height: calc(100% - 62px); margin: 0; padding: 42px 44px; overflow: hidden; }
+    .code-block code { color: var(--color-body); font-family: var(--type-body); font-size: var(--text-code); line-height: 1.74; white-space: pre; }
+    .hljs { display: block; overflow-x: auto; background: transparent !important; padding: 0 !important; color: var(--color-body) !important; }
+    .hljs-comment, .hljs-quote { color: var(--color-muted) !important; }
+    .hljs-keyword, .hljs-selector-tag { color: var(--color-accent-warm) !important; }
+    .hljs-title.function_, .hljs-built_in { color: var(--color-accent) !important; }
+    .hljs-string, .hljs-number, .hljs-literal { color: var(--color-accent-cool) !important; }
+    .implementation-notes { display: flex; flex-direction: column; justify-content: center; gap: 20px; }
+    .implementation-notes h2 { color: var(--color-heading); font-family: var(--type-display); font-size: 42px; font-weight: 500; line-height: 1.08; margin: 0 0 10px; }
+    .implementation-notes p { color: var(--color-muted); font-size: 18px; line-height: 1.55; margin: 0; }
+    .annotation { padding: 20px 22px; border-left: 2px solid var(--color-accent); background: color-mix(in oklch, var(--color-surface) 80%, transparent); }
+    .annotation:nth-of-type(3) { border-left-color: var(--color-accent-warm); }
+    .annotation span { display: block; color: var(--color-heading); font-size: 16px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+
+    /* === SLIDE 3: ALGORITHM AND DERIVATION === */
+    .compare-slide .slide-content { display: grid; grid-template-rows: auto 1fr auto; gap: 34px; }
+    .compare-slide .header .subhead { max-width: 560px; }
+    .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; min-height: 606px; }
+    .comparison-panel { position: relative; padding: 36px 38px; border: var(--line) solid var(--color-border); border-radius: var(--radius-md); background: color-mix(in oklch, var(--color-surface) 92%, transparent); overflow: hidden; }
+    .comparison-panel::after { content: ""; position: absolute; right: 32px; top: 28px; width: 42px; height: 42px; border-top: 2px solid var(--color-accent); border-right: 2px solid var(--color-accent); opacity: .8; }
+    .comparison-panel:nth-child(2)::after { border-color: var(--color-accent-warm); }
+    .panel-label { color: var(--color-accent); font-size: var(--text-caption); font-weight: 500; letter-spacing: .11em; text-transform: uppercase; }
+    .comparison-panel:nth-child(2) .panel-label { color: var(--color-accent-warm); }
+    .comparison-panel h2 { color: var(--color-heading); font-family: var(--type-display); font-size: 45px; font-weight: 500; line-height: 1.05; margin: 18px 0 30px; }
+    .algorithm { border-top: var(--line) solid var(--color-border); padding-top: 21px; display: grid; gap: 14px; }
+    .algo-line { display: grid; grid-template-columns: 42px 1fr; gap: 12px; min-height: 31px; color: var(--color-body); font-size: 19px; line-height: 1.45; }
+    .algo-line em { color: var(--color-muted); font-style: normal; }
+    .algo-line .n { color: var(--color-muted); text-align: right; }
+    .algo-line.highlight { padding: 12px 0; margin: 3px 0; color: var(--color-heading); background: linear-gradient(90deg, color-mix(in oklch, var(--color-accent) 14%, transparent), transparent 75%); }
+    .algo-line.highlight .n { color: var(--color-accent); }
+    .derivation { display: grid; gap: 17px; border-top: var(--line) solid var(--color-border); padding-top: 25px; }
+    .math-row { display: grid; grid-template-columns: 58px 1fr; gap: 18px; align-items: center; color: var(--color-heading); font-size: 23px; }
+    .math-row .tag { color: var(--color-muted); font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
+    .math-row .katex { color: var(--color-heading); }
+    .outcome-band { display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; align-items: center; padding: 22px 28px; border-top: var(--line) solid var(--color-border); color: var(--color-muted); font-size: var(--text-caption); }
+    .outcome-band strong { color: var(--color-heading); font-size: 19px; font-weight: 500; }
+    .outcome-band .divider { width: var(--line); height: 38px; background: var(--color-border); }
+
+    /* === NAVIGATION === */
+    .deck-controls { position: fixed; z-index: 1000; left: 50%; bottom: 22px; display: flex; align-items: center; gap: 8px; transform: translateX(-50%); padding: 7px; border: 1px solid color-mix(in oklch, var(--color-border) 85%, transparent); border-radius: var(--radius-md); background: color-mix(in oklch, var(--color-bg) 88%, transparent); backdrop-filter: blur(12px); }
+    .deck-controls button { width: 38px; height: 32px; border: 0; border-radius: var(--radius-sm); color: var(--color-body); background: transparent; cursor: pointer; }
+    .deck-controls button:hover, .deck-controls button:focus-visible { color: var(--color-bg); background: var(--color-accent); outline: none; }
+    .deck-status { min-width: 58px; color: var(--color-muted); font-size: 12px; text-align: center; }
+    .preview-mode .deck-controls { display: none; }
+
+    /* === REDUCED MOTION AND PRINT === */
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } .reveal { opacity: 1; transform: none; } }
+    
+ .deck-controls { display: none; }
+  
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+  <div class="deck-viewport">
+    <main class="deck-stage" id="deckStage" aria-live="polite">
+      <!-- === SLIDE 1: ATTENTION EQUATION === -->
+      <section class="slide equation-slide is-active" data-slide="1" aria-label="Slide 1: Attention equation">
+        <div class="slide-el active-content">
+          <header class="intro reveal">
+            <div><p class="eyebrow">01 / Mechanism</p><h1 class="title">Attention is a weighted lookup.</h1></div>
+            <p class="subhead intro-copy">Every query chooses where to read. Similarity proposes the weights; softmax turns them into a distribution.</p>
+          </header>
+          <div class="equation-notes reveal" aria-label="Equation annotations">
+            <div class="note-row"><span class="note-index">Q</span><div><h2>Ask a question</h2><p>Queries encode the information each position is looking for.</p></div></div>
+            <div class="note-row"><span class="note-index">K</span><div><h2>Score every candidate</h2><p>Keys create a shared comparison space for relevance.</p></div></div>
+            <div class="note-row"><span class="note-index">V</span><div><h2>Mix the evidence</h2><p>Values are combined using normalized relevance scores.</p></div></div>
+          </div>
+          <article class="formula-hero reveal" aria-label="Scaled dot-product attention formula">
+            <div class="formula-label"><span>Scaled dot-product attention</span><span>n x d</span></div>
+            <div class="formula-block" id="attentionFormula">Attention(Q, K, V) = softmax((QK^T) / sqrt(d_k)) V</div>
+            <p class="formula-caption"><strong>Scale by sqrt(d_k)</strong> to keep logits in a useful range before normalization.</p>
+          </article>
+          <footer class="equation-footer reveal"><span class="signal-line">sequence-to-sequence routing</span><span>1 / 3</span></footer>
+        </div>
+      </section>
+
+      <!-- === SLIDE 2: PYTHON IMPLEMENTATION === -->
+      <section class="slide code-slide" data-slide="2" aria-label="Slide 2: Python attention implementation">
+        <div class="slide-content">
+          <header class="header reveal">
+            <div><p class="eyebrow">02 / Implementation</p><h1 class="title">Four operations, one data path.</h1></div>
+            <p class="subhead">The code follows the derivation directly: score, scale, mask, normalize, aggregate.</p>
+          </header>
+          <article class="code-block reveal" aria-label="Syntax highlighted Python implementation">
+            <div class="code-block__header"><span class="code-block__dots" aria-hidden="true"><span></span><span></span><span></span></span><span class="code-block__lang">Python</span><span class="code-block__filename">attention.py</span></div>
+            <pre><code class="language-python">import math
+import torch
+import torch.nn.functional as F
+
+
+def scaled_dot_product_attention(q, k, v, mask=None):
+    d_k = q.size(-1)
+    scores = (q @ k.transpose(-2, -1)) / math.sqrt(d_k)
+
+    if mask is not None:
+        scores = scores.masked_fill(mask == 0, float("-inf"))
+
+    weights = F.softmax(scores, dim=-1)
+    output = weights @ v
+    return output, weights</code></pre>
+          </article>
+          <aside class="implementation-notes reveal" aria-label="Implementation notes">
+            <div><p class="eyebrow">Read the shapes</p><h2>Keep the contract visible.</h2><p><code>q</code>, <code>k</code>, and <code>v</code> carry leading batch dimensions; only their final axes participate in the matrix multiply.</p></div>
+            <div class="annotation"><span>01 / Scores</span><p><code>q @ k.transpose(...)</code> compares every query with every key.</p></div>
+            <div class="annotation"><span>02 / Weights</span><p><code>softmax</code> produces a row-wise probability distribution for each query.</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- === SLIDE 3: ALGORITHM AND DERIVATION === -->
+      <section class="slide compare-slide" data-slide="3" aria-label="Slide 3: Algorithm and derivation comparison">
+        <div class="slide-content">
+          <header class="header reveal">
+            <div><p class="eyebrow">03 / Correspondence</p><h1 class="title">Same computation, two useful views.</h1></div>
+            <p class="subhead">The algorithm explains execution order. The derivation explains why each operation is present.</p>
+          </header>
+          <div class="comparison-grid">
+            <article class="comparison-panel reveal" aria-label="Algorithm view">
+              <p class="panel-label">Algorithm view</p><h2>What the machine does</h2>
+              <div class="algorithm">
+                <div class="algo-line"><span class="n">01</span><span><em>input</em> Q, K, V and optional mask M</span></div>
+                <div class="algo-line"><span class="n">02</span><span>S &larr; QK<sup>T</sup> / sqrt(d<sub>k</sub>)</span></div>
+                <div class="algo-line"><span class="n">03</span><span>S &larr; mask(S, M)</span></div>
+                <div class="algo-line"><span class="n">04</span><span>A &larr; softmax(S)</span></div>
+                <div class="algo-line highlight"><span class="n">05</span><span><em>return</em> A V</span></div>
+              </div>
+            </article>
+            <article class="comparison-panel reveal" aria-label="Derivation view">
+              <p class="panel-label">Derivation view</p><h2>What the representation means</h2>
+              <div class="derivation">
+                <div class="math-row"><span class="tag">score</span><span class="math-slot">s_ij = q_i^T k_j / sqrt(d_k)</span></div>
+                <div class="math-row"><span class="tag">weight</span><span class="math-slot">alpha_ij = exp(s_ij) / sum_l exp(s_il)</span></div>
+                <div class="math-row"><span class="tag">output</span><span class="math-slot">o_i = sum_j alpha_ij v_j</span></div>
+              </div>
+            </article>
+          </div>
+          <footer class="outcome-band reveal"><span><strong>Complexity</strong><br>O(n2d) score interactions</span><span class="divider" aria-hidden="true"></span><span><strong>Interpretation</strong><br>Each output is a context-aware value mixture</span></footer>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- === SMALL CONTROL SURFACE === -->
+  <nav class="deck-controls" aria-label="Slide navigation">
+    <button type="button" id="previous" aria-label="Previous slide" title="Previous slide">&larr;</button>
+    <span class="deck-status" id="deckStatus">01 / 03</span>
+    <button type="button" id="next" aria-label="Next slide" title="Next slide">&rarr;</button>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/lib/highlight.min.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

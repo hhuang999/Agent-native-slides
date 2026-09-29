@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F01 aurora-borealis-dark — Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,700&family=Geist+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ─── Tokens ─────────────────────────────── */
+  :root {
+    --color-bg:      oklch(0.07 0.02 265);
+    --color-surface: oklch(0.12 0.03 260 / 0.55);
+    --color-border:  oklch(0.35 0.08 200 / 0.4);
+    --color-muted:   oklch(0.52 0.08 190);
+    --color-body:    oklch(0.82 0.03 200);
+    --color-heading: oklch(0.95 0.02 200);
+    --color-accent:  oklch(0.72 0.22 160);
+    --color-accent2: oklch(0.62 0.20 295);
+    --font-heading:  'Bricolage Grotesque', sans-serif;
+    --font-mono:     'Geist Mono', 'Courier New', monospace;
+    --scale: 1;
+  }
+
+  /* ─── CSS @property for aurora animation ─── */
+  @property --au-x { syntax: '<percentage>'; inherits: false; initial-value: 20%; }
+  @property --au-y { syntax: '<percentage>'; inherits: false; initial-value: 40%; }
+
+  /* ─── Body / stage ────────────────────────── */
+  body {
+    background: oklch(0.05 0.02 265);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 16px;
+    padding: 24px;
+    font-family: var(--font-heading);
+  }
+
+  .stage-wrapper {
+    position: relative;
+  }
+
+  .slide-stage {
+    width: 1920px;
+    height: 1080px;
+    transform-origin: top left;
+    transform: scale(var(--scale));
+    position: relative;
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  .slide.is-active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* ─── Aurora background layers ───────────── */
+  .bg-aurora {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 40% at var(--au-x) var(--au-y),
+        oklch(0.55 0.22 160 / 0.45), transparent 65%),
+      radial-gradient(ellipse 60% 35% at 75% 30%,
+        oklch(0.45 0.20 295 / 0.35), transparent 60%),
+      radial-gradient(ellipse 50% 25% at 40% 70%,
+        oklch(0.50 0.18 185 / 0.25), transparent 55%),
+      oklch(0.07 0.02 265);
+    animation: aurora-drift 18s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+
+  @keyframes aurora-drift {
+    to { --au-x: 60%; --au-y: 25%; }
+  }
+
+  .bg-band {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      oklch(0.62 0.18 160 / 0.06) 20%,
+      oklch(0.65 0.22 160 / 0.12) 40%,
+      oklch(0.58 0.20 185 / 0.08) 60%,
+      oklch(0.50 0.15 295 / 0.05) 80%,
+      transparent 100%
+    );
+    top: 28%;
+    height: 20%;
+    filter: blur(48px);
+    animation: band-float 22s ease-in-out infinite alternate;
+    z-index: 1;
+  }
+
+  @keyframes band-float {
+    0%   { top: 32%; opacity: 0.7; }
+    50%  { top: 24%; opacity: 1; }
+    100% { top: 40%; opacity: 0.8; }
+  }
+
+  /* Star field (static, small dots) */
+  .bg-stars {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      radial-gradient(circle 1px at 12% 18%, oklch(0.88 0.02 200 / 0.5) 0, transparent 1px),
+      radial-gradient(circle 1px at 88% 12%, oklch(0.85 0.02 200 / 0.4) 0, transparent 1px),
+      radial-gradient(circle 1px at 35% 78%, oklch(0.82 0.02 200 / 0.35) 0, transparent 1px),
+      radial-gradient(circle 1.5px at 67% 55%, oklch(0.92 0.02 200 / 0.3) 0, transparent 1.5px),
+      radial-gradient(circle 1px at 92% 68%, oklch(0.85 0.02 200 / 0.45) 0, transparent 1px),
+      radial-gradient(circle 1px at 5% 88%, oklch(0.88 0.02 200 / 0.3) 0, transparent 1px),
+      radial-gradient(circle 1px at 78% 85%, oklch(0.82 0.02 200 / 0.25) 0, transparent 1px),
+      radial-gradient(circle 1px at 54% 8%, oklch(0.90 0.02 200 / 0.4) 0, transparent 1px);
+    z-index: 1;
+    animation: twinkle 5s ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle {
+    0%   { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-aurora, .bg-band, .bg-stars { animation: none !important; }
+    [data-anim] { opacity: 1 !important; transform: none !important; filter: none !important; animation: none !important; }
+  }
+
+  /* ─── Slide 1: Cover ─────────────────────── */
+  .s1-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 160px;
+    z-index: 10;
+  }
+
+  .s1-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 40px;
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(10px);
+    animation: blur-in 0.6s 0.2s ease-out forwards;
+  }
+
+  .s1-title {
+    font-family: var(--font-heading);
+    font-size: 130px;
+    font-weight: 300;
+    line-height: 1.0;
+    color: var(--color-heading);
+    letter-spacing: -0.03em;
+    max-width: 1300px;
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(20px);
+    animation: blur-in 0.8s 0.4s ease-out forwards;
+  }
+
+  .s1-title em {
+    font-style: normal;
+    color: var(--color-accent);
+    text-shadow: 0 0 40px oklch(0.65 0.22 160 / 0.5);
+  }
+
+  .s1-rule {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(to right, var(--color-accent), transparent);
+    margin: 56px 0 40px;
+    opacity: 0;
+    animation: blur-in 0.4s 0.8s ease-out forwards;
+  }
+
+  .s1-sub {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--color-muted);
+    letter-spacing: 0.05em;
+    opacity: 0;
+    filter: blur(4px);
+    animation: blur-in 0.5s 1.0s ease-out forwards;
+  }
+
+  /* Decorative arc */
+  .s1-arc {
+    position: absolute;
+    right: 120px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 480px;
+    height: 480px;
+    z-index: 5;
+    opacity: 0;
+    animation: blur-in 1s 0.6s ease-out forwards;
+  }
+
+  /* ─── Slide 2: Data / Evidence ───────────── */
+  .s2-header-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px 160px;
+    border-bottom: 1px solid var(--color-border);
+    z-index: 10;
+    opacity: 0;
+    animation: blur-in 0.4s 0.1s ease-out forwards;
+  }
+
+  .s2-header-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .s2-header-folio {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+
+  .s2-body {
+    position: absolute;
+    inset: 0;
+    padding: 130px 160px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .s2-left {}
+
+  .s2-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    border: 1px solid oklch(0.65 0.22 160 / 0.4);
+    padding: 6px 14px;
+    border-radius: 2px;
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: blur-in 0.4s 0.3s ease-out forwards;
+  }
+
+  .s2-assertion {
+    font-family: var(--font-heading);
+    font-size: 64px;
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--color-heading);
+    letter-spacing: -0.02em;
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(12px);
+    animation: blur-in 0.7s 0.5s ease-out forwards;
+  }
+
+  .s2-assertion strong {
+    font-weight: 700;
+    color: var(--color-accent);
+    text-shadow: 0 0 24px oklch(0.65 0.22 160 / 0.4);
+  }
+
+  .s2-body-text {
+    margin-top: 40px;
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--color-body);
+    opacity: 0;
+    animation: blur-in 0.5s 0.8s ease-out forwards;
+  }
+
+  /* Glass card on right */
+  .s2-glass-card {
+    background: oklch(0.12 0.03 260 / 0.55);
+    backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 56px 56px;
+    box-shadow:
+      0 0 0 1px oklch(0.55 0.15 160 / 0.08),
+      0 16px 48px oklch(0.04 0.02 265 / 0.7);
+    opacity: 0;
+    transform: translateY(16px);
+    animation: blur-in 0.7s 0.6s ease-out forwards;
+  }
+
+  .s2-stat-row {
+    display: flex;
+    flex-direction: column;
+    gap: 44px;
+  }
+
+  .s2-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid oklch(0.28 0.05 200 / 0.4);
+  }
+
+  .s2-stat:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .s2-stat-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .s2-stat-value {
+    font-family: var(--font-heading);
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-accent);
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 32px oklch(0.65 0.22 160 / 0.5);
+  }
+
+  .s2-stat-value.purple {
+    color: var(--color-accent2);
+    text-shadow: 0 0 32px oklch(0.55 0.20 295 / 0.5);
+  }
+
+  .s2-stat-desc {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--color-body);
+    opacity: 0.8;
+  }
+
+  /* ─── Animations ─────────────────────────── */
+  @keyframes blur-in {
+    from { opacity: 0; filter: blur(8px); transform: translateY(12px); }
+    to   { opacity: 1; filter: blur(0);   transform: translateY(0); }
+  }
+
+  /* ─── Nav ────────────────────────────────── */
+  .slide-nav {
+    display: flex;
+    gap: 12px;
+  }
+
+  .slide-nav button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid oklch(0.30 0.06 200 / 0.6);
+    background: oklch(0.12 0.03 260 / 0.6);
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 4px;
+    backdrop-filter: blur(8px);
+  }
+
+  .slide-nav button.active {
+    background: oklch(0.65 0.22 160 / 0.2);
+    border-color: oklch(0.65 0.22 160 / 0.6);
+    color: var(--color-accent);
+    box-shadow: 0 0 12px oklch(0.65 0.22 160 / 0.2);
+  }
+
+  .slide-nav button:hover:not(.active) {
+    background: oklch(0.18 0.04 260 / 0.6);
+    color: var(--color-body);
+  }
+
+  /* ─── Preview mode ───────────────────────── */
+  .preview-mode .slide-nav { display: none; }
+
+  /* ─── Print / PDF ────────────────────────── */
+  @media print {
+    @page { size: 1920px 1080px; margin: 0; }
+    html, body {
+      margin: 0; padding: 0; width: 1920px; height: auto !important;
+      overflow: visible !important; background: #0a0a0f; display: block;
+    }
+    .stage-wrapper {
+      width: 1920px !important; height: auto !important;
+      display: block !important; overflow: visible !important;
+      transform: none !important;
+    }
+    .slide-stage {
+      position: static !important; transform: none !important;
+      width: 1920px !important; height: auto !important; overflow: visible !important;
+    }
+    .slide {
+      position: relative !important; inset: auto !important;
+      visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+      width: 1920px !important; height: 1080px !important;
+      break-after: page; page-break-after: always; overflow: hidden;
+    }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .slide-nav { display: none !important; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage-wrapper">
+  <div class="slide-stage" id="stage" aria-live="polite">
+
+    <!-- ── Slide 1: Cover ───────────────────── -->
+    <div class="slide is-active" id="slide-0" aria-hidden="false">
+      <div class="bg-aurora"></div>
+      <div class="bg-band"></div>
+      <div class="bg-stars"></div>
+
+      <div class="s1-content">
+        <div class="s1-eyebrow" data-anim>NeurIPS 2024 · Spotlight</div>
+        <h1 class="s1-title" data-anim>
+          Emergent <em>Reasoning</em><br>at Scale
+        </h1>
+        <div class="s1-rule" data-anim></div>
+        <div class="s1-sub" data-anim>Chen &amp; Park · OpenAI Research · December 2024</div>
+      </div>
+
+      <!-- Decorative aurora arc SVG -->
+      <svg class="s1-arc" viewBox="0 0 480 480" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="240" cy="240" r="220" stroke="oklch(0.65 0.22 160 / 0.12)" stroke-width="1"/>
+        <circle cx="240" cy="240" r="180" stroke="oklch(0.62 0.20 295 / 0.10)" stroke-width="0.5"/>
+        <circle cx="240" cy="240" r="140" stroke="oklch(0.58 0.18 185 / 0.08)" stroke-width="0.5"/>
+        <path d="M 240 20 A 220 220 0 0 1 440 280" stroke="oklch(0.72 0.22 160 / 0.4)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M 240 20 A 220 220 0 0 1 400 370" stroke="oklch(0.55 0.20 295 / 0.25)" stroke-width="1" stroke-linecap="round"/>
+        <circle cx="440" cy="280" r="4" fill="oklch(0.72 0.22 160 / 0.8)">
+          <animate attributeName="opacity" values="0.8;0.3;0.8" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="400" cy="370" r="3" fill="oklch(0.62 0.20 295 / 0.6)">
+          <animate attributeName="opacity" values="0.6;0.2;0.6" dur="4s" begin="1s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+
+    <!-- ── Slide 2: Evidence ─────────────────── -->
+    <div class="slide" id="slide-1" aria-hidden="true">
+      <div class="bg-aurora"></div>
+      <div class="bg-band"></div>
+      <div class="bg-stars"></div>
+
+      <div class="s2-header-bar">
+        <span class="s2-header-label">Key Findings</span>
+        <span class="s2-header-folio">02 / 02</span>
+      </div>
+
+      <div class="s2-body">
+        <div class="s2-left">
+          <div class="s2-tag">Core Finding</div>
+          <h2 class="s2-assertion">
+            Chain-of-thought length predicts <strong>accuracy ceiling</strong>
+          </h2>
+          <p class="s2-body-text">
+            Across 47 benchmarks, models that generate longer intermediate reasoning chains consistently reach higher accuracy ceilings — independent of parameter count.
+          </p>
+        </div>
+        <div class="s2-right">
+          <div class="s2-glass-card">
+            <div class="s2-stat-row">
+              <div class="s2-stat">
+                <span class="s2-stat-label">Accuracy lift (CoT vs direct)</span>
+                <span class="s2-stat-value">+31%</span>
+                <span class="s2-stat-desc">averaged over math benchmarks</span>
+              </div>
+              <div class="s2-stat">
+                <span class="s2-stat-label">Reasoning tokens / answer token</span>
+                <span class="s2-stat-value purple">8.4×</span>
+                <span class="s2-stat-desc">for top-quartile performers</span>
+              </div>
+              <div class="s2-stat">
+                <span class="s2-stat-label">Benchmarks evaluated</span>
+                <span class="s2-stat-value">47</span>
+                <span class="s2-stat-desc">across math, code, science, logic</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /stage -->
+</div>
+
+<nav class="slide-nav" aria-label="Slides">
+  <button class="active" data-idx="0" aria-label="Slide 1">1</button>
+  <button data-idx="1" aria-label="Slide 2">2</button>
+</nav>
+
+<script>
+  const stage = document.getElementById('stage');
+
+  function setScale() {
+    const s = Math.min(
+      (window.innerWidth  - 48) / 1920,
+      (window.innerHeight - 100) / 1080
+    );
+    document.documentElement.style.setProperty('--scale', s);
+    const w = stage.parentElement;
+    w.style.width  = Math.round(1920 * s) + 'px';
+    w.style.height = Math.round(1080 * s) + 'px';
+    w.style.overflow = 'hidden';
+  }
+  window.addEventListener('resize', setScale);
+
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const btns   = Array.from(document.querySelectorAll('.slide-nav button'));
+
+  slides.forEach((s, i) => { s.dataset.slide = i + 1; });
+
+  window.__deckPlan = {
+    title: 'NeurIPS 2024 · Spotlight',
+    total_slides: slides.length,
+    slides: [
+      { index: 1, type: 'title',   assertion: 'Emergent Reasoning at Scale' },
+      { index: 2, type: 'content', assertion: 'Chain-of-thought length predicts accuracy ceiling' },
+    ],
+  };
+  window.__currentSlide = 1;
+
+  function goToSlide(n) {
+    const total = slides.length;
+    n = Math.min(Math.max(1, Math.round(+n) || 1), total);
+    slides.forEach((s, i) => {
+      const active = i === n - 1;
+      s.classList.toggle('is-active', active);
+      s.setAttribute('aria-hidden', active ? 'false' : 'true');
+    });
+    btns.forEach((b, i) => {
+      b.classList.toggle('active', i === n - 1);
+    });
+    const el = slides[n - 1];
+    const els = el.querySelectorAll('[data-anim], .s2-tag, .s2-assertion, .s2-body-text, .s2-glass-card, .s2-header-bar');
+    els.forEach(node => {
+      const prev = node.style.animation;
+      node.style.animation = 'none';
+      void node.offsetHeight;
+      node.style.animation = prev || '';
+    });
+    window.__currentSlide = n;
+  }
+  window.__goToSlide = goToSlide;
+
+  btns.forEach(b => b.addEventListener('click', () => goToSlide(+b.dataset.idx + 1)));
+  document.addEventListener('keydown', e => {
+    const k = e.key;
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') { e.preventDefault(); goToSlide(window.__currentSlide + 1); }
+    else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); goToSlide(window.__currentSlide - 1); }
+    else if (k === 'Home') goToSlide(1);
+    else if (k === 'End') goToSlide(slides.length);
+  });
+
+  const q = new URLSearchParams(location.search);
+  if (q.has('print')) document.documentElement.classList.add('print-mode');
+  if (q.has('preview')) document.documentElement.classList.add('preview-mode');
+
+  document.fonts.ready.then(() => {
+    setScale();
+    goToSlide(q.has('preview') ? (parseInt(q.get('preview'), 10) || 1) : 1);
+  });
+</script>
+</body>
+</html>

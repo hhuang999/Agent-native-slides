@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M03 Risograph Print — Independent Design Festival Foundation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   M03 RISOGRAPH PRINT — CSS FOUNDATION
+   ============================================================ */
+
+/* --- Color tokens (OKLCH) --- */
+:root {
+  --color-paper:        oklch(0.95 0.018 72);
+  --color-paper-warm:   oklch(0.92 0.022 72);
+  --color-ink:          oklch(0.12 0.010 40);
+  --color-ink-mid:      oklch(0.30 0.012 40);
+  --color-ink-ghost:    oklch(0.55 0.008 40);
+  --color-riso-red:     oklch(0.58 0.20 22);
+  --color-riso-teal:    oklch(0.58 0.16 192);
+  --color-riso-red-20:  oklch(0.58 0.20 22 / 0.20);
+  --color-riso-red-12:  oklch(0.58 0.20 22 / 0.12);
+  --color-riso-teal-20: oklch(0.58 0.16 192 / 0.20);
+  --color-riso-teal-12: oklch(0.58 0.16 192 / 0.12);
+  --color-mis-red:      oklch(0.58 0.20 22 / 0.18);
+  --color-mis-teal:     oklch(0.58 0.16 192 / 0.18);
+  --color-rule:         oklch(0.82 0.010 72);
+
+  /* Typography */
+  --font-primary: 'Space Grotesk', system-ui, sans-serif;
+  --text-display:   4.2vw;
+  --text-headline:  2.1vw;
+  --text-label:     0.82vw;
+  --text-stat:      3.0vw;
+  --text-body:      0.9vw;
+  --text-table:     0.78vw;
+  --text-folio:     0.72vw;
+  --weight-bold:    700;
+  --weight-medium:  500;
+  --weight-regular: 400;
+  --weight-light:   300;
+  --nums: lining-nums tabular-nums;
+  --lh-display: 1.05;
+  --lh-headline: 1.15;
+  --lh-body: 1.6;
+}
+
+/* ============================================================
+   RESET & GLOBAL
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: oklch(0.20 0.010 40);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: var(--font-primary);
+  overflow: hidden;
+}
+
+/* ============================================================
+   STAGE & SCALING
+   ============================================================ */
+#stage-wrapper {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-primary);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active { visibility: visible; opacity: 1; pointer-events: auto; }
+
+/* Background layer z-index 0 */
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Semantic content z-index 1 */
+.slide-content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================
+   MISREGISTRATION HEADLINE
+   ============================================================ */
+.mis-headline {
+  text-shadow:
+     1px  1px 0 var(--color-mis-teal),
+    -1px -1px 0 var(--color-mis-red);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mis-headline { text-shadow: none; }
+}
+
+/* ============================================================
+   SECTION MARKER
+   ============================================================ */
+.section-marker {
+  font-size: var(--text-label);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-riso-red);
+  font-family: var(--font-primary);
+  margin-bottom: 32px;
+}
+
+/* ============================================================
+   RULE ACCENT
+   ============================================================ */
+.rule-accent {
+  border: none;
+  border-top: 3px solid var(--color-riso-red);
+  width: 100%;
+  margin: 28px 0;
+}
+
+/* ============================================================
+   SLIDE 1 — TITLE
+   ============================================================ */
+.s1-inner {
+  padding: 96px 120px 72px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.s1-display {
+  font-size: var(--text-display);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-display);
+  color: var(--color-ink);
+  max-width: 1300px;
+  margin-bottom: 0;
+}
+
+.s1-abstract {
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--lh-body);
+  color: var(--color-ink-mid);
+  max-width: 940px;
+  margin-top: 8px;
+}
+
+.s1-detail-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: auto;
+  border-top: 3px solid var(--color-riso-red);
+}
+
+.s1-detail-cell {
+  padding: 28px 0 28px 28px;
+  border-right: 1px solid var(--color-rule);
+}
+.s1-detail-cell:last-child { border-right: none; }
+
+.s1-detail-key {
+  font-size: var(--text-label);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--color-ink-ghost);
+  margin-bottom: 10px;
+}
+
+.s1-detail-val {
+  font-size: calc(var(--text-body) * 1.35);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: var(--nums);
+  color: var(--color-ink);
+  line-height: 1.2;
+}
+
+/* ============================================================
+   SLIDE 2 — EVIDENCE + ASIDE
+   ============================================================ */
+.s2-inner {
+  padding: 72px 120px 72px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.s2-headline {
+  font-size: var(--text-headline);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-headline);
+  color: var(--color-ink);
+  max-width: 1300px;
+}
+
+.s2-body-area {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 60px;
+  margin-top: auto;
+  align-items: start;
+}
+
+.s2-left { display: flex; flex-direction: column; gap: 40px; }
+
+.s2-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.stat-col {
+  padding: 28px 24px 28px 0;
+  border-top: 3px solid var(--color-riso-red);
+  border-right: 1px solid var(--color-rule);
+}
+.stat-col:last-child { border-right: none; }
+
+.stat-col__number {
+  font-size: var(--text-stat);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: var(--nums);
+  line-height: 1.0;
+  color: var(--color-riso-red);
+}
+
+.stat-col__label {
+  font-size: var(--text-label);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-mid);
+  margin-top: 10px;
+  line-height: 1.4;
+}
+
+.s2-evidence {
+  font-size: var(--text-body);
+  line-height: var(--lh-body);
+  color: var(--color-ink-mid);
+  max-width: 860px;
+}
+
+.aside-panel {
+  padding: 32px 28px;
+  position: relative;
+  overflow: hidden;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.aside-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--color-riso-teal) 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+  background-color: var(--color-riso-teal-12);
+  z-index: 0;
+}
+.aside-panel > * { position: relative; z-index: 1; }
+
+.aside-panel__stat {
+  font-size: calc(var(--text-stat) * 0.85);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: var(--nums);
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+.aside-panel__text {
+  font-size: var(--text-body);
+  color: var(--color-ink-mid);
+  margin-top: 14px;
+  line-height: var(--lh-body);
+}
+
+/* ============================================================
+   SLIDE 3 — COMPARISON TABLE
+   ============================================================ */
+.s3-inner {
+  padding: 72px 120px 72px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.s3-headline {
+  font-size: var(--text-headline);
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-headline);
+  color: var(--color-ink);
+  max-width: 1400px;
+  margin-bottom: 40px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-table);
+  font-family: var(--font-primary);
+  margin-bottom: 24px;
+}
+
+.data-table thead tr {
+  background-image: radial-gradient(circle, var(--color-riso-red) 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+  background-color: var(--color-riso-red-20);
+  color: var(--color-ink);
+}
+
+.data-table th {
+  padding: 14px 18px;
+  font-weight: var(--weight-bold);
+  text-align: left;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: calc(var(--text-table) * 0.88);
+  font-variant-numeric: var(--nums);
+}
+
+.data-table td {
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--color-rule);
+  font-variant-numeric: var(--nums);
+}
+
+.data-table tr.highlighted {
+  background-image: radial-gradient(circle, var(--color-riso-teal) 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+  background-color: var(--color-riso-teal-12);
+  font-weight: var(--weight-medium);
+}
+
+.data-table td.strong {
+  font-weight: var(--weight-bold);
+  color: var(--color-riso-red);
+}
+
+.s3-footnote {
+  font-size: calc(var(--text-body) * 0.88);
+  color: var(--color-ink-ghost);
+  line-height: 1.5;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-rule);
+}
+
+/* ============================================================
+   FOLIO
+   ============================================================ */
+.folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  font-size: var(--text-folio);
+  font-family: var(--font-primary);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.08em;
+  color: var(--color-ink-ghost);
+  font-variant-numeric: var(--nums);
+  z-index: 2;
+}
+
+/* ============================================================
+   DECORATIVE BG MARKS
+   ============================================================ */
+.bg-corner-mark {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-top: 3px solid var(--color-riso-red);
+  border-left: 3px solid var(--color-riso-red);
+  opacity: 0.35;
+}
+.bg-corner-mark.tr {
+  top: 48px; right: 48px;
+  border-top: 3px solid var(--color-riso-teal);
+  border-left: none;
+  border-right: 3px solid var(--color-riso-teal);
+  opacity: 0.35;
+}
+.bg-halftone-accent {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 360px; height: 180px;
+  background-image: radial-gradient(circle, var(--color-riso-red) 1.2px, transparent 1.2px);
+  background-size: 10px 10px;
+  background-color: transparent;
+  opacity: 0.09;
+}
+
+/* ============================================================
+   NAV BAR
+   ============================================================ */
+#nav-bar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-ink);
+  border-radius: 999px;
+  padding: 10px 20px;
+  z-index: 1000;
+  box-shadow: 0 4px 24px oklch(0 0 0 / 0.40);
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-paper);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+  font-family: var(--font-primary);
+}
+.nav-btn:hover { background: oklch(0.25 0.010 40); }
+.nav-btn:focus-visible { outline: 2px solid var(--color-riso-teal); outline-offset: 2px; }
+
+.nav-dots { display: flex; align-items: center; gap: 8px; }
+
+.nav-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid oklch(0.55 0.008 40);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.nav-dot.active {
+  background: var(--color-riso-red);
+  border-color: var(--color-riso-red);
+}
+.nav-dot:focus-visible { outline: 2px solid var(--color-riso-teal); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     STAGE
+     ============================================================ -->
+<div id="stage-wrapper">
+
+  <!-- ===================== SLIDE 1 — TITLE ===================== -->
+  <div class="slide active" id="slide-1" role="region" aria-label="Slide 1 of 3">
+    <div class="slide-bg">
+      <div class="bg-corner-mark"></div>
+      <div class="bg-corner-mark tr"></div>
+      <div class="bg-halftone-accent"></div>
+    </div>
+    <div class="slide-content s1-inner">
+      <div class="section-marker">Independent Design Festival Foundation &nbsp;&bull;&nbsp; Economic Impact Study 2021–2024</div>
+
+      <h1 class="s1-display mis-headline">
+        Independent Design Festivals in Tier-2 Cities Generated 4.1 Times Their Direct Funding Investment in Measurable Local Economic Activity Between 2021 and 2024, With the Greatest Multiplier Effect in Cities With Established Creative Education Infrastructure.
+      </h1>
+
+      <hr class="rule-accent">
+
+      <p class="s1-abstract">
+        This study examined 34 independent design festivals across 19 tier-2 cities over a four-year period, measuring direct and indirect economic outputs against total public and private funding inputs. The findings establish a robust causal link between festival investment, local creative infrastructure, and sustained economic activity beyond the event window.
+      </p>
+
+      <div class="s1-detail-row">
+        <div class="s1-detail-cell">
+          <div class="s1-detail-key">Cities Studied</div>
+          <div class="s1-detail-val">19 Tier-2 Cities</div>
+        </div>
+        <div class="s1-detail-cell">
+          <div class="s1-detail-key">Festivals Analysed</div>
+          <div class="s1-detail-val">34 Events</div>
+        </div>
+        <div class="s1-detail-cell">
+          <div class="s1-detail-key">Study Period</div>
+          <div class="s1-detail-val">2021 – 2024</div>
+        </div>
+        <div class="s1-detail-cell">
+          <div class="s1-detail-key">Mean Economic Multiplier</div>
+          <div class="s1-detail-val">4.1×</div>
+        </div>
+      </div>
+    </div>
+    <div class="folio">01 / 03</div>
+  </div>
+
+  <!-- ===================== SLIDE 2 — EVIDENCE ===================== -->
+  <div class="slide" id="slide-2" role="region" aria-label="Slide 2 of 3">
+    <div class="slide-bg">
+      <div class="bg-corner-mark"></div>
+      <div class="bg-corner-mark tr"></div>
+    </div>
+    <div class="slide-content s2-inner">
+      <div class="section-marker">Economic Evidence &nbsp;&bull;&nbsp; Visitor Spending Analysis</div>
+
+      <h2 class="s2-headline mis-headline">
+        Each 1,000 Festival Attendees From Outside the Host City Generated an Average of $340,000 in Local Hospitality and Retail Spending Over the Festival Period, With 23 Percent Reporting Subsequent Relocation Consideration to the Host City.
+      </h2>
+
+      <hr class="rule-accent">
+
+      <div class="s2-body-area">
+        <div class="s2-left">
+          <div class="s2-stats">
+            <div class="stat-col">
+              <div class="stat-col__number">$340k</div>
+              <div class="stat-col__label">Per 1,000 External Attendees<br>in Hospitality &amp; Retail Spend</div>
+            </div>
+            <div class="stat-col">
+              <div class="stat-col__number">23%</div>
+              <div class="stat-col__label">Reported Subsequent<br>Relocation Consideration</div>
+            </div>
+            <div class="stat-col">
+              <div class="stat-col__number">3.8×</div>
+              <div class="stat-col__label">Higher Dwell Time vs.<br>Standard Tourism Events</div>
+            </div>
+          </div>
+          <p class="s2-evidence">
+            Visitor expenditure tracking was conducted via anonymised card-transaction data from host-city merchant networks, supplemented by post-festival survey panels (n = 4,820). Hospitality spending — accommodation, food and beverage, and local transport — accounted for 68% of the total; independent retail and maker-market sales contributed the remaining 32%. The relocation-consideration metric correlates most strongly with festival programming that includes open-studio and live-practice elements rather than pure exhibition formats.
+          </p>
+        </div>
+
+        <div class="aside-panel">
+          <div class="aside-panel__stat">$2.1M</div>
+          <div class="aside-panel__text">
+            Highest single-festival visitor spend recorded: the Kraków Independent Design Week 2023, drawing 6,180 external attendees over five days with a combined hospitality and retail total of $2.1 million — a 6.2× direct-funding multiplier.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="folio">02 / 03</div>
+  </div>
+
+  <!-- ===================== SLIDE 3 — COMPARISON TABLE ===================== -->
+  <div class="slide" id="slide-3" role="region" aria-label="Slide 3 of 3">
+    <div class="slide-bg">
+      <div class="bg-corner-mark"></div>
+      <div class="bg-corner-mark tr"></div>
+    </div>
+    <div class="slide-content s3-inner">
+      <div class="section-marker">Comparative Analysis &nbsp;&bull;&nbsp; Festival Architecture Models</div>
+
+      <h2 class="s3-headline mis-headline">
+        Multi-Day Immersive Festival Formats Combining Exhibitions, Workshops, and Open-Studio Events Deliver the Highest Economic Multiplier, Strongest Talent Attraction Effect, and Greatest Long-Term Creative Cluster Formation Across All Six Evaluated Festival Architecture Models.
+      </h2>
+
+      <table class="data-table" role="table" aria-label="Festival architecture model comparison">
+        <thead>
+          <tr>
+            <th scope="col">Festival Model</th>
+            <th scope="col">Avg Duration</th>
+            <th scope="col">Economic Multiplier</th>
+            <th scope="col">Talent Attraction Index</th>
+            <th scope="col">Creative Cluster Score</th>
+            <th scope="col">Relocation Consideration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlighted">
+            <td><strong>Multi-Day Immersive (Exhibition + Workshop + Open Studio)</strong></td>
+            <td>5.4 days</td>
+            <td class="strong">5.2×</td>
+            <td class="strong">87 / 100</td>
+            <td class="strong">91 / 100</td>
+            <td class="strong">31%</td>
+          </tr>
+          <tr>
+            <td>Exhibition-Only (Curated Gallery Format)</td>
+            <td>7.1 days</td>
+            <td>2.8×</td>
+            <td>54 / 100</td>
+            <td>48 / 100</td>
+            <td>14%</td>
+          </tr>
+          <tr>
+            <td>Conference-Led (Talks + Panels + Exhibition)</td>
+            <td>3.2 days</td>
+            <td>3.1×</td>
+            <td>71 / 100</td>
+            <td>62 / 100</td>
+            <td>19%</td>
+          </tr>
+          <tr>
+            <td>Market-Centred (Maker Fair + Limited Programming)</td>
+            <td>2.8 days</td>
+            <td>3.4×</td>
+            <td>44 / 100</td>
+            <td>39 / 100</td>
+            <td>11%</td>
+          </tr>
+          <tr>
+            <td>Residency-Led (Long-Form, Low Public Engagement)</td>
+            <td>21.0 days</td>
+            <td>1.9×</td>
+            <td>68 / 100</td>
+            <td>74 / 100</td>
+            <td>22%</td>
+          </tr>
+          <tr>
+            <td>Digital-Hybrid (Partial In-Person, Partial Remote)</td>
+            <td>4.0 days</td>
+            <td>2.2×</td>
+            <td>49 / 100</td>
+            <td>43 / 100</td>
+            <td>09%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="s3-footnote">
+        * Economic multiplier = total measured local economic activity / direct festival funding input. Talent Attraction Index and Creative Cluster Score are composite indices developed for this study; see Appendix B for methodology. Data drawn from 34 festivals across 19 tier-2 cities, 2021–2024. Highlighted row indicates top-performing model across all measured dimensions.
+      </p>
+    </div>
+    <div class="folio">03 / 03</div>
+  </div>
+
+</div><!-- /stage-wrapper -->
+
+<!-- ============================================================
+     NAV BAR
+     ============================================================ -->
+<nav id="nav-bar" aria-label="Slide navigation">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide">&#8592;</button>
+  <div class="nav-dots" role="list" aria-label="Slide indicators">
+    <button class="nav-dot active" role="listitem" aria-label="Go to slide 1" data-slide="1"></button>
+    <button class="nav-dot" role="listitem" aria-label="Go to slide 2" data-slide="2"></button>
+    <button class="nav-dot" role="listitem" aria-label="Go to slide 3" data-slide="3"></button>
+  </div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide">&#8594;</button>
+</nav>
+
+<!-- ============================================================
+     RUNTIME SCRIPT
+     ============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ---- Deck plan ---- */
+  window.__deckPlan = {
+    title: 'M03 Risograph Print — Independent Design Festival Foundation',
+    style: 'M03',
+    slides: [
+      { n: 1, label: 'Title — 4.1× Economic Multiplier' },
+      { n: 2, label: 'Evidence — Visitor Spending Analysis' },
+      { n: 3, label: 'Comparison — Festival Architecture Models' }
+    ]
+  };
+
+  var TOTAL = window.__deckPlan.slides.length;
+  window.__currentSlide = 1;
+
+  /* ---- Stage scaling ---- */
+  function scaleStage() {
+    var wrapper = document.getElementById('stage-wrapper');
+    var scaleX = window.innerWidth  / 1920;
+    var scaleY = window.innerHeight / 1080;
+    var scale  = Math.min(scaleX, scaleY);
+    wrapper.style.transform = 'scale(' + scale + ')';
+    wrapper.style.left = ((window.innerWidth  - 1920 * scale) / 2) + 'px';
+    wrapper.style.top  = ((window.innerHeight - 1080 * scale) / 2) + 'px';
+    wrapper.style.position = 'absolute';
+  }
+
+  scaleStage();
+  window.addEventListener('resize', scaleStage);
+
+  /* ---- Go-to-slide API ---- */
+  window.__goToSlide = function (n) {
+    if (n < 1 || n > TOTAL) return;
+    var slides = document.querySelectorAll('.slide');
+    var dots   = document.querySelectorAll('.nav-dot');
+    slides.forEach(function (s, i) {
+      s.style.display = (i + 1 === n) ? 'flex' : 'none';
+      s.classList.toggle('active', i + 1 === n);
+    });
+    dots.forEach(function (d, i) {
+      d.classList.toggle('active', i + 1 === n);
+    });
+    window.__currentSlide = n;
+  };
+
+  /* ---- Navigation handlers ---- */
+  document.getElementById('btn-prev').addEventListener('click', function () {
+    window.__goToSlide(window.__currentSlide - 1);
+  });
+  document.getElementById('btn-next').addEventListener('click', function () {
+    window.__goToSlide(window.__currentSlide + 1);
+  });
+
+  document.querySelectorAll('.nav-dot').forEach(function (dot) {
+    dot.addEventListener('click', function () {
+      window.__goToSlide(parseInt(dot.getAttribute('data-slide'), 10));
+    });
+  });
+
+  /* ---- Keyboard navigation ---- */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault();
+      window.__goToSlide(window.__currentSlide + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      window.__goToSlide(window.__currentSlide - 1);
+    }
+  });
+
+  /* ---- ?preview=N URL param ---- */
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var preview = params.get('preview');
+    if (preview !== null) {
+      var navBar = document.getElementById('nav-bar');
+      if (navBar) navBar.style.display = 'none';
+      var n = parseInt(preview, 10);
+      if (!isNaN(n)) window.__goToSlide(n);
+    }
+  }());
+
+})();
+</script>
+
+</body>
+</html>

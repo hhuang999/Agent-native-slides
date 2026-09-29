@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G01 light-journal-academic — Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Code+Pro:wght@400;500&family=Noto+Serif+SC:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ─── Reset ─────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ─── Tokens ─────────────────────────────── */
+  :root {
+    --color-bg:      oklch(0.97 0.01 88);
+    --color-surface: oklch(0.99 0.005 90);
+    --color-border:  oklch(0.82 0.01 80);
+    --color-muted:   oklch(0.55 0.02 80);
+    --color-body:    oklch(0.22 0.01 255);
+    --color-heading: oklch(0.10 0.01 255);
+    --color-accent:  oklch(0.48 0.16 255);
+    --font-heading:  'EB Garamond', 'Noto Serif SC', Georgia, serif;
+    --font-body:     'EB Garamond', 'Noto Serif SC', Georgia, serif;
+    --font-mono:     'Source Code Pro', 'Courier New', monospace;
+    --scale: 1;
+  }
+
+  /* ─── Stage ─────────────────────────────── */
+  body {
+    background: oklch(0.88 0.01 80);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 16px;
+    padding: 24px;
+    font-family: var(--font-body);
+  }
+
+  .slide-stage {
+    width: 1920px;
+    height: 1080px;
+    transform-origin: top left;
+    transform: scale(var(--scale));
+    position: relative;
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .slide.is-active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* ─── Paper grain layer ───────────────────── */
+  .grain-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+    animation: grain-breathe 6s ease-in-out infinite;
+    z-index: 10;
+  }
+
+  @keyframes grain-breathe {
+    0%, 100% { opacity: 0.4; }
+    50%       { opacity: 0.7; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grain-layer { animation: none !important; opacity: 0.5; }
+    .slide-in, .fade-up { animation: none !important; opacity: 1 !important; transform: none !important; }
+  }
+
+  /* ─── Slide 1: Cover ─────────────────────── */
+  .s1-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 160px 120px 160px;
+  }
+
+  .s1-rule-top {
+    position: absolute;
+    top: 80px;
+    left: 160px;
+    right: 160px;
+    height: 1px;
+    background: var(--color-border);
+    opacity: 0;
+    animation: fade-up 0.5s 0.1s ease-out forwards;
+  }
+
+  .s1-rule-bottom {
+    position: absolute;
+    bottom: 80px;
+    left: 160px;
+    right: 160px;
+    height: 1px;
+    background: var(--color-border);
+    opacity: 0;
+    animation: fade-up 0.5s 0.2s ease-out forwards;
+  }
+
+  .s1-label {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 48px;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fade-up 0.5s 0.3s ease-out forwards;
+  }
+
+  .s1-title {
+    font-family: var(--font-heading);
+    font-size: 128px;
+    font-weight: 500;
+    line-height: 1.05;
+    color: var(--color-heading);
+    letter-spacing: -0.02em;
+    max-width: 1100px;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: fade-up 0.6s 0.45s ease-out forwards;
+  }
+
+  .s1-divider {
+    width: 64px;
+    height: 1px;
+    background: var(--color-border);
+    margin: 56px 0;
+    opacity: 0;
+    animation: fade-up 0.4s 0.7s ease-out forwards;
+  }
+
+  .s1-meta {
+    display: flex;
+    gap: 64px;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fade-up 0.5s 0.85s ease-out forwards;
+  }
+
+  .s1-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .s1-meta-key {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .s1-meta-val {
+    font-family: var(--font-body);
+    font-size: 22px;
+    color: var(--color-body);
+  }
+
+  .s1-folio {
+    position: absolute;
+    bottom: 96px;
+    right: 160px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-muted);
+    letter-spacing: 0.08em;
+    opacity: 0;
+    animation: fade-up 0.4s 1s ease-out forwards;
+  }
+
+  /* ─── Slide 2: Claim-Evidence ───────────────── */
+  .s2-inner {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    padding: 96px 160px;
+    gap: 0;
+  }
+
+  .s2-left {
+    padding-right: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .s2-divider-v {
+    background: var(--color-border);
+    opacity: 0;
+    animation: fade-up 0.4s 0.2s ease-out forwards;
+  }
+
+  .s2-right {
+    padding-left: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .s2-label {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fade-up 0.4s 0.3s ease-out forwards;
+  }
+
+  .s2-assertion {
+    font-family: var(--font-heading);
+    font-size: 72px;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--color-heading);
+    letter-spacing: -0.015em;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fade-up 0.6s 0.45s ease-out forwards;
+  }
+
+  .s2-support {
+    margin-top: 48px;
+    font-family: var(--font-body);
+    font-size: 22px;
+    line-height: 1.6;
+    color: var(--color-body);
+    max-width: 520px;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fade-up 0.5s 0.65s ease-out forwards;
+  }
+
+  .s2-support em {
+    font-style: italic;
+    color: var(--color-accent);
+  }
+
+  /* Data table */
+  .s2-table {
+    border-collapse: collapse;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fade-up 0.6s 0.5s ease-out forwards;
+  }
+
+  .s2-table th {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    padding: 0 0 16px 0;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    font-weight: 400;
+  }
+
+  .s2-table td {
+    font-family: var(--font-body);
+    font-size: 22px;
+    color: var(--color-body);
+    padding: 20px 0;
+    border-bottom: 1px solid oklch(0.90 0.008 85);
+    vertical-align: top;
+  }
+
+  .s2-table td:last-child {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    color: var(--color-heading);
+    font-weight: 500;
+    text-align: right;
+  }
+
+  .s2-table td.highlight {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .s2-footnote {
+    margin-top: 36px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-muted);
+    line-height: 1.5;
+    opacity: 0;
+    animation: fade-up 0.4s 0.9s ease-out forwards;
+  }
+
+  /* ─── Header line on slide 2 ─────────────── */
+  .s2-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px 160px;
+    border-bottom: 1px solid var(--color-border);
+    opacity: 0;
+    animation: fade-up 0.4s 0.1s ease-out forwards;
+  }
+
+  .s2-header-title {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .s2-header-num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+
+  /* ─── Shared animation ────────────────────── */
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Nav ────────────────────────────────── */
+  .stage-wrapper {
+    position: relative;
+  }
+
+  .slide-nav {
+    display: flex;
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  .slide-nav button {
+    width: 36px;
+    height: 36px;
+    border: 1px solid oklch(0.70 0.01 80);
+    background: oklch(0.94 0.01 85);
+    color: oklch(0.35 0.02 80);
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    border-radius: 2px;
+  }
+
+  .slide-nav button.active {
+    background: oklch(0.22 0.01 255);
+    color: oklch(0.97 0.01 88);
+    border-color: oklch(0.22 0.01 255);
+  }
+
+  .slide-nav button:hover:not(.active) {
+    background: oklch(0.90 0.01 85);
+  }
+
+  /* ─── Preview mode ─────────────────────────── */
+  html.preview-mode .slide-nav { display: none; }
+
+  /* ─── Print / PDF ──────────────────────────── */
+  @media print {
+    @page { size: 1920px 1080px; margin: 0; }
+    html, body { margin: 0; width: 1920px; height: auto !important; overflow: visible !important; background: var(--color-bg); display: block !important; padding: 0 !important; gap: 0 !important; min-height: 0 !important; }
+    .stage-wrapper, .slide-stage { position: static !important; transform: none !important; width: 1920px !important; height: auto !important; overflow: visible !important; }
+    .slide { position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important;
+             visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+             break-after: page; page-break-after: always; overflow: hidden; }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .slide-nav { display: none !important; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage-wrapper">
+  <div class="slide-stage" id="stage" aria-live="polite">
+
+    <!-- ── Slide 1: Cover ───────────────────── -->
+    <div class="slide is-active" id="slide-0" aria-hidden="false">
+      <div class="grain-layer"></div>
+      <div class="s1-rule-top"></div>
+      <div class="s1-rule-bottom"></div>
+      <div class="s1-inner">
+        <div class="s1-label">Nature · Vol. 621 · 2024</div>
+        <h1 class="s1-title">Scaling Laws Drive<br>Compute-Optimal<br>Training</h1>
+        <div class="s1-divider"></div>
+        <div class="s1-meta">
+          <div class="s1-meta-item">
+            <span class="s1-meta-key">Authors</span>
+            <span class="s1-meta-val">Kaplan, McCandlish et al.</span>
+          </div>
+          <div class="s1-meta-item">
+            <span class="s1-meta-key">Venue</span>
+            <span class="s1-meta-val">ICLR 2024</span>
+          </div>
+          <div class="s1-meta-item">
+            <span class="s1-meta-key">Session</span>
+            <span class="s1-meta-val">Oral Presentation</span>
+          </div>
+        </div>
+      </div>
+      <div class="s1-folio">01 / 02</div>
+    </div>
+
+    <!-- ── Slide 2: Claim-Evidence ───────────── -->
+    <div class="slide" id="slide-1" aria-hidden="true">
+      <div class="grain-layer"></div>
+      <div class="s2-header">
+        <span class="s2-header-title">Scaling Laws — Key Finding</span>
+        <span class="s2-header-num">02 / 02</span>
+      </div>
+      <div class="s2-inner" style="padding-top: 130px;">
+        <div class="s2-left">
+          <div class="s2-label">Core Finding</div>
+          <h2 class="s2-assertion">Equal compute split between data and model is suboptimal</h2>
+          <p class="s2-support">
+            Chinchilla shows the optimal ratio is <em>20 tokens per parameter</em> — a 4× data increase over GPT-3 training conditions at matched compute.
+          </p>
+        </div>
+        <div class="s2-divider-v"></div>
+        <div class="s2-right">
+          <table class="s2-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Parameters</th>
+                <th>Training Tokens</th>
+                <th style="text-align:right">Loss</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>GPT-3</td>
+                <td>175B</td>
+                <td>300B</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td class="highlight">Chinchilla</td>
+                <td class="highlight">70B</td>
+                <td class="highlight">1.4T</td>
+                <td class="highlight">↓ 7.3%</td>
+              </tr>
+              <tr>
+                <td>Gopher</td>
+                <td>280B</td>
+                <td>300B</td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="s2-footnote">
+            Source: Hoffmann et al., 2022. Loss measured on Pile validation set.<br>
+            Compute budget held constant across comparisons (≈ 3.6 × 10²³ FLOPs).
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /stage -->
+</div>
+
+<nav class="slide-nav" aria-label="Slides">
+  <button class="active" data-idx="0" aria-label="Slide 1">1</button>
+  <button data-idx="1" aria-label="Slide 2">2</button>
+</nav>
+
+<script>
+  // ── Scale ──────────────────────────────────────
+  const stage = document.getElementById('stage');
+  function setScale() {
+    const s = Math.min(
+      (window.innerWidth  - 48) / 1920,
+      (window.innerHeight - 100) / 1080
+    );
+    document.documentElement.style.setProperty('--scale', s);
+    stage.parentElement.style.width  = Math.round(1920 * s) + 'px';
+    stage.parentElement.style.height = Math.round(1080 * s) + 'px';
+    stage.parentElement.style.overflow = 'hidden';
+  }
+  window.addEventListener('resize', setScale);
+
+  // ── Runtime API ────────────────────────────────
+  const slideEls = Array.from(document.querySelectorAll('.slide'));
+  slideEls.forEach((s, i) => { s.dataset.slide = i + 1; });
+
+  window.__deckPlan = {
+    title: 'G01 light-journal-academic',
+    total_slides: slideEls.length,
+    slides: [
+      { index: 1, type: 'title',    assertion: 'Scaling Laws Drive Compute-Optimal Training' },
+      { index: 2, type: 'evidence', assertion: 'Equal compute split between data and model is suboptimal' }
+    ]
+  };
+  window.__currentSlide = 1;
+
+  const btns = Array.from(document.querySelectorAll('.slide-nav button'));
+
+  function goToSlide(n) {
+    const total = slideEls.length;
+    n = Math.min(Math.max(1, Math.round(+n) || 1), total);
+    slideEls.forEach((s, i) => {
+      const active = i === n - 1;
+      s.classList.toggle('is-active', active);
+      s.setAttribute('aria-hidden', active ? 'false' : 'true');
+    });
+    btns.forEach((b, i) => b.classList.toggle('active', i === n - 1));
+    window.__currentSlide = n;
+    // Re-trigger entrance animations on the newly active slide
+    slideEls[n - 1].querySelectorAll('[class*="s2-"], [class*="s1-"]').forEach(el => {
+      el.style.animation = 'none';
+      void el.offsetHeight;
+      el.style.animation = '';
+    });
+  }
+  window.__goToSlide = goToSlide;
+
+  btns.forEach((btn, i) => btn.addEventListener('click', () => goToSlide(i + 1)));
+
+  document.addEventListener('keydown', e => {
+    const k = e.key;
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); goToSlide(window.__currentSlide + 1);
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); goToSlide(window.__currentSlide - 1);
+    } else if (k === 'Home') { goToSlide(1); }
+    else if (k === 'End')   { goToSlide(slideEls.length); }
+  });
+
+  // ── ?print=1 / ?preview=N ─────────────────────
+  const q = new URLSearchParams(location.search);
+  if (q.has('print')) document.documentElement.classList.add('print-mode');
+  if (q.has('preview')) document.documentElement.classList.add('preview-mode');
+  goToSlide(q.has('preview') ? parseInt(q.get('preview'), 10) || 1 : 1);
+
+  // ── Init after fonts ──────────────────────────
+  document.fonts.ready.then(() => { setScale(); });
+</script>
+</body>
+</html>

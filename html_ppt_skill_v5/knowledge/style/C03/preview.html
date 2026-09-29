@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>C03 — light-editorial-magazine · Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;700&display=swap');
+
+:root {
+  --color-bg:             oklch(0.98 0.006 80);
+  --color-surface:        oklch(0.94 0.008 78);
+  --color-raised-surface: oklch(0.91 0.008 76);
+  --color-border:         oklch(0.72 0.008 80);
+  --color-border-light:   oklch(0.84 0.006 78);
+  --color-folio:          oklch(0.72 0.008 80);
+  --color-heading:        oklch(0.12 0.010 60);
+  --color-body:           oklch(0.22 0.010 62);
+  --color-muted:          oklch(0.46 0.010 68);
+  --color-dim:            oklch(0.64 0.008 72);
+  --color-accent:         oklch(0.38 0.14 155);
+  --color-accent-dim:     oklch(0.52 0.12 155);
+  --color-accent-light:   oklch(0.62 0.14 155);
+  --color-accent-bg:      oklch(0.94 0.04 155);
+  --color-positive:       oklch(0.42 0.18 145);
+  --color-negative:       oklch(0.48 0.22 28);
+  --type-display: 'DM Serif Display', serif;
+  --type-body:    'DM Sans', sans-serif;
+  --type-label:   'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--type-body); font-size: 18px;
+  color: var(--color-body); line-height: 1.75;
+}
+
+.deck-stage { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+
+#magazine-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: var(--color-bg);
+}
+
+/* ── Slides ──────────────────────────────────────────────── */
+.slide {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; padding: 52px 120px 56px;
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+
+/* ── Folio bar ───────────────────────────────────────────── */
+.folio-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-folio);
+  margin-bottom: 28px;
+}
+.folio-text {
+  font-family: var(--type-label); font-size: 10px; font-weight: 500;
+  color: var(--color-dim); text-transform: uppercase; letter-spacing: 0.18em;
+}
+
+/* ── Accent stroke ───────────────────────────────────────── */
+.accent-stroke {
+  width: 56px; height: 2px; background: var(--color-accent);
+  margin-bottom: 20px;
+}
+.hairline {
+  width: 100%; height: 1px;
+  background: var(--color-border-light);
+}
+
+/* ── Slide 1: Title ──────────────────────────────────────── */
+.s1-headline {
+  font-family: var(--type-display); font-size: 88px;
+  color: var(--color-heading); line-height: 0.96; letter-spacing: -0.01em;
+  max-width: 1440px; margin-bottom: 26px;
+}
+.s1-sub {
+  font-family: var(--type-body); font-size: 20px; font-weight: 400;
+  color: var(--color-muted); max-width: 1000px; line-height: 1.70;
+  margin-bottom: 44px;
+}
+.s1-tags {
+  display: flex; gap: 36px; align-items: baseline;
+}
+.mag-tag {
+  font-family: var(--type-label); font-size: 11px; font-weight: 500;
+  color: var(--color-muted); letter-spacing: 0.12em; text-transform: uppercase;
+}
+.s1-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--color-border-light);
+  padding-top: 14px;
+  display: flex; justify-content: space-between;
+}
+.s1-footer-text {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-dim); letter-spacing: 0.06em;
+}
+
+/* ── Slide 2: Stats ──────────────────────────────────────── */
+.s2-headline {
+  font-family: var(--type-display); font-size: 47px;
+  color: var(--color-heading); line-height: 1.08; letter-spacing: -0.01em;
+  max-width: 1540px; margin-bottom: 18px;
+}
+.s2-stat-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  padding: 22px 0; gap: 0;
+}
+.pull-stat {
+  display: flex; flex-direction: column;
+  padding-right: 52px; border-right: 1px solid var(--color-border);
+}
+.pull-stat:first-child { padding-left: 0; }
+.pull-stat:nth-child(2) { padding-left: 52px; }
+.pull-stat:last-child {
+  padding-left: 52px; padding-right: 0; border-right: none;
+}
+.pull-stat__cap {
+  font-family: var(--type-label); font-size: 10px; font-weight: 500;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.16em;
+  margin-bottom: 8px;
+}
+.pull-stat__value {
+  font-family: var(--type-display); font-size: 72px; font-style: italic;
+  color: var(--color-accent); line-height: 0.92; letter-spacing: -0.01em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.pull-stat__desc {
+  font-family: var(--type-label); font-size: 13px; font-weight: 300;
+  color: var(--color-muted); margin-top: 12px; line-height: 1.58;
+}
+.s2-body {
+  display: grid; grid-template-columns: 1fr 380px; gap: 56px;
+  flex: 1; margin-top: 6px; overflow: hidden;
+}
+.s2-text { font-size: 17px; line-height: 1.82; color: var(--color-body); }
+.s2-aside { display: flex; flex-direction: column; }
+.aside-item {
+  padding: 13px 0; border-bottom: 1px solid var(--color-border-light);
+}
+.aside-item:first-child { border-top: 1px solid var(--color-border-light); }
+.aside-item__title {
+  font-family: var(--type-label); font-size: 12px; font-weight: 500;
+  color: var(--color-heading); letter-spacing: 0.04em; margin-bottom: 4px;
+}
+.aside-item__body {
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-muted); line-height: 1.60;
+}
+
+/* ── Slide 3: Table ──────────────────────────────────────── */
+.s3-headline {
+  font-family: var(--type-display); font-size: 44px;
+  color: var(--color-heading); line-height: 1.08; letter-spacing: -0.01em;
+  max-width: 1500px; margin-bottom: 16px;
+}
+.s3-body { flex: 1; display: flex; flex-direction: column; margin-top: 10px; overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--type-label); font-size: 11px; font-weight: 500;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.10em;
+  text-align: left; padding: 10px 14px;
+  border-bottom: 2px solid var(--color-border);
+}
+.data-table th:not(:first-child) { text-align: right; }
+.data-table td {
+  font-family: var(--type-body); font-size: 16px; font-weight: 400;
+  color: var(--color-body); padding: 13px 14px;
+  border-bottom: 1px solid var(--color-border-light);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table td:not(:first-child) {
+  text-align: right;
+  font-family: var(--type-label); font-weight: 300; font-size: 15px;
+}
+.data-table tr.highlight td { background: var(--color-accent-bg); }
+.data-table tr.highlight td:first-child { font-weight: 500; color: var(--color-heading); }
+.win { color: var(--color-accent); font-weight: 500; }
+.good { color: var(--color-positive); }
+.footnote {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-dim); border-top: 1px solid var(--color-border-light);
+  padding-top: 10px; margin-top: auto; letter-spacing: 0.02em; line-height: 1.65;
+}
+
+/* ── Nav ─────────────────────────────────────────────────── */
+#nav { position: fixed; bottom: 16px; right: 20px; z-index: 100; display: flex; gap: 8px; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 3px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-body); font-family: var(--type-label); font-size: 13px;
+  font-weight: 400; cursor: pointer;
+}
+.nav-btn:hover { background: var(--color-raised-surface); }
+#slide-info {
+  position: fixed; bottom: 16px; left: 20px; z-index: 100;
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-muted);
+}
+html.preview-mode #nav, html.preview-mode #slide-info { display: none; }
+
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { margin: 0; width: 1920px; height: auto !important; overflow: visible !important; background: var(--color-bg); }
+  .deck-stage { position: static !important; transform: none !important; width: 1920px !important; height: auto !important; overflow: visible !important; }
+  .slide { position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important;
+           visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+           break-after: page; page-break-after: always; overflow: hidden; }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  #nav, #slide-info { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="deck-stage">
+  <div id="magazine-bg"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide is-active" data-slide="1">
+    <div class="folio-bar">
+      <div class="folio-text">Urban Infrastructure · Policy Analysis · Autumn 2026</div>
+      <div class="folio-text">Thornfield Policy Institute</div>
+    </div>
+    <div class="accent-stroke"></div>
+    <h1 class="s1-headline">Cities That Removed Urban Highways<br>Got Wealthier Land, Not Less Mobility.</h1>
+    <p class="s1-sub">Thornfield Policy Institute reviewed 22 highway removal and urban freeway conversion projects completed across North America and Europe between 2003 and 2024. In every case where removal was completed, land values within a 600-metre corridor increased faster than the surrounding metropolitan average — while mode-shift data showed transit, cycling, and walking absorbed displaced vehicle trips within 36 months.</p>
+    <div class="s1-tags">
+      <div class="mag-tag">22 projects reviewed</div>
+      <div class="mag-tag">North America + Europe</div>
+      <div class="mag-tag">2003–2024 cohort</div>
+      <div class="mag-tag">Peer-reviewed data</div>
+      <div class="mag-tag">Policy brief</div>
+    </div>
+    <div class="s1-footer">
+      <div class="s1-footer-text">Thornfield Policy Institute · Urban Futures Programme · Research brief not for citation without permission</div>
+      <div class="s1-footer-text">Autumn 2026 · Draft for review</div>
+    </div>
+  </div>
+
+  <!-- Slide 2: Stats -->
+  <div class="slide" data-slide="2">
+    <div class="folio-bar">
+      <div class="folio-text">02 / 04 — Quantitative Evidence</div>
+      <div class="folio-text">Thornfield Policy Institute</div>
+    </div>
+    <div class="accent-stroke"></div>
+    <h2 class="s2-headline">In 19 of 22 completed removals, corridor land values rose at 1.8× the metropolitan rate — and 94% of displaced vehicle trips were absorbed by other modes within three years.</h2>
+    <div class="hairline"></div>
+    <div class="s2-stat-row">
+      <div class="pull-stat">
+        <div class="pull-stat__cap">Land value uplift multiplier</div>
+        <div class="pull-stat__value">1.8×</div>
+        <div class="pull-stat__desc">Median corridor appreciation vs. city-wide average in the 36 months following removal completion, across 19 of 22 projects</div>
+      </div>
+      <div class="pull-stat">
+        <div class="pull-stat__cap">Vehicle trip absorption rate</div>
+        <div class="pull-stat__value">94%</div>
+        <div class="pull-stat__desc">Of displaced daily vehicle trips absorbed by transit, cycling, and walking within 36 months — without significant modal shift to parallel roads</div>
+      </div>
+      <div class="pull-stat">
+        <div class="pull-stat__cap">Median construction cost recovery</div>
+        <div class="pull-stat__value">6.4yr</div>
+        <div class="pull-stat__desc">Median years to full removal cost recovery via land value tax uplift alone, across projects where fiscal data was available (n=14)</div>
+      </div>
+    </div>
+    <div class="hairline" style="margin-bottom:16px"></div>
+    <div class="s2-body">
+      <p class="s2-text">The traffic evaporation effect — the empirical finding that removed vehicle capacity does not simply reroute to adjacent roads — was first documented in 1990s San Francisco but remained contested in policy circles until this cohort produced consistent cross-national evidence. Of the 22 projects, 19 recorded corridor land value appreciation above the metropolitan mean; the three exceptions all involved incomplete removal (retained ramps or at-grade intersections that continued to fragment the corridor). The median six-year cost recovery through property tax uplift alone — before accounting for reduced maintenance, improved air quality, or induced development — reframes removal as fiscal policy rather than transport policy.</p>
+      <div class="s2-aside">
+        <div class="aside-item">
+          <div class="aside-item__title">Seoul, Cheonggyecheon 2005</div>
+          <div class="aside-item__body">Elevated expressway removal restored a covered stream. Land values within 600m rose 31% above Seoul average in 5 years; 168,000 daily vehicle trips evaporated without parallel road saturation.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">San Francisco, Embarcadero 1991</div>
+          <div class="aside-item__body">Freeway removal following earthquake damage showed 35% property value uplift in the corridor over 10 years. Trip evaporation measured at 91%.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Milwaukee, Park East 2002</div>
+          <div class="aside-item__body">Spur freeway removal opened 26 acres of city land. $450M in private development followed within 8 years, against a $25M removal cost. Fiscal ROI: 18:1.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Bordeaux, RN230 2021</div>
+          <div class="aside-item__body">Most recent completed project in cohort. 36-month data shows 87% of trips absorbed; land values in Bastide district rising at 2.2× Bordeaux average.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Comparison table -->
+  <div class="slide" data-slide="3">
+    <div class="folio-bar">
+      <div class="folio-text">03 / 04 — Project Comparison</div>
+      <div class="folio-text">Thornfield Policy Institute</div>
+    </div>
+    <div class="accent-stroke"></div>
+    <h2 class="s3-headline">Complete removals consistently outperform partial conversions on land value uplift, trip absorption, and fiscal recovery — the corridor continuity effect is decisive.</h2>
+    <div class="s3-body">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Project · city · year</th>
+            <th>Type</th>
+            <th>Removal cost</th>
+            <th>Land uplift (vs. city avg)</th>
+            <th>Trip absorption</th>
+            <th>Fiscal recovery</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Cheonggyecheon · Seoul · 2005</td><td>Complete</td><td>$385M</td><td>+31%</td><td>91%</td><td>5.2 yr</td></tr>
+          <tr><td>Embarcadero · San Francisco · 1991</td><td>Complete</td><td>$87M</td><td>+35%</td><td>91%</td><td>4.8 yr</td></tr>
+          <tr><td>Park East Spur · Milwaukee · 2002</td><td>Complete</td><td>$25M</td><td>+48%</td><td>88%</td><td>2.1 yr</td></tr>
+          <tr><td>RN230 · Bordeaux · 2021</td><td>Complete</td><td>€62M</td><td>+28%</td><td>87%</td><td>7.4 yr (proj.)</td></tr>
+          <tr><td>Partial conversion cohort avg. (n=3)</td><td>Partial</td><td>—</td><td>+8%</td><td>61%</td><td>&gt;20 yr</td></tr>
+          <tr class="highlight"><td>Complete removal cohort avg. (n=19)</td><td class="win">Complete</td><td>—</td><td class="win">+29%</td><td class="win">94%</td><td class="win">6.4 yr</td></tr>
+        </tbody>
+      </table>
+      <div class="footnote">Land uplift: percentage point difference between corridor property value appreciation and city-wide average in 36 months post-completion. Trip absorption: percentage of pre-removal daily vehicle trips not recorded on adjacent roads within 36 months. Fiscal recovery: years to full cost recovery through incremental property tax revenue in the removal corridor, where fiscal data available. Partial conversion: projects retaining ramps, at-grade intersections, or partial elevated structures. Sources: Thornfield Policy Institute primary dataset; supplemented by Seoul Metropolitan Government (2005–2010), SFMTA post-completion reports, Urban Land Institute Milwaukee case study (2010), Bordeaux Métropole interim assessment (2023). All costs in local currency at year of completion; no PPP adjustment applied.</div>
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn" id="prev">◀</button>
+  <button class="nav-btn" id="next">▶</button>
+</div>
+<div id="slide-info">C03 light-editorial-magazine · <span id="cur">1</span> / 3</div>
+
+<script>
+const slideEls = Array.from(document.querySelectorAll('.slide'))
+const total = slideEls.length
+
+function goTo(n) {
+  n = Math.min(Math.max(1, Math.round(+n) || 1), total)
+  slideEls.forEach((s, i) => s.classList.toggle('is-active', i === n - 1))
+  document.getElementById('cur').textContent = n
+  window.__currentSlide = n
+  return n
+}
+
+document.getElementById('next').onclick = () => goTo(window.__currentSlide + 1)
+document.getElementById('prev').onclick = () => goTo(window.__currentSlide - 1)
+document.addEventListener('keydown', e => {
+  const k = e.key
+  if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') { e.preventDefault(); goTo(window.__currentSlide + 1) }
+  else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); goTo(window.__currentSlide - 1) }
+  else if (k === 'Home') goTo(1)
+  else if (k === 'End') goTo(total)
+})
+
+window.__currentSlide = 1
+window.__goToSlide = goTo
+window.__deckPlan = {
+  title: 'Cities That Removed Urban Highways Got Wealthier Land, Not Less Mobility.',
+  style_id: 'C03',
+  total_slides: total,
+  slides: [
+    { index: 1, assertion: 'Cities That Removed Urban Highways Got Wealthier Land, Not Less Mobility.', type: 'title',
+      speaker_notes: { purpose: 'Frame the counterintuitive evidence claim before the data — highway removal is a fiscal and land policy, not a mobility sacrifice.', key_points: ['22 projects, North America and Europe, 2003–2024', 'Land values in corridor rose above city average in 19 of 22 cases', 'Mode shift absorbed displaced trips without parallel road saturation', 'Policy brief framing: this is infrastructure investment with measurable return'], timing: '~1 min', tone: 'Measured, authoritative, editorial — the voice of a serious policy institute' } },
+    { index: 2, assertion: 'In 19 of 22 completed removals, corridor land values rose at 1.8× the metropolitan rate — and 94% of displaced vehicle trips were absorbed by other modes within three years.', type: 'evidence',
+      speaker_notes: { purpose: 'Stack the quantitative case: land uplift, trip absorption, and fiscal recovery all point in the same direction.', key_points: ['1.8× land value uplift vs. city average, 36-month window', '94% trip absorption rate — traffic evaporation is robust and cross-national', '6.4-year median fiscal cost recovery through property tax alone', 'Seoul, SF Embarcadero, Milwaukee Park East as established precedents; Bordeaux as most recent'], transition: 'How do complete removals compare to partial conversions?', timing: '~3 min' } },
+    { index: 3, assertion: 'Complete removals consistently outperform partial conversions on land value uplift, trip absorption, and fiscal recovery — the corridor continuity effect is decisive.', type: 'comparison',
+      speaker_notes: { purpose: 'Quantify the implementation gap: corridor continuity is the single variable that separates the 29% uplift cases from the 8% cases.', key_points: ['+29% land uplift for complete removal vs. +8% for partial', '94% vs. 61% trip absorption', '6.4-year vs. >20-year fiscal recovery', 'Policy implication: half-measures do not capture the corridor continuity effect — completion is the leverage point'], timing: '~2 min' } }
+  ]
+}
+
+const q = new URLSearchParams(location.search)
+if (q.has('print')) document.documentElement.classList.add('print-mode')
+if (q.has('preview')) document.documentElement.classList.add('preview-mode')
+goTo(q.has('preview') ? parseInt(q.get('preview'), 10) || 1 : 1)
+</script>
+</body>
+</html>

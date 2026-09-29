@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H01 — Primer Clean | Retail Digital Integration Benchmark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── DESIGN TOKENS ─────────────────────────────────────────────────── */
+:root {
+  --c-bg:            oklch(0.99 0.000 0);
+  --c-surface:       oklch(0.965 0.004 80);
+  --c-surface-alt:   oklch(0.945 0.004 80);
+  --c-border:        oklch(0.88 0.004 80);
+  --c-text-primary:  oklch(0.18 0.004 252);
+  --c-text-body:     oklch(0.30 0.004 252);
+  --c-text-muted:    oklch(0.52 0.006 252);
+  --c-accent:        oklch(0.50 0.14 252);
+  --c-accent-light:  oklch(0.92 0.04 252);
+  --c-highlight-row: oklch(0.92 0.04 252);
+  --c-stat-border:   oklch(0.50 0.14 252);
+
+  --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --ts-display:  80px;
+  --ts-h1:       48px;
+  --ts-h2:       28px;
+  --ts-stat:     88px;
+  --ts-body:     19px;
+  --ts-caption:  14px;
+
+  --lh-tight: 1.15;
+  --lh-body:  1.65;
+  --lh-loose: 1.8;
+}
+
+/* ─── RESET / BASE ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: oklch(0.92 0.003 240);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-primary);
+  font-variant-numeric: lining-nums tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── STAGE WRAPPER ─────────────────────────────────────────────────── */
+#stage-wrapper {
+  display: flex; align-items: center; justify-content: center;
+  width: 100vw; height: 100vh;
+}
+
+/* ─── DECK STAGE ────────────────────────────────────────────────────── */
+#deck-stage {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  transform-origin: center center;
+  background: var(--c-bg);
+  overflow: hidden;
+}
+
+/* ─── SLIDE BASE ────────────────────────────────────────────────────── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  width: 1920px; height: 1080px;
+  position: absolute; inset: 0;
+  
+  background: var(--c-bg);
+  z-index: 1;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+/* ─── COMMON SLIDE ZONES ────────────────────────────────────────────── */
+.slide-header {
+  padding: 72px 120px 0;
+  flex-shrink: 0;
+}
+.slide-content {
+  padding: 0 120px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── FOLIO ─────────────────────────────────────────────────────────── */
+.folio {
+  position: absolute;
+  bottom: 36px; right: 120px;
+  font-size: 13px;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--c-text-muted);
+  letter-spacing: 0.04em;
+  z-index: 2;
+}
+
+/* ─── SECTION MARKER ────────────────────────────────────────────────── */
+.section-marker {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 28px;
+}
+.section-rule {
+  width: 48px; height: 2px;
+  background: var(--c-accent);
+  flex-shrink: 0;
+}
+.section-label {
+  font-size: var(--ts-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--c-text-muted);
+}
+
+/* ─── HEADLINE ──────────────────────────────────────────────────────── */
+.headline {
+  font-size: var(--ts-h1);
+  font-weight: 600;
+  color: var(--c-text-primary);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.01em;
+  max-width: 1380px;
+}
+.display-headline {
+  font-size: var(--ts-display);
+  font-weight: 700;
+  color: var(--c-text-primary);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+  max-width: 1440px;
+}
+
+/* ─── SLIDE 1 — TITLE ───────────────────────────────────────────────── */
+.s1-meta {
+  font-size: var(--ts-caption);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--c-text-muted);
+  margin-bottom: 40px;
+}
+.s1-abstract {
+  margin-top: 36px;
+  font-size: 22px;
+  color: var(--c-text-body);
+  line-height: var(--lh-body);
+  max-width: 1100px;
+}
+.detail-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: auto;
+  padding-top: 48px;
+  border-top: 1px solid var(--c-border);
+}
+.detail-item {
+  padding: 28px 36px 28px 0;
+  border-right: 1px solid var(--c-border);
+}
+.detail-item:last-child { border-right: none; padding-right: 0; }
+.detail-label {
+  font-size: var(--ts-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--c-text-muted);
+  margin-bottom: 10px;
+}
+.detail-value {
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--c-text-primary);
+  line-height: 1.4;
+}
+
+/* ─── SLIDE 2 — EVIDENCE ────────────────────────────────────────────── */
+.evidence-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 60px;
+  flex: 1;
+  margin-top: 40px;
+}
+.evidence-main { display: flex; flex-direction: column; gap: 40px; }
+.stat-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+.stat-col {
+  padding: 28px 40px 28px 0;
+  border-top: 1px solid var(--c-stat-border);
+  border-right: 1px solid var(--c-border);
+}
+.stat-col:last-child { border-right: none; padding-right: 0; }
+.stat-value {
+  font-size: var(--ts-stat);
+  font-weight: 700;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--c-text-primary);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+.stat-unit {
+  font-size: 36px;
+  font-weight: 400;
+  color: var(--c-accent);
+  vertical-align: super;
+  line-height: 1;
+}
+.stat-label {
+  font-size: var(--ts-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--c-text-muted);
+  line-height: 1.6;
+}
+.evidence-para {
+  font-size: var(--ts-body);
+  color: var(--c-text-body);
+  line-height: var(--lh-body);
+  max-width: 860px;
+}
+.aside-panel {
+  background: var(--c-surface);
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-self: start;
+  margin-top: 0;
+}
+.aside-stat-val {
+  font-size: 64px;
+  font-weight: 700;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--c-accent);
+  line-height: 1;
+}
+.aside-stat-unit {
+  font-size: 32px;
+  font-weight: 400;
+  color: var(--c-accent);
+}
+.aside-label {
+  font-size: var(--ts-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--c-text-muted);
+  margin-bottom: 4px;
+}
+.aside-text {
+  font-size: 15px;
+  color: var(--c-text-muted);
+  line-height: var(--lh-loose);
+}
+
+/* ─── SLIDE 3 — TABLE ───────────────────────────────────────────────── */
+.table-wrap {
+  margin-top: 36px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 17px;
+}
+.data-table thead th {
+  text-align: left;
+  font-size: var(--ts-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--c-text-muted);
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--c-border);
+  white-space: nowrap;
+}
+.data-table thead th:first-child { padding-left: 0; }
+.data-table tbody td {
+  padding: 18px 20px;
+  color: var(--c-text-body);
+  border-bottom: 1px solid var(--c-border);
+  font-variant-numeric: lining-nums tabular-nums;
+  vertical-align: middle;
+}
+.data-table tbody td:first-child { padding-left: 0; font-weight: 500; color: var(--c-text-primary); }
+.data-table tbody tr.row-highlight td {
+  background: var(--c-highlight-row);
+  font-weight: 600;
+  color: var(--c-text-primary);
+}
+.data-table tbody tr.row-highlight td:first-child { color: var(--c-accent); }
+.data-table td.positive { color: var(--c-accent); font-weight: 600; }
+.data-table td.num { text-align: right; }
+.table-footnote {
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--c-text-muted);
+  line-height: 1.7;
+}
+
+/* ─── NAV BAR ───────────────────────────────────────────────────────── */
+#nav-bar {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: oklch(0.18 0.004 252 / 0.9);
+  backdrop-filter: blur(8px);
+  padding: 10px 20px;
+  border-radius: 999px;
+  z-index: 1000;
+  user-select: none;
+}
+.nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: oklch(0.85 0.003 252);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 18px;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s;
+  display: flex; align-items: center;
+}
+.nav-btn:hover { color: #fff; background: oklch(0.35 0.01 252 / 0.5); }
+.nav-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+.nav-dots { display: flex; gap: 8px; align-items: center; }
+.nav-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: oklch(0.5 0.004 252);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  border: none;
+}
+.nav-dot.active {
+  background: #fff;
+  transform: scale(1.25);
+}
+.nav-dot:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
+
+/* ─── REDUCED MOTION (no animations in this style anyway) ───────────── */
+@media (prefers-reduced-motion: reduce) {
+  .nav-dot, .nav-btn { transition: none; }
+}
+
+/* ─── PRINT ─────────────────────────────────────────────────────────── */
+
+
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+<div id="stage-wrapper">
+  <div id="deck-stage">
+
+    <!-- ── SLIDE 1 — TITLE ──────────────────────────────────────────── -->
+    <div class="slide is-active" data-slide="1" id="slide-1">
+      <div class="slide-header">
+        <div class="s1-meta">Meridian Advisory Group &nbsp;·&nbsp; Global Retail Benchmark Series 2024</div>
+        <div class="display-headline" style="font-size:58px;line-height:1.1;max-width:1440px;">
+          Retailers Who Integrated Digital and Physical Inventory Systems Before 2022 Achieved 23 Percent Higher Operating Margins Than Late Adopters During the 2023–2024 Demand Normalization Period.
+        </div>
+        <div class="s1-abstract">
+          This benchmark study tracks 214 retail chains across North America and Europe, stratified by digital integration maturity. Early integrators consistently demonstrated superior margin resilience through the post-COVID demand normalization, with advantages compounding rather than converging across the two-year study window.
+        </div>
+      </div>
+      <div class="slide-content" style="justify-content:flex-end;padding-bottom:80px;">
+        <div class="detail-row">
+          <div class="detail-item">
+            <div class="detail-label">Study Cohort</div>
+            <div class="detail-value">214 Retail Chains</div>
+          </div>
+          <div class="detail-item" style="padding-left:36px;">
+            <div class="detail-label">Geographies</div>
+            <div class="detail-value">North America &amp; Europe</div>
+          </div>
+          <div class="detail-item" style="padding-left:36px;">
+            <div class="detail-label">Study Window</div>
+            <div class="detail-value">2021 – 2024 (4 years)</div>
+          </div>
+          <div class="detail-item" style="padding-left:36px;">
+            <div class="detail-label">Maturity Tiers</div>
+            <div class="detail-value">Early / Mid / Late Adopter</div>
+          </div>
+        </div>
+      </div>
+      <div class="folio">01 / 03</div>
+    </div>
+
+    <!-- ── SLIDE 2 — EVIDENCE ───────────────────────────────────────── -->
+    <div class="slide" data-slide="2" id="slide-2">
+      <div class="slide-header">
+        <div class="section-marker">
+          <div class="section-rule"></div>
+          <div class="section-label">Key Findings — Inventory Visibility Impact</div>
+        </div>
+        <div class="headline">
+          Real-Time Inventory Visibility Across All Channels Reduces Stockout Events by 41 Percent and Cuts Clearance Markdown Spend by 18 Percent, Delivering a Median 14-Month Payback on Integration Investment.
+        </div>
+      </div>
+      <div class="slide-content" style="padding-top:40px;">
+        <div class="evidence-layout">
+          <div class="evidence-main">
+            <div class="stat-cols">
+              <div class="stat-col">
+                <div class="stat-value">41<span class="stat-unit">%</span></div>
+                <div class="stat-label">Reduction in stockout<br>events across all channels</div>
+              </div>
+              <div class="stat-col" style="padding-left:40px;">
+                <div class="stat-value">18<span class="stat-unit">%</span></div>
+                <div class="stat-label">Decrease in clearance<br>markdown spend</div>
+              </div>
+              <div class="stat-col" style="padding-left:40px;">
+                <div class="stat-value">14<span class="stat-unit">mo</span></div>
+                <div class="stat-label">Median payback period<br>on integration investment</div>
+              </div>
+            </div>
+            <div class="evidence-para">
+              Retailers achieving full omnichannel inventory visibility — defined as sub-15-minute refresh across all store, warehouse, and transit nodes — reported stockout rates of 2.3 percent versus 3.9 percent for late adopters. The 18 percent markdown reduction reflects fewer clearance cycles triggered by phantom inventory discrepancies. Capital recovery timelines improved sharply in year two as operational efficiency gains began to compound against the initial technology spend.
+            </div>
+          </div>
+          <div class="aside-panel">
+            <div class="aside-label">Supplementary Finding</div>
+            <div class="aside-stat-val">3.2<span class="aside-stat-unit">×</span></div>
+            <div class="aside-text">
+              Early integrators reported 3.2 times higher same-day fulfillment capacity versus late adopters, enabling direct capture of same-day delivery demand without third-party logistics premiums.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="folio">02 / 03</div>
+    </div>
+
+    <!-- ── SLIDE 3 — COMPARISON TABLE ──────────────────────────────── -->
+    <div class="slide" data-slide="3" id="slide-3">
+      <div class="slide-header">
+        <div class="section-marker">
+          <div class="section-rule"></div>
+          <div class="section-label">Operational KPI Comparison — Early vs. Late Adopters</div>
+        </div>
+        <div class="headline" style="font-size:38px;">
+          Early Integrators Outperform Late Adopters on Every Measured Operational KPI — Including Fulfillment Cost, Return Rate, and Customer Lifetime Value — With the Gap Widening Each Year Since 2021.
+        </div>
+      </div>
+      <div class="slide-content" style="padding-top:32px;">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:28%;">KPI</th>
+                <th class="num" style="width:16%;">Early Adopters</th>
+                <th class="num" style="width:16%;">Late Adopters</th>
+                <th class="num" style="width:14%;">Gap (pp / %)</th>
+                <th class="num" style="width:13%;">2021 Gap</th>
+                <th style="width:13%;">Trend</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Operating Margin</td>
+                <td class="num">18.4%</td>
+                <td class="num">15.0%</td>
+                <td class="num positive">+3.4 pp</td>
+                <td class="num">+1.5 pp</td>
+                <td>Widening</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>Order Fulfillment Cost (per unit)</td>
+                <td class="num">$4.12</td>
+                <td class="num">$6.89</td>
+                <td class="num positive">−40%</td>
+                <td class="num">−18%</td>
+                <td>Widening</td>
+              </tr>
+              <tr>
+                <td>Customer Return Rate</td>
+                <td class="num">8.1%</td>
+                <td class="num">12.7%</td>
+                <td class="num positive">−4.6 pp</td>
+                <td class="num">−2.1 pp</td>
+                <td>Widening</td>
+              </tr>
+              <tr>
+                <td>12-Month Customer LTV</td>
+                <td class="num">$312</td>
+                <td class="num">$241</td>
+                <td class="num positive">+29%</td>
+                <td class="num">+11%</td>
+                <td>Widening</td>
+              </tr>
+              <tr>
+                <td>Stockout Rate (all channels)</td>
+                <td class="num">2.3%</td>
+                <td class="num">3.9%</td>
+                <td class="num positive">−1.6 pp</td>
+                <td class="num">−0.7 pp</td>
+                <td>Widening</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="table-footnote">
+            Source: Meridian Advisory Group Retail Digital Maturity Survey, n = 214 chains, data as of Q3 2024. Early adopters = full omnichannel inventory integration completed before Jan 2022. Late adopters = integration not yet completed as of Jan 2022. Highlighted row indicates largest absolute cost gap. All figures are median values within each cohort.
+          </div>
+        </div>
+      </div>
+      <div class="folio">03 / 03</div>
+    </div>
+
+  </div><!-- /deck-stage -->
+</div><!-- /stage-wrapper -->
+
+<!-- ── NAV BAR ───────────────────────────────────────────────────────── -->
+<div id="nav-bar">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide" onclick="window.__goToSlide(window.__currentSlide - 1)">&#8592;</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide" onclick="window.__goToSlide(window.__currentSlide + 1)">&#8594;</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

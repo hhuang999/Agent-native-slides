@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>A05 — neon-cyberpunk · Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap');
+
+:root {
+  --color-bg:             oklch(0.06 0.020 240);
+  --color-surface:        oklch(0.10 0.018 240);
+  --color-raised-surface: oklch(0.14 0.015 240);
+  --color-border:         oklch(0.20 0.022 240);
+  --color-heading:        oklch(0.98 0.004 200);
+  --color-body:           oklch(0.80 0.010 240);
+  --color-muted:          oklch(0.48 0.018 240);
+  --color-accent:         oklch(0.82 0.22 185);
+  --color-accent-dim:     oklch(0.60 0.18 185);
+  --color-accent-glow:    oklch(0.82 0.22 185 / 0.18);
+  --color-accent-glow-strong: oklch(0.82 0.22 185 / 0.40);
+  --color-accent-2:       oklch(0.72 0.28 330);
+  --color-accent-2-dim:   oklch(0.54 0.22 330);
+  --color-accent-2-glow:  oklch(0.72 0.28 330 / 0.18);
+  --color-positive:       oklch(0.70 0.22 145);
+  --type-display: 'Rajdhani', sans-serif;
+  --type-body:    'Rajdhani', sans-serif;
+  --type-label:   'Source Code Pro', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--type-body); font-size: 20px; color: var(--color-body);
+}
+
+.deck-stage { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+
+/* ── Hologram-scan background ────────────────────── */
+#hologram-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      oklch(0.82 0.22 185 / 0.04) 2px,
+      oklch(0.82 0.22 185 / 0.04) 4px
+    ),
+    var(--color-bg);
+  animation: scan-sweep 4s linear infinite;
+}
+#hologram-bg::after {
+  content: '';
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%, oklch(0.82 0.22 185 / 0.5) 25%,
+    oklch(0.82 0.22 185 / 0.5) 75%, transparent 100%);
+  animation: scan-line 4s linear infinite;
+}
+@keyframes scan-sweep { from { background-position: 0 0; } to { background-position: 0 1080px; } }
+@keyframes scan-line  { from { top: -2px; } to { top: 1080px; } }
+@media (prefers-reduced-motion: reduce) {
+  #hologram-bg { animation: none; }
+  #hologram-bg::after { display: none; }
+}
+
+/* ── Slides ──────────────────────────────────────── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; padding: 72px 96px;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+
+
+.accent-rule {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-border) 60%, transparent 100%);
+  margin-bottom: 32px;
+}
+.counter {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-accent-2); letter-spacing: 0.14em; margin-bottom: 10px;
+}
+.cyber-tag {
+  display: inline-flex; align-items: center;
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-accent); letter-spacing: 0.14em; text-transform: uppercase;
+  border: 1px solid var(--color-accent-dim);
+  background: var(--color-accent-glow);
+  padding: 3px 12px; border-radius: 2px; width: fit-content;
+}
+
+/* ── Slide 1: Title ──────────────────────────────── */
+.s1-headline {
+  font-family: var(--type-display); font-size: 90px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.0; letter-spacing: 0.01em;
+  max-width: 1400px; margin-bottom: 20px;
+  text-shadow: 0 0 40px oklch(0.82 0.22 185 / 0.20);
+}
+.s1-sub {
+  font-size: 26px; color: var(--color-muted); font-weight: 400;
+  max-width: 900px; line-height: 1.55; margin-bottom: 52px;
+  letter-spacing: 0.01em;
+}
+.s1-badges { display: flex; gap: 14px; flex-wrap: wrap; }
+.badge {
+  font-family: var(--type-label); font-size: 13px;
+  color: var(--color-body); letter-spacing: 0.06em;
+  border: 1px solid var(--color-border);
+  padding: 6px 14px; border-radius: 2px;
+  background: var(--color-surface);
+}
+.s1-floor {
+  position: absolute; bottom: 64px; left: 96px; right: 96px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-accent-2) 0%, var(--color-border) 40%, transparent 100%);
+}
+.s1-corner {
+  position: absolute; top: 72px; right: 96px;
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-muted); letter-spacing: 0.08em;
+}
+
+/* ── Slide 2: Metrics ────────────────────────────── */
+.s2-headline {
+  font-family: var(--type-display); font-size: 54px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.08; letter-spacing: 0.01em;
+  margin-bottom: 24px; max-width: 1500px;
+}
+.s2-body { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; flex: 1; margin-top: 8px; }
+.glow-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-accent-dim);
+  border-radius: 4px; padding: 28px 24px;
+  box-shadow: 0 0 0 1px var(--color-accent-dim), 0 0 20px oklch(0.82 0.22 185 / 0.08);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.glow-card.magenta {
+  border-color: var(--color-accent-2-dim);
+  box-shadow: 0 0 0 1px var(--color-accent-2-dim), 0 0 20px oklch(0.72 0.28 330 / 0.08);
+}
+.card-label {
+  font-family: var(--type-label); font-size: 11px;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.12em;
+}
+.card-value {
+  font-family: var(--type-label); font-size: 52px; font-weight: 500;
+  color: var(--color-accent); line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+  text-shadow: 0 0 24px var(--color-accent-glow-strong);
+}
+.glow-card.magenta .card-value {
+  color: var(--color-accent-2);
+  text-shadow: 0 0 24px oklch(0.72 0.28 330 / 0.50);
+}
+.card-body { font-size: 17px; color: var(--color-muted); line-height: 1.6; flex: 1; }
+.card-footer {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-positive); letter-spacing: 0.06em;
+  border-top: 1px solid var(--color-border); padding-top: 12px;
+}
+
+/* ── Slide 3: Code + Specs ───────────────────────── */
+.s3-headline {
+  font-family: var(--type-display); font-size: 50px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.1; margin-bottom: 20px;
+  max-width: 1400px; letter-spacing: 0.01em;
+}
+.s3-body { display: grid; grid-template-columns: 1fr 480px; gap: 40px; flex: 1; }
+.code-block {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px; overflow: hidden; display: flex; flex-direction: column;
+}
+.code-block__bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 16px; background: var(--color-raised-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+.cb-dots { display: flex; gap: 5px; }
+.cb-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.cb-dots span:nth-child(1) { background: oklch(0.55 0.22 25); }
+.cb-dots span:nth-child(2) { background: oklch(0.65 0.20 90); }
+.cb-dots span:nth-child(3) { background: oklch(0.55 0.22 145); }
+.cb-file {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-muted); margin-left: 8px;
+}
+.code-block__body {
+  padding: 20px 24px; flex: 1;
+  font-family: var(--type-label); font-size: 14px;
+  line-height: 1.80; color: var(--color-body); overflow: hidden;
+}
+.kw  { color: oklch(0.82 0.22 185); }
+.fn  { color: oklch(0.85 0.16 75); }
+.str { color: oklch(0.72 0.28 330); }
+.cm  { color: var(--color-muted); font-style: italic; }
+.num { color: oklch(0.70 0.22 145); }
+.ty  { color: oklch(0.78 0.18 265); }
+
+.spec-panel {
+  display: flex; flex-direction: column; gap: 0;
+}
+.spec-header {
+  font-family: var(--type-label); font-size: 11px;
+  color: var(--color-accent); letter-spacing: 0.14em; text-transform: uppercase;
+  padding-bottom: 12px; border-bottom: 1px solid var(--color-accent-dim);
+  margin-bottom: 0;
+}
+.spec-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 13px 0; border-bottom: 1px solid var(--color-border);
+  gap: 16px;
+}
+.spec-row__key {
+  font-family: var(--type-label); font-size: 13px;
+  color: var(--color-muted); flex-shrink: 0;
+}
+.spec-row__val {
+  font-family: var(--type-label); font-size: 15px;
+  color: var(--color-heading); text-align: right;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.spec-row__val.accent { color: var(--color-accent); }
+.spec-row__val.magenta { color: var(--color-accent-2); }
+
+/* ── Nav ─────────────────────────────────────────── */
+#nav { position: fixed; bottom: 16px; right: 20px; z-index: 100; display: flex; gap: 8px; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 3px;
+  background: var(--color-raised-surface); border: 1px solid var(--color-border);
+  color: var(--color-body); font-family: var(--type-label); font-size: 13px; cursor: pointer;
+}
+.nav-btn:hover { background: var(--color-border); }
+#slide-info {
+  position: fixed; bottom: 16px; left: 20px; z-index: 100;
+  font-family: var(--type-label); font-size: 12px; color: var(--color-muted);
+}
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+<div class="deck-stage">
+  <div id="hologram-bg"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide is-active" data-slide="1">
+    <div class="cyber-tag" style="margin-bottom:16px">Version 3.0 · Worldwide Release</div>
+    <div class="accent-rule" style="margin-bottom:28px"></div>
+    <div class="s1-corner">SYSTEM: ONLINE · 2025-09-29 · BUILD 3.0.0</div>
+    <h1 class="s1-headline">The Grid<br>Runs on Us Now.</h1>
+    <p class="s1-sub">NexOS 3.0 ships the world's first on-device AI kernel — zero-latency inference, zero cloud dependency, and full hardware cryptography on any device sold in the last three years.</p>
+    <div class="s1-badges">
+      <div class="badge">On-device inference</div>
+      <div class="badge">&lt;1ms token latency</div>
+      <div class="badge">Zero egress cost</div>
+      <div class="badge">AES-256 hardware vault</div>
+      <div class="badge">Available now</div>
+    </div>
+    <div class="s1-floor"></div>
+  </div>
+
+  <!-- Slide 2: Metrics -->
+  <div class="slide" data-slide="2">
+    <div class="counter">02 / 05 — PERFORMANCE</div>
+    <h2 class="s2-headline">On-device beats cloud on every metric that matters to the user: latency, privacy, and cost.</h2>
+    <div class="accent-rule" style="margin-bottom:0"></div>
+    <div class="s2-body" style="margin-top:24px">
+      <div class="glow-card">
+        <div class="card-label">Avg. Token Latency</div>
+        <div class="card-value">&lt;1ms</div>
+        <div class="card-body">On-chip inference pipeline eliminates the network round-trip entirely. First token arrives before the user's finger leaves the keyboard.</div>
+        <div class="card-footer">↓ 99.7% vs. best cloud API</div>
+      </div>
+      <div class="glow-card magenta">
+        <div class="card-label">Privacy Guarantee</div>
+        <div class="card-value">0 bits</div>
+        <div class="card-body">Zero bytes of user data ever leave the device. The inference engine runs in a hardware-isolated enclave — kernel access is blocked by design.</div>
+        <div class="card-footer">↑ Hardware-enforced, not policy</div>
+      </div>
+      <div class="glow-card">
+        <div class="card-label">Inference Cost</div>
+        <div class="card-value">$0.00</div>
+        <div class="card-body">No tokens to buy. No API keys to rotate. No egress bill on burst traffic. The model ships with the OS and runs on existing silicon.</div>
+        <div class="card-footer">↓ 100% vs. any cloud provider</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Technical specs -->
+  <div class="slide" data-slide="3">
+    <div class="counter">04 / 05 — ARCHITECTURE</div>
+    <h2 class="s3-headline">NexOS 3.0 is a 2.4B parameter sparse model compiled to a custom WASM target, running natively on consumer NPUs.</h2>
+    <div class="accent-rule" style="margin-bottom:0"></div>
+    <div class="s3-body" style="margin-top:20px">
+      <div class="code-block">
+        <div class="code-block__bar">
+          <div class="cb-dots"><span></span><span></span><span></span></div>
+          <span class="cb-file">nexos_kernel.rs</span>
+        </div>
+        <div class="code-block__body">
+<span class="cm">// NexOS on-device inference pipeline</span><br>
+<span class="kw">pub struct</span> <span class="ty">InferenceEngine</span> {<br>
+&nbsp;&nbsp;model: <span class="ty">SparseModel</span>,<br>
+&nbsp;&nbsp;vault: <span class="ty">HardwareVault</span>,<br>
+&nbsp;&nbsp;npu:   <span class="ty">NpuContext</span>,<br>
+}<br><br>
+<span class="kw">impl</span> <span class="ty">InferenceEngine</span> {<br>
+&nbsp;&nbsp;<span class="kw">pub fn</span> <span class="fn">run</span>(&amp;<span class="kw">self</span>, prompt: &amp;<span class="ty">str</span>) -&gt; <span class="ty">TokenStream</span> {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm">// Tokenize entirely on-chip</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> tokens = <span class="kw">self</span>.model.tokenize(prompt);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm">// Route to active expert subset only</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> experts = <span class="kw">self</span>.model.route(&amp;tokens);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm">// NPU dispatch — never touches main RAM</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">self</span>.npu.dispatch(experts)<br>
+&nbsp;&nbsp;}<br>
+}<br><br>
+<span class="cm">// Zero-copy vault: AES-256 in secure enclave</span><br>
+<span class="kw">pub fn</span> <span class="fn">seal</span>(data: &amp;[<span class="ty">u8</span>]) -&gt; <span class="ty">SealedBlob</span> {<br>
+&nbsp;&nbsp;<span class="ty">HardwareVault</span>::encrypt_inplace(data, <span class="ty">AES256GCM</span>)<br>
+}
+        </div>
+      </div>
+      <div class="spec-panel">
+        <div class="spec-header">Technical Specifications</div>
+        <div class="spec-row">
+          <span class="spec-row__key">Model size</span>
+          <span class="spec-row__val accent">2.4B params (sparse)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-row__key">Active params / token</span>
+          <span class="spec-row__val accent">340M (14%)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-row__key">Compile target</span>
+          <span class="spec-row__val">WASM-SIMD + NPU ABI</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-row__key">Memory footprint</span>
+          <span class="spec-row__val">1.8 GB (int4 quant)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-row__key">Token latency (P50)</span>
+          <span class="spec-row__val accent">0.74ms</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-row__key">Token latency (P99)</span>
+          <span class="spec-row__val">2.1ms</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-row__key">Encryption</span>
+          <span class="spec-row__val magenta">AES-256-GCM (HW)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-row__key">Min hardware</span>
+          <span class="spec-row__val">6 TOPS NPU · 6 GB RAM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn" id="prev">◀</button>
+  <button class="nav-btn" id="next">▶</button>
+</div>
+<div id="slide-info">A05 neon-cyberpunk · <span id="cur">1</span> / 3</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

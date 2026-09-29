@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J02 Data Dashboard — Global Logistics Analytics Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS — J02 Data Dashboard
+   ============================================================ */
+:root {
+  --c-base:        oklch(0.10 0.012 258);
+  --c-surface:     oklch(0.15 0.015 258);
+  --c-surface-hi:  oklch(0.18 0.015 258);
+  --c-border:      oklch(0.28 0.018 258);
+  --c-grid:        oklch(0.22 0.015 258 / 0.4);
+  --c-text-hi:     oklch(0.97 0.006 258);
+  --c-text-body:   oklch(0.82 0.010 258);
+  --c-text-muted:  oklch(0.58 0.012 258);
+  --c-cyan:        oklch(0.72 0.18 198);
+  --c-cyan-dim:    oklch(0.62 0.14 198);
+  --c-cyan-bg:     oklch(0.18 0.04 198);
+  --c-amber:       oklch(0.70 0.16 62);
+  --c-amber-dim:   oklch(0.60 0.12 62);
+  --c-amber-bg:    oklch(0.18 0.04 62);
+  --c-success:     oklch(0.68 0.15 145);
+  --c-danger:      oklch(0.62 0.18 25);
+
+  --ff-label: 'IBM Plex Sans', system-ui, sans-serif;
+  --ff-data:  'IBM Plex Mono', 'Courier New', monospace;
+
+  --fs-2xs: 0.625rem;
+  --fs-xs:  0.75rem;
+  --fs-sm:  0.875rem;
+  --fs-base: 1rem;
+  --fs-md:  1.25rem;
+  --fs-lg:  1.5rem;
+  --fs-xl:  2rem;
+  --fs-2xl: 2.75rem;
+  --fs-3xl: 3.5rem;
+  --fs-hero: 5rem;
+
+  --lh-tight:  1.15;
+  --lh-snug:   1.3;
+  --lh-normal: 1.5;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0a0c10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+  font-family: var(--ff-label);
+}
+
+/* ============================================================
+   DECK STAGE — fixed 1920×1080
+   ============================================================ */
+#deck-stage {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  transform-origin: top left;
+  overflow: hidden;
+}
+
+/* ============================================================
+   SLIDES
+   ============================================================ */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+
+/* Grid-line background */
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-color: var(--c-base);
+  background-image:
+    linear-gradient(to right,  var(--c-grid) 0.5px, transparent 0.5px),
+    linear-gradient(to bottom, var(--c-grid) 0.5px, transparent 0.5px);
+  background-size: 40px 40px;
+}
+
+/* Top bar accent line */
+.slide-bg::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--c-cyan) 0%, oklch(0.72 0.18 198 / 0.2) 100%);
+}
+
+/* All semantic content above bg */
+.slide-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================
+   SHARED COMPONENTS
+   ============================================================ */
+.section-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--ff-label);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-cyan);
+}
+.section-marker::before {
+  content: '';
+  display: block;
+  width: 3px;
+  height: 1.1em;
+  background: var(--c-cyan);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.stat-badge {
+  display: inline-block;
+  background: var(--c-cyan-bg);
+  border: 1px solid oklch(0.72 0.18 198 / 0.4);
+  color: var(--c-cyan);
+  font-family: var(--ff-label);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.delta-up {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: oklch(0.68 0.15 145 / 0.12);
+  border: 1px solid oklch(0.68 0.15 145 / 0.4);
+  color: var(--c-success);
+  font-family: var(--ff-data);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.delta-down {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: oklch(0.62 0.18 25 / 0.12);
+  border: 1px solid oklch(0.62 0.18 25 / 0.4);
+  color: var(--c-danger);
+  font-family: var(--ff-data);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.delta-amber {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--c-amber-bg);
+  border: 1px solid oklch(0.70 0.16 62 / 0.4);
+  color: var(--c-amber);
+  font-family: var(--ff-data);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.panel {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  padding: 20px 24px;
+}
+
+.slide-folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  font-family: var(--ff-data);
+  font-size: 11px;
+  color: var(--c-text-muted);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: 0.06em;
+  z-index: 2;
+}
+
+/* ============================================================
+   SLIDE 1 — TITLE
+   ============================================================ */
+#slide-1 .slide-content {
+  padding: 56px 100px 80px;
+  justify-content: space-between;
+}
+
+.s1-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.s1-org {
+  font-family: var(--ff-data);
+  font-size: var(--fs-xs);
+  color: var(--c-text-muted);
+  letter-spacing: 0.1em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.s1-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+  padding: 40px 0;
+}
+
+.s1-platform {
+  font-family: var(--ff-data);
+  font-size: var(--fs-md);
+  font-weight: 500;
+  color: var(--c-cyan);
+  letter-spacing: 0.06em;
+  font-variant-numeric: lining-nums tabular-nums;
+  text-transform: uppercase;
+}
+
+.s1-headline {
+  font-family: var(--ff-label);
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--c-text-hi);
+  line-height: var(--lh-snug);
+  max-width: 1560px;
+}
+
+.s1-abstract {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 1400px;
+}
+.s1-abstract p {
+  font-family: var(--ff-label);
+  font-size: var(--fs-sm);
+  color: var(--c-text-body);
+  line-height: var(--lh-normal);
+}
+
+.s1-detail-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.s1-detail-col {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-top: 2px solid var(--c-cyan);
+  border-radius: 4px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.s1-detail-col .detail-value {
+  font-family: var(--ff-data);
+  font-size: var(--fs-2xl);
+  font-weight: 600;
+  color: var(--c-text-hi);
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.s1-detail-col .detail-unit {
+  font-family: var(--ff-data);
+  font-size: var(--fs-xs);
+  color: var(--c-cyan);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: 0.06em;
+}
+.s1-detail-col .detail-label {
+  font-family: var(--ff-label);
+  font-size: var(--fs-xs);
+  color: var(--c-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* ============================================================
+   SLIDE 2 — EVIDENCE + ASIDE
+   ============================================================ */
+#slide-2 .slide-content {
+  padding: 56px 100px 80px;
+  gap: 28px;
+}
+
+.s2-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.s2-headline {
+  font-family: var(--ff-label);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--c-text-hi);
+  line-height: var(--lh-snug);
+  max-width: 1500px;
+}
+
+.s2-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  min-height: 0;
+}
+
+.s2-main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.s2-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 24px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-top: 2px solid var(--c-cyan);
+  border-radius: 4px;
+}
+.stat-col .stat-value {
+  font-family: var(--ff-data);
+  font-size: var(--fs-3xl);
+  font-weight: 600;
+  color: var(--c-text-hi);
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.stat-col .stat-unit {
+  font-family: var(--ff-data);
+  font-size: var(--fs-xs);
+  color: var(--c-cyan);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: 0.06em;
+  margin-top: -4px;
+}
+.stat-col .stat-label {
+  font-family: var(--ff-label);
+  font-size: var(--fs-xs);
+  color: var(--c-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+.stat-col .stat-delta {
+  margin-top: 4px;
+}
+
+.s2-evidence {
+  font-family: var(--ff-label);
+  font-size: var(--fs-sm);
+  color: var(--c-text-body);
+  line-height: var(--lh-normal);
+  max-width: 880px;
+}
+
+.s2-aside {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-left: 3px solid var(--c-amber);
+  border-radius: 4px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aside-label {
+  font-family: var(--ff-label);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-amber);
+}
+
+.aside-stat {
+  font-family: var(--ff-data);
+  font-size: var(--fs-3xl);
+  font-weight: 600;
+  color: var(--c-text-hi);
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.aside-stat-unit {
+  font-family: var(--ff-data);
+  font-size: var(--fs-sm);
+  color: var(--c-amber);
+  letter-spacing: 0.06em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.aside-divider {
+  border: none;
+  border-top: 1px solid var(--c-border);
+}
+
+.aside-text {
+  font-family: var(--ff-label);
+  font-size: var(--fs-xs);
+  color: var(--c-text-body);
+  line-height: var(--lh-normal);
+}
+
+/* ============================================================
+   SLIDE 3 — COMPARISON TABLE
+   ============================================================ */
+#slide-3 .slide-content {
+  padding: 56px 100px 80px;
+  gap: 24px;
+}
+
+.s3-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.s3-headline {
+  font-family: var(--ff-label);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--c-text-hi);
+  line-height: var(--lh-snug);
+  max-width: 1500px;
+}
+
+.table-wrapper {
+  flex: 1;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--ff-label);
+  font-size: var(--fs-sm);
+}
+.data-table thead tr {
+  background: var(--c-surface-hi);
+}
+.data-table th {
+  color: var(--c-text-muted);
+  font-weight: 600;
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 14px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--c-border);
+  white-space: nowrap;
+}
+.data-table th.numeric { text-align: right; }
+.data-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid oklch(0.22 0.015 258 / 0.5);
+  color: var(--c-text-body);
+  vertical-align: middle;
+}
+.data-table td.numeric {
+  font-family: var(--ff-data);
+  font-variant-numeric: lining-nums tabular-nums;
+  text-align: right;
+  color: var(--c-text-body);
+}
+.data-table tr.highlight-row td {
+  background: oklch(0.72 0.18 198 / 0.08);
+  border-top: 1px solid oklch(0.72 0.18 198 / 0.3);
+  border-bottom: 1px solid oklch(0.72 0.18 198 / 0.3);
+  color: var(--c-text-hi);
+  font-weight: 600;
+}
+.data-table tr.highlight-row td.numeric {
+  color: var(--c-cyan);
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+.arch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.arch-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.s3-footnote {
+  font-family: var(--ff-label);
+  font-size: 11px;
+  color: var(--c-text-muted);
+  line-height: var(--lh-normal);
+}
+
+/* ============================================================
+   NAV BAR
+   ============================================================ */
+#nav-bar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: oklch(0.15 0.015 258 / 0.92);
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  padding: 8px 16px;
+  z-index: 9999;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.nav-btn {
+  background: none;
+  border: 1px solid var(--c-border);
+  color: var(--c-text-muted);
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+.nav-btn:hover { color: var(--c-text-hi); border-color: var(--c-cyan); }
+.nav-btn:focus-visible { outline: 2px solid var(--c-cyan); outline-offset: 2px; }
+
+.nav-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--c-border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  padding: 0;
+}
+.nav-dot.active {
+  background: var(--c-cyan);
+  box-shadow: 0 0 6px oklch(0.72 0.18 198 / 0.6);
+}
+.nav-dot:hover:not(.active) { background: var(--c-text-muted); }
+.nav-dot:focus-visible { outline: 2px solid var(--c-cyan); outline-offset: 2px; }
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .nav-btn, .nav-dot, .nav-dot.active { transition: none; }
+}
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     DECK STAGE
+     ============================================================ -->
+<div id="deck-stage">
+
+  <!-- ========================================================
+       SLIDE 1 — TITLE
+       ======================================================== -->
+  <div class="slide is-active" data-slide="1" id="slide-1" role="region" aria-label="Slide 1 of 3">
+    <div class="slide-bg" aria-hidden="true"></div>
+    <div class="slide-content">
+
+      <div class="s1-header">
+        <span class="section-marker">Global Logistics Analytics Platform</span>
+        <span class="s1-org">Q3 2024 — Supply Chain Disruption Monitoring Report</span>
+      </div>
+
+      <div class="s1-main">
+        <div class="s1-platform">GLAP / Disruption Intelligence Dashboard</div>
+
+        <h1 class="s1-headline">
+          Supply Chain Disruption Events in Q3 2024 Averaged 14 Days Longer to Resolve<br>
+          Than Q3 2023 Benchmarks, Increasing Inventory Carrying Costs by an Estimated<br>
+          $2.3 Billion Across Monitored Tier-1 Supplier Networks.
+        </h1>
+
+        <div class="s1-abstract">
+          <p>
+            Analysis of 4,820 disruption events across 312 Tier-1 supplier nodes spanning
+            North America, EMEA, and APAC reveals a systemic degradation in resolution velocity.
+            Mean time-to-resolution climbed from 18.4 days in Q3 2023 to 32.6 days in Q3 2024,
+            driven primarily by port congestion events (+42%) and geopolitical routing disruptions (+29%).
+          </p>
+          <p>
+            Estimated financial impact accounts for carrying cost differentials, expedite premiums,
+            and production slowdown penalties. The $2.3B figure represents a conservative model
+            using a 22% annualised carrying cost rate applied to stranded inventory volumes exceeding
+            standard buffer thresholds across all monitored networks.
+          </p>
+        </div>
+
+        <div class="s1-detail-row">
+          <div class="s1-detail-col">
+            <span class="detail-value">4,820</span>
+            <span class="detail-unit">events monitored</span>
+            <span class="detail-label">Total Disruption Events Q3 2024</span>
+          </div>
+          <div class="s1-detail-col">
+            <span class="detail-value">+14.2</span>
+            <span class="detail-unit">days avg. vs Q3 2023</span>
+            <span class="detail-label">Resolution Time Delta</span>
+          </div>
+          <div class="s1-detail-col">
+            <span class="detail-value">$2.3B</span>
+            <span class="detail-unit">estimated USD</span>
+            <span class="detail-label">Incremental Carrying Cost Impact</span>
+          </div>
+          <div class="s1-detail-col">
+            <span class="detail-value">312</span>
+            <span class="detail-unit">supplier nodes</span>
+            <span class="detail-label">Monitored Tier-1 Network Coverage</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="slide-folio" aria-label="Slide 1 of 3">01 / 03</div>
+  </div>
+
+  <!-- SLIDE 2 — EVIDENCE + ASIDE -->
+  <div class="slide" data-slide="2" id="slide-2" role="region" aria-label="Slide 2 of 3">
+    <div class="slide-bg" aria-hidden="true"></div>
+    <div class="slide-content">
+
+      <div class="s2-header">
+        <span class="section-marker">Finding 01 — Detection Velocity</span>
+        <h2 class="s2-headline">
+          Routes Monitored by Real-Time Multi-Modal Tracking Detected Disruption Events 6.2 Days Earlier on Average<br>
+          Than Routes Relying on Supplier Self-Reporting, Enabling Rerouting Before Backlog Formation in 78 Percent of Cases.
+        </h2>
+      </div>
+
+      <div class="s2-body">
+        <div class="s2-main-col">
+          <div class="s2-stat-row">
+            <div class="stat-col">
+              <span class="stat-badge">Avg Detection Lead</span>
+              <span class="stat-value">6.2</span>
+              <span class="stat-unit">days earlier</span>
+              <span class="stat-label">Real-Time Tracking vs. Self-Reporting</span>
+              <span class="stat-delta"><span class="delta-up">&#9650; +52% faster</span></span>
+            </div>
+            <div class="stat-col">
+              <span class="stat-badge">Rerouting Success</span>
+              <span class="stat-value">78%</span>
+              <span class="stat-unit">of detected events</span>
+              <span class="stat-label">Rerouted Before Backlog Formation</span>
+              <span class="stat-delta"><span class="delta-up">&#9650; +31pp vs baseline</span></span>
+            </div>
+            <div class="stat-col">
+              <span class="stat-badge">Routes Analysed</span>
+              <span class="stat-value">1,847</span>
+              <span class="stat-unit">active routes</span>
+              <span class="stat-label">Covered by Multi-Modal Monitoring</span>
+              <span class="stat-delta"><span class="delta-amber">&#8593; 68% of network</span></span>
+            </div>
+          </div>
+          <p class="s2-evidence">
+            Routes instrumented with GLAP's multi-modal telemetry layer — integrating AIS vessel tracking,
+            air cargo manifest feeds, and road sensor networks — consistently surfaced disruption signals
+            days before supplier-generated status updates. In Q3 2024, the median self-reporting lag was
+            8.7 days from event onset; multi-modal detection achieved a median of 2.5 days. The 6.2-day
+            advantage proved decisive: logistics teams that received early alerts rerouted shipments before
+            origin buffers were exhausted in 78% of cases, compared to only 47% on self-reported routes.
+            Backlog clearing time on successfully rerouted lanes averaged 4.1 days versus 22.8 days for
+            reactive interventions — a 5.6&times; efficiency gain across all monitored disruption categories.
+          </p>
+        </div>
+
+        <div class="s2-aside">
+          <span class="aside-label">Supplementary KPI</span>
+          <div>
+            <span class="aside-stat">5.6&times;</span><br>
+            <span class="aside-stat-unit">faster backlog clearance</span>
+          </div>
+          <hr class="aside-divider">
+          <p class="aside-text">
+            Proactively rerouted lanes cleared backlogs in a mean of 4.1 days. Reactive interventions
+            on self-reported routes required 22.8 days — a 5.6&times; differential confirming that
+            detection speed is the primary driver of total disruption cost, not event severity.
+          </p>
+          <hr class="aside-divider">
+          <p class="aside-text" style="font-size:0.7rem; color: var(--c-text-muted);">
+            Sample: 1,092 disruption pairs matched by event type and severity across monitored vs.
+            self-reported routes. Q3 2024. Confidence interval: 95%.
+          </p>
+        </div>
+      </div>
+
+    </div>
+    <div class="slide-folio" aria-label="Slide 2 of 3">02 / 03</div>
+  </div>
+
+  <!-- SLIDE 3 — COMPARISON TABLE -->
+  <div class="slide" data-slide="3" id="slide-3" role="region" aria-label="Slide 3 of 3">
+    <div class="slide-bg" aria-hidden="true"></div>
+    <div class="slide-content">
+
+      <div class="s3-header">
+        <span class="section-marker">Finding 02 — Architecture Comparison</span>
+        <h2 class="s3-headline">
+          Predictive Multi-Modal Monitoring With Automated Rerouting Recommendation Reduces Total Disruption Cost<br>
+          by 31 Percent Versus Reactive Self-Reporting Workflows, Delivering the Strongest ROI Across All Four<br>
+          Evaluated Supply Chain Visibility Architectures.
+        </h2>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table" aria-label="Supply chain visibility architecture comparison">
+          <thead>
+            <tr>
+              <th style="min-width:320px;">Visibility Architecture</th>
+              <th class="numeric" style="min-width:160px;">Avg. Detection Lag</th>
+              <th class="numeric" style="min-width:170px;">Reroute Success Rate</th>
+              <th class="numeric" style="min-width:190px;">Disruption Cost Index</th>
+              <th class="numeric" style="min-width:170px;">Cost Reduction vs. A</th>
+              <th class="numeric" style="min-width:130px;">ROI Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="arch-label"><span class="arch-dot" style="background:var(--c-danger);"></span>A — Reactive Self-Reporting</span></td>
+              <td class="numeric">8.7 days</td><td class="numeric">47%</td><td class="numeric">100 (baseline)</td><td class="numeric">—</td><td class="numeric">1.0&times;</td>
+            </tr>
+            <tr>
+              <td><span class="arch-label"><span class="arch-dot" style="background:var(--c-amber);"></span>B — Passive Multi-Modal Monitoring</span></td>
+              <td class="numeric">5.1 days</td><td class="numeric">61%</td><td class="numeric">83</td><td class="numeric">&#8722;17%</td><td class="numeric">2.3&times;</td>
+            </tr>
+            <tr>
+              <td><span class="arch-label"><span class="arch-dot" style="background:oklch(0.65 0.15 248);"></span>C — Active Monitoring + Manual Rerouting</span></td>
+              <td class="numeric">2.9 days</td><td class="numeric">71%</td><td class="numeric">76</td><td class="numeric">&#8722;24%</td><td class="numeric">3.1&times;</td>
+            </tr>
+            <tr class="highlight-row">
+              <td>
+                <span class="arch-label">
+                  <span class="arch-dot" style="background:var(--c-cyan);"></span>
+                  D — Predictive Multi-Modal + Auto-Rerouting
+                  <span class="stat-badge" style="margin-left:10px;">Recommended</span>
+                </span>
+              </td>
+              <td class="numeric">2.5 days</td><td class="numeric">78%</td><td class="numeric">69</td><td class="numeric">&#8722;31%</td><td class="numeric">4.7&times;</td>
+            </tr>
+            <tr>
+              <td><span class="arch-label"><span class="arch-dot" style="background:var(--c-text-muted);"></span>E — Blockchain-Verified Self-Reporting</span></td>
+              <td class="numeric">7.4 days</td><td class="numeric">53%</td><td class="numeric">91</td><td class="numeric">&#8722;9%</td><td class="numeric">1.4&times;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="s3-footnote">
+        Cost Index: composite of carrying cost, expedite premium, and production slowdown penalty, normalised to Architecture A (Reactive Self-Reporting = 100).
+        ROI Score: net benefit per dollar of platform investment over 12-month horizon. Sample n = 312 Tier-1 supplier nodes, Q3 2024.
+        Architecture D (GLAP Predictive Suite) requires full multi-modal sensor integration and a 6-month historical baseline for predictive model calibration.
+      </p>
+
+    </div>
+    <div class="slide-folio" aria-label="Slide 3 of 3">03 / 03</div>
+  </div>
+
+</div><!-- /deck-stage -->
+
+<nav id="nav-bar" aria-label="Slide navigation">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide" title="Previous">&#8249;</button>
+  <div class="nav-dots" role="tablist" aria-label="Slide selector">
+    <button class="nav-dot active" role="tab" aria-selected="true"  aria-label="Slide 1" data-slide="1"></button>
+    <button class="nav-dot"        role="tab" aria-selected="false" aria-label="Slide 2" data-slide="2"></button>
+    <button class="nav-dot"        role="tab" aria-selected="false" aria-label="Slide 3" data-slide="3"></button>
+  </div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide" title="Next">&#8250;</button>
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

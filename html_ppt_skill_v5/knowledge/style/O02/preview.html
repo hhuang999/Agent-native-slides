@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O02 Sand-Dune — Desert Ecology and Water Research Institute</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── COLOR TOKENS ───────────────────────────────────────────────────── */
+:root {
+  --color-bg:            oklch(0.94 0.030 68);
+  --color-bg-raised:     oklch(0.91 0.028 66);
+  --color-bg-sunken:     oklch(0.96 0.018 70);
+  --color-border:        oklch(0.82 0.040 60);
+  --color-border-light:  oklch(0.88 0.028 65);
+  --color-text-primary:  oklch(0.22 0.030 50);
+  --color-text-secondary:oklch(0.40 0.032 55);
+  --color-text-muted:    oklch(0.58 0.028 60);
+  --color-accent:        oklch(0.52 0.18 36);
+  --color-accent-warm:   oklch(0.60 0.15 42);
+  --color-accent-deep:   oklch(0.42 0.16 32);
+  --color-accent-tint:   oklch(0.90 0.040 50);
+  --stat-bar-w: 20px;
+  --stat-bar-h: 1px;
+
+  /* Type */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body:    'Plus Jakarta Sans', system-ui, sans-serif;
+  --fs-xs:  11px; --fs-sm: 13px; --fs-base: 15px;
+  --fs-md:  18px; --fs-lg: 22px; --fs-xl:  28px;
+  --fs-2xl: 36px; --fs-3xl: 46px; --fs-4xl: 58px;
+  --fw-light: 300; --fw-regular: 400; --fw-medium: 500;
+  --fw-semibold: 600; --fw-bold: 700;
+  --lh-tight: 1.15; --lh-snug: 1.30; --lh-base: 1.55;
+  --ls-wide: 0.06em; --ls-wider: 0.12em;
+}
+
+/* ─── STAGE ──────────────────────────────────────────────────────────── */
+html, body { width: 100%; height: 100%; background: #2a1a10; overflow: hidden; }
+
+#stage-wrapper {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+
+#deck-stage {
+  width: 1920px; height: 1080px;
+  transform-origin: top left;
+  position: relative;
+}
+
+/* ─── SLIDE BASE ─────────────────────────────────────────────────────── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  position: absolute; inset: 0;
+  width: 1920px; height: 1080px;
+  background: var(--color-bg);
+  
+  flex-direction: column;
+  overflow: hidden;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+/* Grain texture */
+.slide::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 3px,
+    oklch(0.90 0.022 66 / 0.16) 3px,
+    oklch(0.90 0.022 66 / 0.16) 4px
+  );
+  pointer-events: none;
+}
+
+/* Vignette */
+.slide::after {
+  content: '';
+  position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse 120% 80% at 50% 120%,
+    oklch(0.72 0.040 56 / 0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* All content above pseudo-elements */
+.slide > * { position: relative; z-index: 1; }
+
+/* ─── HEADER BAR ─────────────────────────────────────────────────────── */
+.slide-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 32px 72px 0;
+  flex-shrink: 0;
+}
+
+.slide-org {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.slide-tag {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ─── STRATA RULE ────────────────────────────────────────────────────── */
+.strata-rule {
+  width: 100%; height: 1px;
+  background: var(--color-border);
+  flex-shrink: 0;
+  margin: 24px 0 0;
+}
+.strata-rule--light {
+  background: var(--color-border-light);
+  margin: 0;
+}
+
+/* ─── SECTION MARKER ─────────────────────────────────────────────────── */
+.section-marker {
+  display: flex; align-items: center; gap: 14px;
+  padding: 36px 72px 0;
+  flex-shrink: 0;
+}
+.section-marker__bar {
+  width: var(--stat-bar-w); height: var(--stat-bar-h);
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+.section-marker__label {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 14, "wght" 400;
+  font-style: italic;
+  font-size: var(--fs-sm);
+  color: var(--color-accent);
+  letter-spacing: var(--ls-wide);
+}
+
+/* ─── BODY CONTENT AREA ──────────────────────────────────────────────── */
+.slide-body {
+  flex: 1; min-height: 0;
+  padding: 0 72px;
+  display: flex; flex-direction: column;
+}
+
+/* ─── SLIDE 1 SPECIFIC ───────────────────────────────────────────────── */
+.s1-headline {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 72, "wght" 700;
+  font-size: 52px;
+  line-height: var(--lh-tight);
+  color: var(--color-text-primary);
+  letter-spacing: -0.018em;
+  margin-top: 32px;
+  max-width: 1400px;
+}
+
+.s1-abstract {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+  color: var(--color-text-secondary);
+  max-width: 960px;
+  margin-top: 24px;
+}
+
+.s1-detail-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: auto;
+  border-top: 1px solid var(--color-border);
+  padding: 28px 0 36px;
+}
+
+.s1-detail-col {
+  padding: 0 32px;
+  border-right: 1px solid var(--color-border-light);
+}
+.s1-detail-col:first-child { padding-left: 0; }
+.s1-detail-col:last-child { border-right: none; }
+
+.s1-detail-col__label {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+}
+
+.s1-detail-col__value {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  color: var(--color-text-primary);
+  line-height: var(--lh-snug);
+  font-weight: var(--fw-medium);
+}
+
+/* ─── SLIDE 2 SPECIFIC ───────────────────────────────────────────────── */
+.s2-headline {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 48, "wght" 700;
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-snug);
+  color: var(--color-text-primary);
+  letter-spacing: -0.015em;
+  margin-top: 28px;
+  max-width: 1400px;
+}
+
+.stat-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 44px;
+}
+
+.stat-col {
+  padding: 0 48px 0 0;
+  display: flex; flex-direction: column; gap: 10px;
+  border-right: 1px solid var(--color-border-light);
+  margin-right: 48px;
+}
+.stat-col:last-child { border-right: none; margin-right: 0; }
+
+.stat-col__bar {
+  width: var(--stat-bar-w); height: var(--stat-bar-h);
+  background: var(--color-accent);
+}
+
+.stat-col__value {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 48, "wght" 700;
+  font-size: var(--fs-3xl);
+  line-height: var(--lh-tight);
+  color: var(--color-text-primary);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.stat-col__value .unit {
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+  color: var(--color-accent);
+  margin-left: 2px;
+  vertical-align: super;
+  line-height: 1;
+  font-variation-settings: normal;
+}
+
+.stat-col__label {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  line-height: var(--lh-snug);
+}
+
+.stat-col__note {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  line-height: var(--lh-base);
+}
+
+.s2-evidence {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-base);
+  color: var(--color-text-secondary);
+  max-width: 1200px;
+  margin-top: 32px;
+}
+
+/* Aside panel */
+.aside-panel {
+  background: var(--color-bg-raised);
+  border-top: 1px solid var(--color-border);
+  padding: 28px 72px;
+  display: flex; align-items: center; gap: 56px;
+  margin-top: auto; flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+
+.aside-panel__stat-value {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 48, "wght" 700;
+  font-size: var(--fs-2xl);
+  color: var(--color-accent);
+  font-variant-numeric: lining-nums tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.aside-panel__text {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--lh-base);
+  max-width: 900px;
+}
+
+.aside-panel__label {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+/* ─── SLIDE 3 SPECIFIC ───────────────────────────────────────────────── */
+.s3-headline {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 48, "wght" 700;
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-snug);
+  color: var(--color-text-primary);
+  letter-spacing: -0.015em;
+  margin-top: 28px;
+  max-width: 1500px;
+}
+
+.table-wrap {
+  margin-top: 32px; overflow: hidden; flex: 1; min-height: 0;
+}
+
+.data-table {
+  width: 100%; border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.data-table th {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left; white-space: nowrap;
+}
+
+.data-table th.r, .data-table td.r { text-align: right; }
+
+.data-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-primary);
+  line-height: var(--lh-snug);
+}
+
+.data-table tbody tr:hover td {
+  background: oklch(0.90 0.035 58 / 0.50);
+}
+
+.data-table tr.highlighted td {
+  background: var(--color-accent-tint);
+  font-weight: var(--fw-semibold);
+}
+
+.data-table tr.highlighted td:first-child {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 13px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10px; font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wide); text-transform: uppercase;
+  padding: 2px 7px; border-radius: 3px;
+  line-height: 1.5;
+}
+.badge--best {
+  background: var(--color-accent-tint);
+  color: var(--color-accent-deep);
+  border: 1px solid oklch(0.78 0.10 42);
+}
+.badge--mid {
+  background: oklch(0.90 0.012 65);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-light);
+}
+
+.s3-footnote {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  line-height: var(--lh-base);
+  padding: 18px 0 0;
+  border-top: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+  max-width: 1400px;
+}
+
+/* ─── FOLIO ──────────────────────────────────────────────────────────── */
+.slide-folio {
+  position: absolute; bottom: 36px; right: 120px;
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  letter-spacing: var(--ls-wide);
+  font-variant-numeric: lining-nums tabular-nums;
+  z-index: 2;
+}
+
+/* ─── NAV BAR ────────────────────────────────────────────────────────── */
+#nav-bar {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px;
+  background: oklch(0.22 0.030 50 / 0.88);
+  border: 1px solid oklch(0.38 0.040 55 / 0.60);
+  border-radius: 999px;
+  padding: 10px 20px;
+  z-index: 9999;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.nav-btn {
+  background: none; border: none; cursor: pointer;
+  color: oklch(0.80 0.020 65); padding: 4px 8px;
+  font-size: 14px; border-radius: 50%;
+  transition: color 0.15s, background 0.15s;
+  line-height: 1;
+}
+.nav-btn:hover { color: var(--color-accent-warm); background: oklch(1 0 0 / 0.08); }
+.nav-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+.nav-dots { display: flex; align-items: center; gap: 7px; }
+
+.nav-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: oklch(0.60 0.018 60);
+  border: none; cursor: pointer; padding: 0;
+  transition: background 0.15s, transform 0.15s;
+}
+.nav-dot.active {
+  background: var(--color-accent);
+  transform: scale(1.35);
+}
+.nav-dot:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+/* ─── REDUCED MOTION ─────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .nav-dot, .nav-btn { transition: none; }
+}
+
+/* ─── PRINT ──────────────────────────────────────────────────────────── */
+
+
+  .slide::before, .slide::after { display: none; }
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+
+<div id="stage-wrapper">
+  <div id="deck-stage">
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SLIDE 1 — TITLE                                                 -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="slide is-active" data-slide="1" id="slide-1" aria-label="Slide 1 of 3">
+
+      <!-- Header -->
+      <div class="slide-el active-header">
+        <span class="slide-org">Desert Ecology &amp; Water Research Institute</span>
+        <span class="slide-tag">MENA Groundwater Study · 2024 Annual Report</span>
+      </div>
+
+      <!-- Strata rule -->
+      <div class="strata-rule"></div>
+
+      <!-- Body -->
+      <div class="slide-body" style="padding-top:0; justify-content:center;">
+
+        <!-- Section label -->
+        <div style="margin-top:40px; display:flex; align-items:center; gap:14px;">
+          <div style="width:20px; height:1px; background:var(--color-accent);"></div>
+          <span style="font-family:var(--font-display); font-variation-settings:'opsz' 14,'wght' 400; font-style:italic; font-size:var(--fs-sm); color:var(--color-accent); letter-spacing:var(--ls-wide);">Hydrological Systems Research</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="s1-headline">
+          Groundwater Depletion Rates Across 14 MENA Aquifer Systems<br>
+          Accelerated by 34 Percent Between 2015 and 2024, Outpacing All<br>
+          Modeled Recharge Scenarios and Threatening Primary Water Sources<br>
+          for an Estimated 68 Million Rural Residents.
+        </h1>
+
+        <!-- Abstract -->
+        <p class="s1-abstract">
+          Satellite gravimetry and field measurement campaigns across the Arabian Peninsula, Levant, and North African basins reveal a consistent pattern of accelerating aquifer decline since 2015. Depletion rates in non-renewable fossil aquifer systems now exceed modeled worst-case projections by a factor of 1.6, driven by agricultural intensification, population growth, and a decade of below-average annual precipitation across all monitored zones.
+        </p>
+
+        <!-- Detail row -->
+        <div class="s1-detail-row">
+          <div class="s1-detail-col">
+            <div class="s1-detail-col__label">Study Scope</div>
+            <div class="s1-detail-col__value">14 Aquifer Systems · 9 Countries · 2015–2024</div>
+          </div>
+          <div class="s1-detail-col">
+            <div class="s1-detail-col__label">Primary Method</div>
+            <div class="s1-detail-col__value">GRACE-FO Gravimetry + 340 Field Monitoring Wells</div>
+          </div>
+          <div class="s1-detail-col">
+            <div class="s1-detail-col__label">Lead Investigators</div>
+            <div class="s1-detail-col__value">Dr. Layla Nassir, Prof. Omar Al-Rasheed, Dr. Selin Çelik</div>
+          </div>
+          <div class="s1-detail-col">
+            <div class="s1-detail-col__label">Population at Risk</div>
+            <div class="s1-detail-col__value" style="font-variant-numeric:lining-nums tabular-nums;">68 Million Rural Residents (primary water source)</div>
+          </div>
+        </div>
+
+      </div><!-- /slide-body -->
+
+      <!-- Folio -->
+      <div class="slide-folio" style="font-variant-numeric:lining-nums tabular-nums;">01 / 03</div>
+
+    </section><!-- /slide-1 -->
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SLIDE 2 — EVIDENCE: STATS + ASIDE                              -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="slide" data-slide="2" id="slide-2" aria-label="Slide 2 of 3">
+
+      <!-- Header -->
+      <div class="slide-header">
+        <span class="slide-org">Desert Ecology &amp; Water Research Institute</span>
+        <span class="slide-tag">Aquifer Economics · Section 2</span>
+      </div>
+
+      <div class="strata-rule"></div>
+
+      <!-- Body -->
+      <div class="slide-body" style="padding-top:0;">
+
+        <!-- Section marker -->
+        <div class="section-marker">
+          <div class="section-marker__bar"></div>
+          <span class="section-marker__label">Economic Feedback Mechanisms</span>
+        </div>
+
+        <!-- Headline -->
+        <h2 class="s2-headline">
+          Each 10-Meter Drop in Aquifer Water Table Increases Agricultural<br>
+          Pumping Energy Cost by 38 Percent and Reduces Smallholder Farm<br>
+          Viability Probability by 22 Points, Creating a Self-Reinforcing<br>
+          Cycle of Extraction Intensification and Aquifer Depletion.
+        </h2>
+
+        <!-- Stat row -->
+        <div class="stat-row">
+
+          <div class="stat-col">
+            <div class="stat-col__bar"></div>
+            <div class="stat-col__value">+38<span class="unit">%</span></div>
+            <div class="stat-col__label">Energy Cost Increase per 10m Table Drop</div>
+            <div class="stat-col__note">Median across 11 pump-metered monitoring sites; diesel and grid-electric weighted average</div>
+          </div>
+
+          <div class="stat-col">
+            <div class="stat-col__bar"></div>
+            <div class="stat-col__value">−22<span class="unit">pts</span></div>
+            <div class="stat-col__label">Smallholder Farm Viability Probability Loss</div>
+            <div class="stat-col__note">Logistic model; controls for crop type, land tenure, access to credit (n = 4,820 farms)</div>
+          </div>
+
+          <div class="stat-col">
+            <div class="stat-col__bar"></div>
+            <div class="stat-col__value">1.6<span class="unit">×</span></div>
+            <div class="stat-col__label">Extraction Rate Amplification Factor</div>
+            <div class="stat-col__note">Ratio of observed 2024 extraction to 2015 baseline; driven by deeper pump installation</div>
+          </div>
+
+        </div><!-- /stat-row -->
+
+        <!-- Evidence paragraph -->
+        <p class="s2-evidence" style="margin-top:28px;">
+          Field economic surveys conducted across 4,820 smallholder farms in Egypt, Jordan, Morocco, and Yemen reveal a mechanically consistent pattern: as water tables fall, farm operators respond by installing deeper, higher-wattage submersible pumps rather than reducing irrigated area, because the short-term cost of crop failure exceeds the energy surcharge. This behavioral response amplifies extraction rates, accelerating the very depletion that drives energy costs higher. The resulting feedback loop increases structural farm debt, reduces crop diversification, and concentrates water abstraction in the lowest-elevation wells — precisely the aquifer horizons with the longest natural recharge timescales.
+        </p>
+
+      </div><!-- /slide-body -->
+
+      <!-- Aside panel -->
+      <div class="aside-panel">
+        <div>
+          <div class="aside-panel__label">Supplementary Finding</div>
+          <div class="aside-panel__stat-value">USD 2,340</div>
+        </div>
+        <p class="aside-panel__text">
+          Median annual increase in farm energy expenditure per smallholder household over the 2019–2024 period in monitored aquifer zones — equivalent to 31 percent of median net farm income. Households absorbing these costs show significantly elevated rates of debt-financed pump upgrading (OR 2.4, 95% CI 1.9–3.1), confirming that the viability spiral operates predominantly through capital constraint channels rather than agronomic knowledge gaps.
+        </p>
+      </div>
+
+      <!-- Folio -->
+      <div class="slide-folio" style="font-variant-numeric:lining-nums tabular-nums;">02 / 03</div>
+
+    </section><!-- /slide-2 -->
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SLIDE 3 — COMPARISON: DATA TABLE + FOOTNOTE                    -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="slide" data-slide="3" id="slide-3" aria-label="Slide 3 of 3">
+
+      <!-- Header -->
+      <div class="slide-header">
+        <span class="slide-org">Desert Ecology &amp; Water Research Institute</span>
+        <span class="slide-tag">Management Configurations · Section 3</span>
+      </div>
+
+      <div class="strata-rule"></div>
+
+      <!-- Body -->
+      <div class="slide-body" style="padding-top:0; padding-bottom:28px;">
+
+        <!-- Section marker -->
+        <div class="section-marker">
+          <div class="section-marker__bar"></div>
+          <span class="section-marker__label">Water Management Configuration Comparison</span>
+        </div>
+
+        <!-- Headline -->
+        <h2 class="s3-headline">
+          Managed Aquifer Recharge Programs Combined With Precision Drip Irrigation and Crop Portfolio
+          Diversification Deliver the Lowest Net Depletion Rate, Highest Farm Income Stability, and
+          Greatest Aquifer Recovery Probability Across All Seven Evaluated Water Management Configurations.
+        </h2>
+
+        <!-- Table -->
+        <div class="table-wrap">
+          <table class="data-table" role="grid" aria-label="Water Management Configuration Comparison">
+            <thead>
+              <tr>
+                <th scope="col">Configuration</th>
+                <th scope="col" class="r">Net Depletion Rate<br><span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:10px;">(mm/yr, 5-yr avg)</span></th>
+                <th scope="col" class="r">Farm Income<br>Stability Index</th>
+                <th scope="col" class="r">Aquifer Recovery<br>Probability (%)</th>
+                <th scope="col" class="r">Avg. Energy Cost<br>Change (%)</th>
+                <th scope="col">Feasibility<br>Assessment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="highlighted">
+                <td><strong>MAR + Precision Drip + Crop Diversification</strong> <span class="badge badge--best">Optimal</span></td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">−12</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">0.84</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">67</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">−18</td>
+                <td>High (with subsidy)</td>
+              </tr>
+              <tr>
+                <td>MAR Only <span class="badge badge--mid">Partial</span></td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">−28</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">0.61</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">41</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">−6</td>
+                <td>Moderate</td>
+              </tr>
+              <tr>
+                <td>Precision Drip + Quota System</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">−35</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">0.57</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">29</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">−14</td>
+                <td>Moderate</td>
+              </tr>
+              <tr>
+                <td>Quota System Only</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">−44</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">0.43</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">18</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">+2</td>
+                <td>Low (compliance)</td>
+              </tr>
+              <tr>
+                <td>Desalination Supplementation</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">−38</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">0.50</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">22</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">+31</td>
+                <td>Low (capital cost)</td>
+              </tr>
+              <tr>
+                <td>Status Quo (no intervention)</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">−72</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">0.28</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">4</td>
+                <td class="r" style="font-variant-numeric:lining-nums tabular-nums;">+38</td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footnote -->
+        <p class="s3-footnote">
+          * Net depletion rate = gross abstraction minus natural recharge minus MAR input, expressed as equivalent water-table decline in mm/yr over a 5-year modeled horizon. Farm Income Stability Index: composite of year-to-year income variance (40%), debt-to-income ratio (35%), and crop insurance uptake (25%), range 0–1. Aquifer Recovery Probability: modeled probability of partial recovery (&gt;15 mm/yr net recharge) within 25 years under each configuration. Source: DEWRI Integrated Hydro-Economic Model v3.1, 2024. Sample: 14 aquifer systems, 9 countries, n = 4,820 monitored farms.
+        </p>
+
+      </div><!-- /slide-body -->
+
+      <!-- Folio -->
+      <div class="slide-folio" style="font-variant-numeric:lining-nums tabular-nums;">03 / 03</div>
+
+    </section><!-- /slide-3 -->
+
+  </div><!-- /deck-stage -->
+</div><!-- /stage-wrapper -->
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- NAV BAR                                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<nav id="nav-bar" aria-label="Slide navigation" role="navigation">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide">&#8592;</button>
+  <div class="nav-dots" id="nav-dots" role="tablist" aria-label="Slide indicators"></div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide">&#8594;</button>
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

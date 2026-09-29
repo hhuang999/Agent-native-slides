@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>ML Systems Atlas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* === DESIGN TOKENS === */
+    :root {
+      --stage-bg: oklch(0.15 0.018 252);
+      --color-bg: oklch(0.15 0.018 252);
+      --color-surface: oklch(0.19 0.022 252);
+      --color-raised-surface: oklch(0.23 0.025 252);
+      --color-border: oklch(0.39 0.028 252);
+      --color-muted: oklch(0.69 0.028 252);
+      --color-body: oklch(0.91 0.012 252);
+      --color-heading: oklch(0.98 0.006 252);
+      --color-accent: oklch(0.80 0.16 172);
+      --color-accent-soft: oklch(0.80 0.16 172 / 0.14);
+      --color-warm: oklch(0.79 0.12 77);
+      --color-warm-soft: oklch(0.79 0.12 77 / 0.15);
+      --type-display: "Instrument Serif", Georgia, serif;
+      --type-body: "Manrope", sans-serif;
+      --type-label: "DM Mono", monospace;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --ease-out: cubic-bezier(.16, 1, .3, 1);
+    }
+
+    /* === FIXED 16:9 STAGE === */
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg); }
+    body { color: var(--color-body); font-family: var(--type-body); }
+    .deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg); }
+    .deck-stage { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--color-bg); }
+    .slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease; position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden;  background: var(--color-bg); }
+    .slide.is-active { display: flex; visibility: visible; opacity: 1; pointer-events: auto; }
+    svg { max-width: 100%; max-height: 100%; }
+
+    /* === SHARED SLIDE CHROME === */
+    .slide::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .55;
+      background-image: linear-gradient(oklch(0.46 0.026 252 / .1) 1px, transparent 1px), linear-gradient(90deg, oklch(0.46 0.026 252 / .1) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, black, transparent 76%);
+    }
+    .slide::after { content: ""; position: absolute; width: 760px; height: 760px; right: -260px; top: -380px; border: 1px solid var(--color-border); border-radius: 50%; opacity: .55; pointer-events: none; }
+    .slide-content { position: relative; z-index: 1; width: 100%; height: 100%; padding: 74px 108px 76px; }
+    .slide-index { position: absolute; top: 79px; right: 112px; color: var(--color-muted); font: 500 15px/1 var(--type-label); letter-spacing: .06em; font-variant-numeric: lining-nums tabular-nums; }
+    .eyebrow { color: var(--color-accent); font: 500 16px/1 var(--type-label); letter-spacing: .12em; text-transform: uppercase; }
+    h1, h2, p { margin: 0; }
+    h1 { color: var(--color-heading); font: 400 72px/.95 var(--type-display); letter-spacing: 0; }
+    h1 em { color: var(--color-accent); font-style: italic; }
+    .subtitle { max-width: 600px; margin-top: 18px; color: var(--color-muted); font-size: 21px; line-height: 1.55; }
+    .deck-controls { position: fixed; z-index: 10; right: 22px; bottom: 18px; display: flex; align-items: center; gap: 10px; color: var(--color-body); font: 500 12px/1 var(--type-label); }
+    .deck-controls button { width: 34px; height: 34px; border: 1px solid var(--color-border); border-radius: 50%; background: var(--color-surface); color: var(--color-body); cursor: pointer; font: inherit; }
+    .deck-controls button:hover, .deck-controls button:focus-visible { border-color: var(--color-accent); color: var(--color-accent); outline: none; }
+    .deck-controls output { min-width: 38px; text-align: center; color: var(--color-muted); font-variant-numeric: lining-nums tabular-nums; }
+
+    /* === SVG COMPONENT TOKENS === */
+    .ml-svg {
+      --node-bg: var(--color-surface);
+      --node-raised: var(--color-raised-surface);
+      --node-border: var(--color-border);
+      --node-text: var(--color-body);
+      --arrow: var(--color-muted);
+      --highlight-bg: var(--color-accent);
+      --highlight-fg: var(--color-bg);
+      --label: var(--color-muted);
+      font-family: var(--type-label);
+      overflow: visible;
+    }
+    .ml-svg .svg-title { fill: var(--node-text); font-size: 16px; font-weight: 500; letter-spacing: .025em; }
+    .ml-svg .svg-label { fill: var(--label); font-size: 13px; letter-spacing: .025em; }
+    .ml-svg .svg-micro { fill: var(--label); font-size: 11px; }
+    .ml-svg .svg-accent { fill: var(--highlight-bg); }
+    .ml-svg .signal { fill: none; stroke: var(--arrow); stroke-width: 1.5; marker-end: url(#arrowhead); }
+    .ml-svg .signal-accent { fill: none; stroke: var(--highlight-bg); stroke-width: 2; marker-end: url(#arrowhead-accent); }
+    .ml-svg .node { fill: var(--node-bg); stroke: var(--node-border); stroke-width: 1; }
+    .ml-svg .node-raised { fill: var(--node-raised); stroke: var(--node-border); stroke-width: 1.2; }
+    .ml-svg .node-highlight { fill: var(--color-accent-soft); stroke: var(--highlight-bg); stroke-width: 1.8; }
+    .ml-svg .node-accent { fill: var(--highlight-bg); stroke: var(--highlight-bg); }
+
+    /* === SLIDE 01: TRANSFORMER === */
+    .transformer-layout { display: grid; grid-template-columns: 440px 1fr; gap: 70px; align-items: center; height: 100%; padding-top: 38px; }
+    .transformer-copy { align-self: start; padding-top: 69px; }
+    .transformer-copy h1 { max-width: 420px; }
+    .principles { display: grid; gap: 18px; margin-top: 62px; }
+    .principle { display: grid; grid-template-columns: 38px 1fr; gap: 15px; align-items: start; }
+    .principle-mark { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--color-border); border-radius: 50%; color: var(--color-accent); font: 500 13px var(--type-label); }
+    .principle strong { display: block; color: var(--color-body); font-size: 16px; font-weight: 600; }
+    .principle span { display: block; margin-top: 4px; color: var(--color-muted); font-size: 14px; line-height: 1.45; }
+    .transformer-figure { height: 818px; padding: 38px 42px 26px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: oklch(0.185 0.02 252 / .78); box-shadow: inset 0 1px 0 oklch(0.98 0.006 252 / .04); }
+    .figure-kicker { display: flex; justify-content: space-between; align-items: center; color: var(--color-muted); font: 500 13px/1 var(--type-label); letter-spacing: .08em; text-transform: uppercase; }
+    .figure-kicker b { color: var(--color-accent); font-weight: 500; }
+    .transformer-figure .ml-svg { display: block; width: 100%; height: 712px; margin-top: 22px; }
+
+    /* === SLIDE 02: ATTENTION === */
+    .attention-content { display: flex; flex-direction: column; }
+    .attention-heading { display: flex; align-items: flex-end; justify-content: space-between; }
+    .attention-heading .subtitle { max-width: 490px; }
+    .attention-grid { display: grid; grid-template-columns: 1.13fr .87fr; gap: 54px; flex: 1; align-items: center; padding: 32px 0 28px; }
+    .attention-figure { height: 680px; padding: 38px 52px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
+    .attention-figure .ml-svg { width: 100%; height: 570px; }
+    .formula-panel { padding: 42px 44px; border-top: 2px solid var(--color-warm); border-radius: var(--radius-md); background: var(--color-warm-soft); }
+    .formula-panel .formula-label { color: var(--color-warm); font: 500 13px/1 var(--type-label); letter-spacing: .1em; text-transform: uppercase; }
+    .formula { margin-top: 22px; color: var(--color-heading); font: 400 52px/.98 var(--type-display); }
+    .formula sub { font: 500 19px var(--type-label); }
+    .formula-note { margin-top: 18px; color: var(--color-body); font-size: 17px; line-height: 1.5; }
+    .attention-notes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 22px; }
+    .attention-note { min-height: 120px; padding: 18px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); }
+    .attention-note b { color: var(--color-body); font: 500 13px/1 var(--type-label); }
+    .attention-note span { display: block; margin-top: 12px; color: var(--color-muted); font-size: 14px; line-height: 1.4; }
+    .attention-legend { display: flex; gap: 26px; margin-top: 23px; color: var(--color-muted); font: 13px/1 var(--type-label); }
+    .attention-legend i { display: inline-block; width: 24px; height: 2px; margin: 0 8px 4px 0; background: var(--color-muted); vertical-align: middle; }
+    .attention-legend i.accent { background: var(--color-accent); }
+
+    /* === SLIDE 03: RAG === */
+    .rag-content { display: flex; flex-direction: column; }
+    .rag-topline { display: flex; justify-content: space-between; align-items: flex-end; }
+    .rag-status { display: flex; gap: 16px; align-items: center; padding-bottom: 8px; color: var(--color-muted); font: 500 13px/1 var(--type-label); letter-spacing: .05em; }
+    .rag-status::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--color-accent); box-shadow: 0 0 0 6px var(--color-accent-soft); }
+    .rag-figure { flex: 1; margin-top: 38px; padding: 30px 42px 20px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: oklch(0.185 0.02 252 / .78); }
+    .rag-figure .ml-svg { width: 100%; height: 600px; }
+    .rag-bottom { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 24px; }
+    .rag-metric { padding: 18px 20px; border-left: 2px solid var(--color-border); background: oklch(0.20 0.022 252 / .55); }
+    .rag-metric:nth-child(1) { border-left-color: var(--color-accent); }
+    .rag-metric b { display: block; color: var(--color-body); font-size: 15px; font-weight: 600; }
+    .rag-metric span { display: block; margin-top: 5px; color: var(--color-muted); font-size: 13px; line-height: 1.35; }
+
+    /* === MOTION === */
+    .is-active .reveal { animation: rise .65s var(--ease-out) both; }
+    .is-active .reveal-delay-1 { animation-delay: .12s; }
+    .is-active .reveal-delay-2 { animation-delay: .24s; }
+    .is-active .reveal-delay-3 { animation-delay: .36s; }
+    .is-active .signal-pulse { animation: flow 2.8s linear infinite; }
+    @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes flow { to { stroke-dashoffset: -16; } }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+    
+  
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+  <div class="deck-viewport">
+    <main class="deck-stage" id="deckStage" aria-label="ML architecture component showcase">
+
+      <!-- === SLIDE 01: TRANSFORMER ENCODER / DECODER === -->
+      <section class="slide is-active" data-slide="1" data-title="Transformer architecture" aria-labelledby="transformer-title">
+        <div class="slide-content transformer-layout">
+          <div class="transformer-copy">
+            <p class="eyebrow reveal">01 / architecture component</p>
+            <h1 class="reveal reveal-delay-1" id="transformer-title">A sequence becomes a <em>shared language.</em></h1>
+            <p class="subtitle reveal reveal-delay-2">The encoder forms contextual memory. The decoder uses that memory while predicting one output token at a time.</p>
+            <div class="principles reveal reveal-delay-3" aria-label="Transformer design principles">
+              <div class="principle"><span class="principle-mark">01</span><div><strong>Context in parallel</strong><span>Self-attention compares every token with every other token.</span></div></div>
+              <div class="principle"><span class="principle-mark">02</span><div><strong>Memory across stacks</strong><span>Cross-attention exposes encoder context at each decoder layer.</span></div></div>
+              <div class="principle"><span class="principle-mark">03</span><div><strong>Autoregressive output</strong><span>Masked attention protects the next-token prediction constraint.</span></div></div>
+            </div>
+          </div>
+          <figure class="transformer-figure reveal reveal-delay-1" aria-labelledby="transformer-caption">
+            <figcaption class="figure-kicker" id="transformer-caption"><span>encoder-decoder topology</span><b>context bridge</b></figcaption>
+            <svg class="ml-svg" viewBox="0 0 1040 720" role="img" aria-label="Transformer encoder and decoder stacks connected by cross attention. Source tokens flow up through the encoder stack of multi-head attention, add and norm, and feed forward blocks. The resulting contextual memory feeds cross-attention inside the decoder stack, which also has masked self-attention and feed forward blocks, ending in the next predicted token.">
+              <defs>
+                <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="var(--arrow)"/></marker>
+                <marker id="arrowhead-accent" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="var(--highlight-bg)"/></marker>
+              </defs>
+              <text class="svg-label" x="220" y="38" text-anchor="middle">ENCODER &#215; N</text>
+              <text class="svg-label" x="772" y="38" text-anchor="middle">DECODER &#215; N</text>
+              <rect class="node" x="54" y="65" width="334" height="554" rx="14"/>
+              <rect class="node" x="606" y="65" width="334" height="554" rx="14"/>
+
+              <rect class="node-raised" x="84" y="123" width="274" height="72" rx="8"/>
+              <text class="svg-title" x="221" y="164" text-anchor="middle">Multi-head attention</text>
+              <rect class="node" x="84" y="223" width="274" height="43" rx="6"/>
+              <text class="svg-label" x="221" y="250" text-anchor="middle">Add &amp; norm</text>
+              <rect class="node-raised" x="84" y="294" width="274" height="72" rx="8"/>
+              <text class="svg-title" x="221" y="337" text-anchor="middle">Feed forward</text>
+              <rect class="node" x="84" y="394" width="274" height="43" rx="6"/>
+              <text class="svg-label" x="221" y="421" text-anchor="middle">Add &amp; norm</text>
+              <path class="signal" d="M221 558V439"/>
+              <path class="signal" d="M221 392V368"/>
+              <path class="signal" d="M221 292V268"/>
+              <path class="signal" d="M221 221V197"/>
+
+              <rect class="node-raised" x="636" y="105" width="274" height="72" rx="8"/>
+              <text class="svg-title" x="773" y="147" text-anchor="middle">Masked self-attention</text>
+              <rect class="node" x="636" y="194" width="274" height="40" rx="6"/>
+              <text class="svg-label" x="773" y="219" text-anchor="middle">Add &amp; norm</text>
+              <rect class="node-highlight" x="636" y="255" width="274" height="82" rx="8"/>
+              <text class="svg-title" x="773" y="294" text-anchor="middle">Cross-attention</text>
+              <text class="svg-micro" x="773" y="314" text-anchor="middle">K, V from encoder memory</text>
+              <rect class="node" x="636" y="354" width="274" height="40" rx="6"/>
+              <text class="svg-label" x="773" y="379" text-anchor="middle">Add &amp; norm</text>
+              <rect class="node-raised" x="636" y="415" width="274" height="72" rx="8"/>
+              <text class="svg-title" x="773" y="458" text-anchor="middle">Feed forward</text>
+              <rect class="node" x="636" y="504" width="274" height="40" rx="6"/>
+              <text class="svg-label" x="773" y="529" text-anchor="middle">Add &amp; norm</text>
+              <path class="signal" d="M773 585V546"/>
+              <path class="signal" d="M773 502V489"/>
+              <path class="signal" d="M773 413V396"/>
+              <path class="signal" d="M773 352V339"/>
+              <path class="signal" d="M773 253V236"/>
+              <path class="signal" d="M773 192V179"/>
+
+              <path class="signal-accent signal-pulse" stroke-dasharray="6 5" d="M359 332 C455 332 514 296 634 296"/>
+              <text class="svg-micro" x="488" y="305" text-anchor="middle" fill="var(--highlight-bg)">contextual memory</text>
+
+              <rect class="node-accent" x="125" y="654" width="192" height="42" rx="7"/>
+              <text x="221" y="680" text-anchor="middle" fill="var(--highlight-fg)" font-size="13" font-weight="500">source tokens</text>
+              <path class="signal" d="M221 652V621"/>
+              <rect class="node" x="677" y="654" width="192" height="42" rx="7"/>
+              <text class="svg-title" x="773" y="680" text-anchor="middle">next token</text>
+              <path class="signal" d="M773 652V587"/>
+            </svg>
+          </figure>
+          <span class="slide-index" aria-hidden="true">01 / 03</span>
+        </div>
+      </section>
+
+      <!-- === SLIDE 02: SCALED DOT-PRODUCT ATTENTION === -->
+      <section class="slide" data-slide="2" data-title="Scaled dot-product attention" aria-labelledby="attention-title">
+        <div class="slide-content attention-content">
+          <div class="attention-heading">
+            <div>
+              <p class="eyebrow reveal">02 / computation component</p>
+              <h1 class="reveal reveal-delay-1" id="attention-title">Attention is a <em>routing rule.</em></h1>
+            </div>
+            <p class="subtitle reveal reveal-delay-2">Queries ask where to look, keys define possible matches, and values carry the information forward.</p>
+          </div>
+          <div class="attention-grid">
+            <figure class="attention-figure reveal reveal-delay-1" aria-labelledby="attention-caption">
+              <svg class="ml-svg" viewBox="0 0 720 560" role="img" aria-label="Scaled dot-product attention flow. Query and key are compared with matrix multiplication, the result is scaled by the square root of the key dimension, passed through softmax to form weights, then those weights are matrix multiplied with value to form the weighted output.">
+                <defs>
+                  <marker id="arrowhead2" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="var(--arrow)"/></marker>
+                  <marker id="arrowhead2-accent" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="var(--highlight-bg)"/></marker>
+                </defs>
+                <text class="svg-label" x="360" y="28" text-anchor="middle">SCALED DOT-PRODUCT ATTENTION</text>
+
+                <rect class="node-accent" x="40" y="435" width="120" height="54" rx="8"/>
+                <text x="100" y="468" text-anchor="middle" fill="var(--highlight-fg)" font-size="19" font-weight="500">Q</text>
+                <text class="svg-micro" x="100" y="514" text-anchor="middle">query</text>
+
+                <rect class="node" x="205" y="435" width="120" height="54" rx="8"/>
+                <text class="svg-title" x="265" y="468" text-anchor="middle">K</text>
+                <text class="svg-micro" x="265" y="514" text-anchor="middle">key</text>
+
+                <rect class="node" x="560" y="435" width="120" height="54" rx="8"/>
+                <text class="svg-title" x="620" y="468" text-anchor="middle">V</text>
+                <text class="svg-micro" x="620" y="514" text-anchor="middle">value</text>
+
+                <rect class="node-raised" x="202" y="340" width="320" height="55" rx="8"/>
+                <text class="svg-title" x="362" y="374" text-anchor="middle">MatMul &#160;&#160;Q K&#7488;</text>
+
+                <rect class="node" x="247" y="247" width="230" height="52" rx="8"/>
+                <text class="svg-title" x="362" y="279" text-anchor="middle">scale &#160;&#247; &#8730;d&#8342;</text>
+
+                <rect class="node-highlight" x="247" y="154" width="230" height="52" rx="8"/>
+                <text class="svg-title" x="362" y="186" text-anchor="middle">softmax weights</text>
+
+                <rect class="node-raised" x="202" y="63" width="320" height="55" rx="8"/>
+                <text class="svg-title" x="362" y="97" text-anchor="middle">MatMul &#160;&#160;weights &#183; V</text>
+
+                <path class="signal" marker-end="url(#arrowhead2)" d="M100 433 L100 368 L200 368"/>
+                <path class="signal" marker-end="url(#arrowhead2)" d="M265 433 L265 396"/>
+                <path class="signal" marker-end="url(#arrowhead2)" d="M362 338V301"/>
+                <path class="signal" marker-end="url(#arrowhead2)" d="M362 245V208"/>
+                <path class="signal" marker-end="url(#arrowhead2)" d="M362 152V120"/>
+                <path class="signal-accent signal-pulse" marker-end="url(#arrowhead2-accent)" stroke-dasharray="6 5" d="M620 433V91H524"/>
+
+                <text class="svg-accent" x="362" y="50" text-anchor="middle" font-size="16" font-weight="500">weighted output</text>
+              </svg>
+              <figcaption class="attention-legend" id="attention-caption"><span><i></i>comparison path</span><span><i class="accent"></i>value path</span></figcaption>
+            </figure>
+            <div class="reveal reveal-delay-2">
+              <section class="formula-panel" aria-label="Attention formula">
+                <p class="formula-label">normalized relevance</p>
+                <p class="formula">Attention(Q, K, V)<br>= softmax(QK&#7488; / &#8730;d&#8342;)V</p>
+                <p class="formula-note">The scale keeps dot products in a range where softmax can still distinguish useful relevance.</p>
+              </section>
+              <div class="attention-notes">
+                <div class="attention-note"><b>Q &#183; K&#7488;</b><span>Scores every candidate relation for the current position.</span></div>
+                <div class="attention-note"><b>softmax</b><span>Turns raw scores into a comparable probability distribution.</span></div>
+                <div class="attention-note"><b>&#8730;d&#8342;</b><span>Stabilizes gradients as the key dimension increases.</span></div>
+                <div class="attention-note"><b>&#183; V</b><span>Mixes content according to the learned relevance weights.</span></div>
+              </div>
+            </div>
+          </div>
+          <span class="slide-index" aria-hidden="true">02 / 03</span>
+        </div>
+      </section>
+
+      <!-- === SLIDE 03: RETRIEVAL AUGMENTED GENERATION === -->
+      <section class="slide" data-slide="3" data-title="Retrieval augmented generation" aria-labelledby="rag-title">
+        <div class="slide-content rag-content">
+          <div class="rag-topline">
+            <div>
+              <p class="eyebrow reveal">03 / system component</p>
+              <h1 class="reveal reveal-delay-1" id="rag-title">Generation grounded in <em>live evidence.</em></h1>
+            </div>
+            <p class="rag-status reveal reveal-delay-2">retrieval layer active</p>
+          </div>
+          <figure class="rag-figure reveal reveal-delay-1" aria-labelledby="rag-caption">
+            <svg class="ml-svg" viewBox="0 0 1660 610" role="img" aria-label="Retrieval augmented generation system. A user query is embedded and sent to a retriever, which searches a source index and returns top-K ranked evidence chunks. Those chunks and the original query are passed to a generator, which produces a grounded answer with references.">
+              <defs>
+                <marker id="arrowhead3" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="var(--arrow)"/></marker>
+                <marker id="arrowhead3-accent" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="var(--highlight-bg)"/></marker>
+              </defs>
+              <text class="svg-label" x="58" y="67">REQUEST</text>
+              <text class="svg-label" x="380" y="67">RETRIEVAL</text>
+              <text class="svg-label" x="774" y="67">EVIDENCE</text>
+              <text class="svg-label" x="1221" y="67">SYNTHESIS</text>
+              <text class="svg-label" x="1512" y="67">RESPONSE</text>
+
+              <rect class="node-accent" x="26" y="232" width="206" height="102" rx="12"/>
+              <text x="129" y="274" text-anchor="middle" fill="var(--highlight-fg)" font-size="19" font-weight="500">User query</text>
+              <text x="129" y="299" text-anchor="middle" fill="var(--highlight-fg)" font-size="12" opacity=".8">intent + constraints</text>
+
+              <rect class="node-raised" x="318" y="211" width="224" height="144" rx="12"/>
+              <text class="svg-title" x="430" y="264" text-anchor="middle">Retriever</text>
+              <text class="svg-label" x="430" y="289" text-anchor="middle">embed + rank</text>
+              <path d="M356 316H504" stroke="var(--highlight-bg)" stroke-width="2"/>
+              <circle cx="380" cy="316" r="5" fill="var(--highlight-bg)"/>
+              <circle cx="430" cy="316" r="5" fill="var(--highlight-bg)"/>
+              <circle cx="480" cy="316" r="5" fill="var(--highlight-bg)"/>
+
+              <rect class="node" x="337" y="438" width="186" height="76" rx="10"/>
+              <text class="svg-title" x="430" y="470" text-anchor="middle">Source index</text>
+              <text class="svg-micro" x="430" y="492" text-anchor="middle">vectors + metadata</text>
+
+              <rect class="node" x="673" y="131" width="292" height="304" rx="13"/>
+              <text class="svg-title" x="819" y="172" text-anchor="middle">Top-K evidence chunks</text>
+              <rect class="node-raised" x="700" y="196" width="238" height="48" rx="6"/>
+              <text class="svg-micro" x="720" y="225">01</text>
+              <text class="svg-label" x="758" y="225">ranked source passage</text>
+              <rect class="node-raised" x="700" y="263" width="238" height="48" rx="6"/>
+              <text class="svg-micro" x="720" y="292">02</text>
+              <text class="svg-label" x="758" y="292">ranked source passage</text>
+              <rect class="node-raised" x="700" y="330" width="238" height="48" rx="6"/>
+              <text class="svg-micro" x="720" y="359">03</text>
+              <text class="svg-label" x="758" y="359">ranked source passage</text>
+
+              <rect class="node-highlight" x="1110" y="194" width="252" height="178" rx="13"/>
+              <text class="svg-title" x="1236" y="252" text-anchor="middle">Generator</text>
+              <text class="svg-label" x="1236" y="278" text-anchor="middle">prompt + cited context</text>
+              <path d="M1158 315H1314" stroke="var(--highlight-bg)" stroke-width="1" stroke-dasharray="4 4"/>
+              <text class="svg-micro" x="1236" y="338" text-anchor="middle">constrained completion</text>
+
+              <rect class="node-accent" x="1450" y="232" width="185" height="102" rx="12"/>
+              <text x="1542" y="274" text-anchor="middle" fill="var(--highlight-fg)" font-size="19" font-weight="500">Grounded answer</text>
+              <text x="1542" y="299" text-anchor="middle" fill="var(--highlight-fg)" font-size="12" opacity=".8">response + references</text>
+
+              <path class="signal" marker-end="url(#arrowhead3)" d="M234 283H316"/>
+              <path class="signal-accent signal-pulse" marker-end="url(#arrowhead3-accent)" stroke-dasharray="7 5" d="M544 283H671"/>
+              <path class="signal" marker-end="url(#arrowhead3)" d="M967 283H1108"/>
+              <path class="signal" marker-end="url(#arrowhead3)" d="M1364 283H1448"/>
+              <path class="signal" marker-end="url(#arrowhead3)" stroke-dasharray="4 4" d="M430 436V357"/>
+              <path class="signal-accent" marker-end="url(#arrowhead3-accent)" stroke-dasharray="6 5" d="M539 474C680 534 1040 533 1168 374"/>
+
+              <text class="svg-micro" x="809" y="543" text-anchor="middle" fill="var(--highlight-bg)">selected context is injected before generation</text>
+            </svg>
+            <figcaption class="figure-kicker" id="rag-caption"><span>retrieval augmented generation</span><b>evidence travels with the prompt</b></figcaption>
+          </figure>
+          <div class="rag-bottom reveal reveal-delay-3" aria-label="RAG implementation notes">
+            <div class="rag-metric"><b>Query representation</b><span>Embed the request with the same semantic space used for source chunks.</span></div>
+            <div class="rag-metric"><b>Evidence selection</b><span>Rank for relevance, diversify results, and preserve source metadata.</span></div>
+            <div class="rag-metric"><b>Answer construction</b><span>Pass only the useful context so citations remain inspectable and precise.</span></div>
+          </div>
+          <span class="slide-index" aria-hidden="true">03 / 03</span>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <nav class="deck-controls" aria-label="Slide controls">
+    <button type="button" id="previous" aria-label="Previous slide">&#8592;</button>
+    <output id="slideCount" aria-live="polite">1 / 3</output>
+    <button type="button" id="next" aria-label="Next slide">&#8594;</button>
+  </nav>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M02 Ink Illustration — Independent Literary Press Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── COLOR TOKENS ───────────────────────────────────────────────────── */
+:root {
+  --c-paper:        oklch(0.96 0.014 68);
+  --c-paper-deep:   oklch(0.92 0.016 68);
+  --c-ink:          oklch(0.10 0.012 40);
+  --c-ink-mid:      oklch(0.30 0.012 40);
+  --c-ink-light:    oklch(0.52 0.010 40);
+  --c-rule:         oklch(0.18 0.012 40);
+  --c-vermilion:    oklch(0.48 0.18 24);
+  --c-vermilion-dk: oklch(0.38 0.16 24);
+
+  /* Type scale */
+  --t-display:  5.0rem;
+  --t-headline: 2.7rem;
+  --t-subhead:  1.4rem;
+  --t-body:     1.05rem;
+  --t-stat:     3.4rem;
+  --t-label:    0.78rem;
+
+  --lh-display:  1.10;
+  --lh-headline: 1.22;
+  --lh-body:     1.68;
+
+  --f-serif: 'Spectral', Georgia, 'Times New Roman', serif;
+  --f-sans:  'Jost', system-ui, sans-serif;
+}
+
+/* ── DECK WRAPPER ───────────────────────────────────────────────────── */
+#deck-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: oklch(0.88 0.012 68);
+  overflow: hidden;
+}
+
+/* ── STAGE ──────────────────────────────────────────────────────────── */
+#deck-stage {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  transform-origin: center center;
+  overflow: hidden;
+  background: var(--c-paper);
+}
+
+/* ── SLIDE ──────────────────────────────────────────────────────────── */
+.slide {
+  display: flex;
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active { visibility: visible; opacity: 1; pointer-events: auto; }
+
+/* ── BACKGROUND LAYER (z-index 0) ───────────────────────────────────── */
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-color: var(--c-paper);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      oklch(0.94 0.012 68 / 0.22) 3px,
+      oklch(0.94 0.012 68 / 0.22) 4px
+    );
+}
+
+/* ── CONTENT LAYER (z-index 1) ──────────────────────────────────────── */
+.slide-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 0 120px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── FOLIO ──────────────────────────────────────────────────────────── */
+.slide-folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  z-index: 1;
+  font-family: var(--f-sans);
+  font-size: var(--t-label);
+  color: var(--c-ink-light);
+  letter-spacing: 0.06em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ── INK RULE ───────────────────────────────────────────────────────── */
+.ink-rule {
+  width: 100%;
+  height: 0.5px;
+  background: var(--c-rule);
+  border: none;
+  flex-shrink: 0;
+}
+
+/* ── SECTION MARKER ─────────────────────────────────────────────────── */
+.section-marker {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.section-marker::before {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 0.5px;
+  background: var(--c-vermilion);
+  flex-shrink: 0;
+}
+.section-marker span {
+  font-family: var(--f-sans);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-ink-mid);
+}
+
+/* ── INK BLOT ───────────────────────────────────────────────────────── */
+.ink-blot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--c-vermilion);
+  flex-shrink: 0;
+}
+
+/* ── NUMERIC ────────────────────────────────────────────────────────── */
+.numeric, .stat-figure, td.num, th.num {
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   SLIDE 1 — TITLE
+   ──────────────────────────────────────────────────────────────────── */
+#slide-1 .slide-content {
+  justify-content: space-between;
+  padding-top: 200px;
+  padding-bottom: 80px;
+}
+
+.s1-upper { flex: 1; display: flex; flex-direction: column; gap: 36px; }
+
+.s1-display {
+  font-family: var(--f-serif);
+  font-size: var(--t-display);
+  font-weight: 300;
+  line-height: var(--lh-display);
+  color: var(--c-ink);
+  max-width: 1080px;
+  letter-spacing: -0.01em;
+}
+
+.s1-abstract {
+  font-family: var(--f-serif);
+  font-size: var(--t-subhead);
+  font-weight: 300;
+  font-style: italic;
+  line-height: var(--lh-body);
+  color: var(--c-ink-mid);
+  max-width: 860px;
+}
+
+.s1-lower { flex-shrink: 0; }
+
+.detail-row {
+  display: flex;
+  gap: 0;
+  margin-top: 20px;
+}
+
+.detail-item {
+  flex: 1;
+  padding: 24px 32px 24px 0;
+  border-left: 0.5px solid var(--c-rule);
+}
+.detail-item:first-child { padding-left: 0; border-left: none; }
+
+.detail-label {
+  font-family: var(--f-sans);
+  font-size: var(--t-label);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--c-ink-light);
+  margin-bottom: 8px;
+}
+.detail-value {
+  font-family: var(--f-serif);
+  font-size: var(--t-body);
+  color: var(--c-ink);
+  line-height: 1.5;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   SLIDE 2 — EVIDENCE
+   ──────────────────────────────────────────────────────────────────── */
+#slide-2 .slide-content {
+  padding-top: 160px;
+  padding-bottom: 80px;
+  gap: 0;
+}
+
+.s2-marker { margin-bottom: 36px; }
+
+.s2-headline {
+  font-family: var(--f-serif);
+  font-size: var(--t-headline);
+  font-weight: 300;
+  line-height: var(--lh-headline);
+  color: var(--c-ink);
+  max-width: 1280px;
+  margin-bottom: 52px;
+}
+
+.stat-row {
+  display: flex;
+  gap: 64px;
+  margin-bottom: 52px;
+}
+
+.stat-col { display: flex; flex-direction: column; gap: 10px; }
+
+.stat-blot-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stat-figure {
+  font-family: var(--f-serif);
+  font-size: var(--t-stat);
+  font-weight: 300;
+  line-height: 1;
+  color: var(--c-ink);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.stat-label {
+  font-family: var(--f-sans);
+  font-size: var(--t-label);
+  font-weight: 400;
+  letter-spacing: 0.07em;
+  color: var(--c-ink-mid);
+  text-transform: uppercase;
+  line-height: 1.5;
+  max-width: 240px;
+}
+
+.s2-lower {
+  display: flex;
+  gap: 80px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.evidence-para {
+  flex: 1;
+  font-family: var(--f-serif);
+  font-size: var(--t-body);
+  color: var(--c-ink-mid);
+  line-height: var(--lh-body);
+}
+
+.aside-panel {
+  width: 520px;
+  flex-shrink: 0;
+  border-left: 0.5px solid var(--c-rule);
+  padding-left: 48px;
+}
+
+.aside-stat {
+  font-family: var(--f-serif);
+  font-size: 2.6rem;
+  font-weight: 300;
+  color: var(--c-vermilion);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.aside-label {
+  font-family: var(--f-sans);
+  font-size: var(--t-label);
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--c-ink-light);
+  margin-bottom: 16px;
+}
+
+.aside-text {
+  font-family: var(--f-serif);
+  font-size: 0.95rem;
+  color: var(--c-ink-mid);
+  line-height: var(--lh-body);
+}
+
+/* ────────────────────────────────────────────────────────────────────
+   SLIDE 3 — COMPARISON
+   ──────────────────────────────────────────────────────────────────── */
+#slide-3 .slide-content {
+  padding-top: 160px;
+  padding-bottom: 80px;
+  gap: 0;
+}
+
+.s3-marker { margin-bottom: 36px; }
+
+.s3-headline {
+  font-family: var(--f-serif);
+  font-size: var(--t-headline);
+  font-weight: 300;
+  line-height: var(--lh-headline);
+  color: var(--c-ink);
+  max-width: 1240px;
+  margin-bottom: 44px;
+}
+
+.comp-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 0.5px solid var(--c-rule);
+  border-bottom: 0.5px solid var(--c-rule);
+  margin-bottom: 20px;
+}
+
+.comp-table th {
+  font-family: var(--f-sans);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--c-ink-mid);
+  text-align: left;
+  padding: 14px 20px;
+  border-bottom: 0.5px solid var(--c-rule);
+  vertical-align: bottom;
+}
+
+.comp-table th.num { text-align: right; }
+
+.comp-table td {
+  font-family: var(--f-serif);
+  font-size: var(--t-body);
+  color: var(--c-ink);
+  padding: 13px 20px;
+  border-bottom: 0.5px solid oklch(0.18 0.012 40 / 0.20);
+  vertical-align: top;
+  line-height: 1.45;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.comp-table td.num { text-align: right; }
+
+.comp-table tr.highlight td {
+  background-color: var(--c-paper-deep);
+  font-weight: 600;
+}
+
+.comp-table tr:last-child td { border-bottom: none; }
+
+.comp-table td .tag-best {
+  display: inline-block;
+  font-family: var(--f-sans);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--c-vermilion);
+  border: 0.5px solid var(--c-vermilion);
+  padding: 2px 6px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.footnote {
+  font-family: var(--f-sans);
+  font-size: 0.72rem;
+  color: var(--c-ink-light);
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+}
+
+/* ── NAV BAR ────────────────────────────────────────────────────────── */
+#nav-bar {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: oklch(0.12 0.012 40 / 0.88);
+  backdrop-filter: blur(8px);
+  border-radius: 999px;
+  padding: 10px 20px;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: oklch(0.82 0.010 68);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: var(--f-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+.nav-btn:hover { color: #fff; }
+.nav-btn:focus-visible {
+  outline: 2px solid var(--c-vermilion);
+  outline-offset: 2px;
+}
+
+.nav-dots { display: flex; gap: 8px; align-items: center; }
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: oklch(0.55 0.010 68);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  transition: background 0.15s, transform 0.15s;
+}
+.nav-dot.active {
+  background: oklch(0.92 0.014 68);
+  transform: scale(1.3);
+}
+.nav-dot:focus-visible {
+  outline: 2px solid var(--c-vermilion);
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION FALLBACK ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .nav-btn, .nav-dot { transition: none; }
+}
+</style>
+</head>
+<body>
+<div id="deck-wrapper">
+  <div id="deck-stage">
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SLIDE 1 — TITLE
+    ══════════════════════════════════════════════════════════════════ -->
+    <div class="slide active" id="slide-1" role="region" aria-label="Slide 1 of 3">
+      <div class="slide-bg" aria-hidden="true"></div>
+      <div class="slide-content">
+        <div class="s1-upper">
+          <div class="section-marker">
+            <span>Independent Literary Press — Small Press Economics Study</span>
+          </div>
+          <h1 class="s1-display">
+            Independent Literary Publishers With Annual Print Runs Below 5,000 Copies Generated 34 Percent Higher Per-Title Review Coverage in Major Literary Publications Than Mid-Size Publishers Between 2020 and 2024, Despite Operating on 12 Percent of Comparable Marketing Budgets.
+          </h1>
+          <p class="s1-abstract">
+            A five-year longitudinal study of 312 independent and mid-size literary presses examines the relationship between marketing spend, print run scale, and critical review placement across seventeen major literary publications. The findings challenge prevailing assumptions about the role of marketing investment in securing critical attention for literary fiction.
+          </p>
+        </div>
+        <div class="s1-lower">
+          <hr class="ink-rule">
+          <div class="detail-row">
+            <div class="detail-item">
+              <div class="detail-label">Study Period</div>
+              <div class="detail-value">2020 – 2024, five calendar years</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Presses Surveyed</div>
+              <div class="detail-value numeric">312 literary publishers, 9 countries</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Publications Tracked</div>
+              <div class="detail-value">17 major literary review outlets</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Titles Analyzed</div>
+              <div class="detail-value numeric">4,840 literary fiction titles</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-folio" aria-label="Slide 1">1</div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SLIDE 2 — EVIDENCE
+    ══════════════════════════════════════════════════════════════════ -->
+    <div class="slide" id="slide-2" role="region" aria-label="Slide 2 of 3">
+      <div class="slide-bg" aria-hidden="true"></div>
+      <div class="slide-content">
+        <div class="section-marker s2-marker">
+          <span>Finding 01 — Critical Reception and Awards</span>
+        </div>
+        <h2 class="s2-headline">
+          Literary Titles From Independent Presses Received Awards Recognition at 2.7 Times the Rate of Comparably-Reviewed Books From Major Houses — Suggesting That Critical Gatekeeping and Award Nomination Processes Favor Independent Publication for Long-Form Literary Fiction.
+        </h2>
+        <div class="stat-row">
+          <div class="stat-col">
+            <div class="stat-blot-row">
+              <span class="ink-blot" aria-hidden="true"></span>
+              <span class="stat-figure">2.7×</span>
+            </div>
+            <div class="stat-label">Award recognition rate vs. major-house peers</div>
+          </div>
+          <div class="stat-col">
+            <div class="stat-blot-row">
+              <span class="ink-blot" aria-hidden="true"></span>
+              <span class="stat-figure">68%</span>
+            </div>
+            <div class="stat-label">Of shortlisted titles from presses under 5,000 run</div>
+          </div>
+          <div class="stat-col">
+            <div class="stat-blot-row">
+              <span class="ink-blot" aria-hidden="true"></span>
+              <span class="stat-figure">$14k</span>
+            </div>
+            <div class="stat-label">Median marketing spend per title — independent press</div>
+          </div>
+        </div>
+        <div class="s2-lower">
+          <p class="evidence-para">
+            Across the 2020–2024 study window, independent literary presses with annual print runs below 5,000 copies saw their titles appear on major prize shortlists at 2.7 times the rate of comparably-reviewed titles from mid-size and large commercial houses. This pattern held consistently across the Booker, the National Book Award, and twelve smaller literary distinctions tracked by the study. Peer reviewers and award judges interviewed as part of the qualitative component of the research noted that independent press titles frequently arrive with stronger editorial apparatus — longer developmental timelines, closer author-editor relationships, and more deliberate design — factors that may contribute both to critical reception and to the impression of institutional seriousness that award nomination processes reward.
+          </p>
+          <div class="aside-panel" role="complementary" aria-label="Supplementary finding">
+            <div class="aside-stat numeric">41%</div>
+            <div class="aside-label">Repeat Shortlist Rate</div>
+            <p class="aside-text">
+              Among independent presses with three or more shortlisted titles in the period, 41 percent had at least one author return to a shortlist within four years of their debut listing — a repeat recognition rate not observed at scale in any other press-size category in the study. This depth of recognition trajectory suggests that independent publication creates durable critical relationships rather than one-time visibility events.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="slide-folio" aria-label="Slide 2">2</div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         SLIDE 3 — COMPARISON
+    ══════════════════════════════════════════════════════════════════ -->
+    <div class="slide" id="slide-3" role="region" aria-label="Slide 3 of 3">
+      <div class="slide-bg" aria-hidden="true"></div>
+      <div class="slide-content">
+        <div class="section-marker s3-marker">
+          <span>Finding 02 — Distribution Models and Revenue Stability</span>
+        </div>
+        <h2 class="s3-headline">
+          Independent Presses That Combined Direct-to-Reader Subscription Models With Bookstore Partnerships Achieved the Highest Revenue Stability, Strongest Author Retention, and Greatest Per-Title Longevity Across All Five Evaluated Distribution Configurations.
+        </h2>
+        <table class="comp-table" aria-label="Distribution model comparison">
+          <thead>
+            <tr>
+              <th scope="col">Distribution Configuration</th>
+              <th scope="col" class="num">Revenue Stability Index</th>
+              <th scope="col" class="num">Author Retention Rate</th>
+              <th scope="col" class="num">Median Title Active Life (yr)</th>
+              <th scope="col" class="num">Avg. Annual Titles</th>
+              <th scope="col">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight">
+              <td>Subscription + Bookstore Partnership<span class="tag-best">Best</span></td>
+              <td class="num">87</td>
+              <td class="num">92%</td>
+              <td class="num">6.4</td>
+              <td class="num">18</td>
+              <td>Dual-channel model; highest repeat-purchase rate and most stable seasonal revenue curve across all five years</td>
+            </tr>
+            <tr>
+              <td>Bookstore-Only (Independent Retail)</td>
+              <td class="num">61</td>
+              <td class="num">74%</td>
+              <td class="num">3.8</td>
+              <td class="num">22</td>
+              <td>Strong critical placement but higher revenue volatility; susceptible to single-season performance swings</td>
+            </tr>
+            <tr>
+              <td>Direct-to-Reader Only (No Retail)</td>
+              <td class="num">72</td>
+              <td class="num">81%</td>
+              <td class="num">4.9</td>
+              <td class="num">12</td>
+              <td>Lower discoverability; strong reader loyalty metrics once subscription base established above 800 subscribers</td>
+            </tr>
+            <tr>
+              <td>Amazon-Primary with Minimal Retail</td>
+              <td class="num">44</td>
+              <td class="num">58%</td>
+              <td class="num">2.1</td>
+              <td class="num">31</td>
+              <td>Highest title volume but lowest title longevity; significant author departures after first book in 42% of cases</td>
+            </tr>
+            <tr>
+              <td>Academic / Institutional Distribution</td>
+              <td class="num">58</td>
+              <td class="num">86%</td>
+              <td class="num">8.2</td>
+              <td class="num">8</td>
+              <td>Longest title active life due to library standing orders; limited general-reader reach constrains discovery</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="footnote">
+          Revenue Stability Index: proprietary composite score (0–100) weighting seasonal variance, year-over-year deviation, and months-of-runway coverage. Author Retention Rate: percentage of authors contracting a second title with the same press within six years. Title Active Life: years from publication to below-threshold sales velocity (&lt;12 copies/month). N = 246 presses with complete five-year financial records. Source: Independent Literary Press Economic Survey 2025, conducted in partnership with the Literary Publishers Research Consortium.
+        </p>
+      </div>
+      <div class="slide-folio" aria-label="Slide 3">3</div>
+    </div>
+
+  </div><!-- /deck-stage -->
+</div><!-- /deck-wrapper -->
+
+<!-- ══════════════════════════════════════════════════════════════════
+     NAV BAR
+══════════════════════════════════════════════════════════════════ -->
+<nav id="nav-bar" role="navigation" aria-label="Slide navigation">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide">Prev</button>
+  <div class="nav-dots" role="tablist" aria-label="Slides">
+    <button class="nav-dot active" role="tab" aria-selected="true"  aria-label="Slide 1" data-slide="1"></button>
+    <button class="nav-dot"        role="tab" aria-selected="false" aria-label="Slide 2" data-slide="2"></button>
+    <button class="nav-dot"        role="tab" aria-selected="false" aria-label="Slide 3" data-slide="3"></button>
+  </div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide">Next</button>
+</nav>
+
+<script>
+/* ── RUNTIME GLOBALS ─────────────────────────────────────────────── */
+window.__currentSlide = 1;
+
+window.__deckPlan = {
+  totalSlides: 3,
+  style: 'M02',
+  styleName: 'ink-illustration',
+  slides: [
+    { n: 1, type: 'title',      headline: 'Independent Literary Publishers With Annual Print Runs Below 5,000 Copies Generated 34 Percent Higher Per-Title Review Coverage…' },
+    { n: 2, type: 'evidence',   headline: 'Literary Titles From Independent Presses Received Awards Recognition at 2.7 Times the Rate…' },
+    { n: 3, type: 'comparison', headline: 'Independent Presses That Combined Direct-to-Reader Subscription Models With Bookstore Partnerships Achieved the Highest Revenue Stability…' }
+  ]
+};
+
+/* ── SCALE STAGE ─────────────────────────────────────────────────── */
+function scaleStage() {
+  var stage   = document.getElementById('deck-stage');
+  var wrapper = document.getElementById('deck-wrapper');
+  var scaleX  = wrapper.clientWidth  / 1920;
+  var scaleY  = wrapper.clientHeight / 1080;
+  var scale   = Math.min(scaleX, scaleY);
+  stage.style.transform = 'scale(' + scale + ')';
+}
+
+window.addEventListener('resize', scaleStage);
+scaleStage();
+
+/* ── goToSlide ───────────────────────────────────────────────────── */
+window.__goToSlide = function(n) {
+  var total = window.__deckPlan.totalSlides;
+  if (n < 1 || n > total) return;
+  var slides = document.querySelectorAll('.slide');
+  var dots   = document.querySelectorAll('.nav-dot');
+
+  slides.forEach(function(s) { s.classList.remove('active'); s.style.display = 'none'; });
+  dots.forEach(function(d, i) {
+    d.classList.remove('active');
+    d.setAttribute('aria-selected', 'false');
+  });
+
+  var target = document.getElementById('slide-' + n);
+  if (target) {
+    target.style.display = 'flex';
+    target.classList.add('active');
+  }
+  var dot = document.querySelector('[data-slide="' + n + '"]');
+  if (dot) {
+    dot.classList.add('active');
+    dot.setAttribute('aria-selected', 'true');
+  }
+
+  window.__currentSlide = n;
+};
+
+/* ── NAV BUTTONS ─────────────────────────────────────────────────── */
+document.getElementById('btn-prev').addEventListener('click', function() {
+  window.__goToSlide(window.__currentSlide - 1);
+});
+document.getElementById('btn-next').addEventListener('click', function() {
+  window.__goToSlide(window.__currentSlide + 1);
+});
+
+/* ── DOT BUTTONS ─────────────────────────────────────────────────── */
+document.querySelectorAll('.nav-dot').forEach(function(dot) {
+  dot.addEventListener('click', function() {
+    window.__goToSlide(parseInt(dot.getAttribute('data-slide'), 10));
+  });
+});
+
+/* ── KEYBOARD NAV ────────────────────────────────────────────────── */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+    e.preventDefault();
+    window.__goToSlide(window.__currentSlide + 1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    window.__goToSlide(window.__currentSlide - 1);
+  }
+});
+
+/* ── ?preview=N ──────────────────────────────────────────────────── */
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var preview = params.get('preview');
+  if (preview !== null) {
+    document.getElementById('nav-bar').style.display = 'none';
+    var n = parseInt(preview, 10);
+    if (!isNaN(n)) window.__goToSlide(n);
+  }
+})();
+</script>
+</body>
+</html>

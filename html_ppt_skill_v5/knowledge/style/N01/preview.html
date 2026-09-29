@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N01 Art Deco Gold — International Auction House 2024</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── CSS Custom Properties ── */
+:root {
+  --c-bg-base:        oklch(0.08 0.008 40);
+  --c-bg-raised:      oklch(0.12 0.010 42);
+  --c-bg-inset:       oklch(0.06 0.006 38);
+  --c-bg-overlay:     oklch(0.16 0.012 44);
+  --c-text-primary:   oklch(0.94 0.014 68);
+  --c-text-secondary: oklch(0.70 0.016 64);
+  --c-text-muted:     oklch(0.52 0.012 60);
+  --c-gold-900:       oklch(0.38 0.08  74);
+  --c-gold-700:       oklch(0.56 0.13  74);
+  --c-gold-500:       oklch(0.74 0.16  74);
+  --c-gold-300:       oklch(0.86 0.11  74);
+  --c-gold-100:       oklch(0.95 0.05  74);
+  --c-border:         oklch(0.26 0.020 66);
+  --c-divider:        oklch(0.56 0.13  74);
+  --f-display:        'Cinzel', 'Trajan Pro', serif;
+  --f-body:           'Cormorant Garamond', 'Garamond', Georgia, serif;
+  --t-hero:           clamp(1.9rem, 2.6vw, 3.0rem);
+  --t-h1:             clamp(1.3rem, 1.8vw, 2.0rem);
+  --t-h2:             clamp(1.0rem, 1.3vw, 1.4rem);
+  --t-body-lg:        clamp(0.95rem, 1.15vw, 1.2rem);
+  --t-body:           clamp(0.85rem, 1.0vw, 1.05rem);
+  --t-small:          clamp(0.72rem, 0.84vw, 0.875rem);
+  --t-micro:          clamp(0.60rem, 0.70vw, 0.72rem);
+  --lh-display:       1.12;
+  --lh-body:          1.65;
+  --ls-wide:          0.14em;
+  --ls-normal:        0.04em;
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: #0a0907;
+  overflow: hidden;
+  font-family: var(--f-body);
+  color: var(--c-text-primary);
+}
+
+/* ── Stage wrapper ── */
+#stage-wrapper {
+  width: 100vw; height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: #0a0907;
+}
+
+/* ── 1920×1080 stage ── */
+#deck-stage {
+  width: 1920px; height: 1080px;
+  position: relative;
+  transform-origin: top left;
+  overflow: hidden;
+}
+
+/* ── Slide base ── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  position: absolute;
+  inset: 0;
+  width: 1920px; height: 1080px;
+  
+  background-color: var(--c-bg-base);
+  color: var(--c-text-primary);
+  font-family: var(--f-body);
+  overflow: hidden;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+
+/* ── Background radial glow ── */
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse 55% 38% at 50% -3%,
+    oklch(0.74 0.10 74 / 0.08) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+/* ── Gold double-rule top border ── */
+.slide-border-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 7px;
+  z-index: 2;
+  border-top: 1px solid var(--c-gold-700);
+  border-bottom: 1px solid var(--c-gold-700);
+}
+
+/* ── Slide folio ── */
+.slide-folio {
+  position: absolute;
+  bottom: 36px; right: 120px;
+  font-family: var(--f-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  color: var(--c-text-muted);
+  font-variant-numeric: lining-nums tabular-nums;
+  z-index: 10;
+}
+
+/* ── All semantic content above bg ── */
+.slide-content {
+  position: relative;
+  z-index: 1;
+  width: 100%; height: 100%;
+}
+
+/* ── Section marker ── */
+.section-marker {
+  font-family: var(--f-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-gold-500);
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.section-marker::before {
+  content: '';
+  display: inline-block;
+  width: 36px; height: 1px;
+  background: var(--c-gold-500);
+}
+
+/* ── Art Deco three-line divider ── */
+.deco-divider {
+  width: 100%;
+  margin: 28px 0;
+  position: relative;
+  height: 6px;
+}
+.deco-divider::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--c-gold-700);
+}
+.deco-divider::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--c-gold-700);
+}
+
+/* ── Corner bracket panel ── */
+.deco-panel {
+  position: relative;
+  padding: 32px 40px;
+}
+.deco-panel::before {
+  content: '';
+  position: absolute;
+  top: 8px; left: 8px;
+  width: 28px; height: 28px;
+  border-top: 1px solid var(--c-gold-700);
+  border-left: 1px solid var(--c-gold-700);
+}
+.deco-panel::after {
+  content: '';
+  position: absolute;
+  bottom: 8px; right: 8px;
+  width: 28px; height: 28px;
+  border-bottom: 1px solid var(--c-gold-700);
+  border-right: 1px solid var(--c-gold-700);
+}
+
+/* ── Stat columns ── */
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.stat-overline {
+  width: 40px; height: 1px;
+  background: var(--c-gold-500);
+  flex-shrink: 0;
+}
+.stat-number {
+  font-family: var(--f-display);
+  font-size: 3.0rem;
+  font-weight: 600;
+  color: var(--c-gold-500);
+  font-variant-numeric: lining-nums proportional-nums;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.stat-unit {
+  font-family: var(--f-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--c-gold-700);
+  vertical-align: super;
+  font-size: 1.2rem;
+}
+.stat-label {
+  font-family: var(--f-body);
+  font-size: 0.82rem;
+  color: var(--c-text-secondary);
+  line-height: 1.5;
+  max-width: 190px;
+}
+
+/* ── Aside panel ── */
+.aside-panel {
+  background: var(--c-bg-raised);
+  border-left: 2px solid var(--c-gold-700);
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.aside-stat {
+  font-family: var(--f-display);
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--c-gold-300);
+  font-variant-numeric: lining-nums proportional-nums;
+  line-height: 1.1;
+}
+.aside-text {
+  font-family: var(--f-body);
+  font-size: 0.82rem;
+  color: var(--c-text-secondary);
+  line-height: 1.6;
+}
+
+/* ── Data table ── */
+.deco-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--f-body);
+  font-size: 0.9rem;
+}
+.deco-table th {
+  font-family: var(--f-display);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-gold-700);
+  border-bottom: 1px solid var(--c-gold-700);
+  padding: 10px 18px;
+  text-align: left;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.deco-table td {
+  padding: 13px 18px;
+  color: var(--c-text-primary);
+  border-bottom: 1px solid oklch(0.26 0.020 66 / 0.45);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.deco-table tr:nth-child(even) td {
+  background: oklch(0.12 0.010 42 / 0.35);
+}
+.deco-table tr.row-highlight td {
+  background: oklch(0.74 0.10 74 / 0.13);
+  color: var(--c-gold-300);
+  font-weight: 600;
+}
+.deco-table tr.row-highlight td:first-child {
+  border-left: 2px solid var(--c-gold-500);
+  padding-left: 16px;
+}
+
+/* ── Footnote ── */
+.footnote {
+  font-family: var(--f-body);
+  font-size: 0.70rem;
+  color: var(--c-text-muted);
+  line-height: 1.5;
+  border-top: 1px solid var(--c-border);
+  padding-top: 12px;
+  margin-top: 20px;
+}
+
+/* ── Nav bar ── */
+#nav-bar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: oklch(0.12 0.010 42 / 0.92);
+  border: 1px solid var(--c-gold-700);
+  border-radius: 999px;
+  padding: 8px 18px;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+}
+.nav-btn {
+  background: none;
+  border: none;
+  color: var(--c-gold-500);
+  font-family: var(--f-display);
+  font-size: 0.72rem;
+  cursor: pointer;
+  padding: 4px 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+.nav-btn:hover { color: var(--c-gold-300); }
+.nav-btn:focus-visible { outline: 2px solid var(--c-gold-500); outline-offset: 2px; border-radius: 4px; }
+.nav-dots {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+.nav-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--c-gold-700);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.nav-dot.active {
+  background: var(--c-gold-500);
+  border-color: var(--c-gold-500);
+}
+.nav-dot:focus-visible { outline: 2px solid var(--c-gold-500); outline-offset: 2px; }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .nav-btn, .nav-dot { transition: none; }
+}
+
+/* ── Title slide layout ── */
+.s1-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 80px 200px;
+  text-align: center;
+}
+.s1-logo-area {
+  font-family: var(--f-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  color: var(--c-gold-700);
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+.s1-title {
+  font-family: var(--f-display);
+  font-size: clamp(1.6rem, 2.4vw, 2.6rem);
+  font-weight: 700;
+  color: var(--c-text-primary);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  max-width: 1300px;
+  margin-bottom: 32px;
+}
+.s1-abstract {
+  font-family: var(--f-body);
+  font-size: 1.05rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--c-text-secondary);
+  line-height: 1.7;
+  max-width: 960px;
+  margin-bottom: 0;
+}
+.s1-detail-row {
+  display: flex;
+  gap: 0;
+  margin-top: 44px;
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
+  width: 100%;
+  max-width: 1200px;
+}
+.s1-detail-col {
+  flex: 1;
+  padding: 22px 32px;
+  border-right: 1px solid var(--c-border);
+  text-align: left;
+}
+.s1-detail-col:last-child { border-right: none; }
+.s1-detail-label {
+  font-family: var(--f-display);
+  font-size: 0.60rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-gold-700);
+  margin-bottom: 6px;
+}
+.s1-detail-value {
+  font-family: var(--f-body);
+  font-size: 0.90rem;
+  color: var(--c-text-primary);
+  line-height: 1.45;
+}
+
+/* ── Evidence slide layout ── */
+.s2-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 70px 160px;
+}
+.s2-headline {
+  font-family: var(--f-display);
+  font-size: clamp(1.1rem, 1.55vw, 1.65rem);
+  font-weight: 600;
+  color: var(--c-text-primary);
+  line-height: 1.28;
+  max-width: 1300px;
+  margin-bottom: 44px;
+  letter-spacing: -0.005em;
+}
+.s2-stats-row {
+  display: flex;
+  gap: 0;
+  margin-bottom: 40px;
+}
+.s2-stats-row .stat-col {
+  flex: 1;
+  padding: 0 40px 0 0;
+  border-right: 1px solid var(--c-border);
+  margin-right: 40px;
+}
+.s2-stats-row .stat-col:last-child {
+  border-right: none;
+  margin-right: 0;
+}
+.s2-aside-wrap {
+  display: flex;
+  gap: 56px;
+  align-items: flex-start;
+}
+.s2-evidence {
+  flex: 1;
+  font-family: var(--f-body);
+  font-size: 0.92rem;
+  color: var(--c-text-secondary);
+  line-height: 1.72;
+}
+.s2-aside {
+  width: 340px;
+  flex-shrink: 0;
+}
+
+/* ── Comparison slide layout ── */
+.s3-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 60px 140px;
+}
+.s3-headline {
+  font-family: var(--f-display);
+  font-size: clamp(1.0rem, 1.45vw, 1.55rem);
+  font-weight: 600;
+  color: var(--c-text-primary);
+  line-height: 1.28;
+  max-width: 1400px;
+  margin-bottom: 36px;
+  letter-spacing: -0.005em;
+}
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+<div id="stage-wrapper">
+  <div id="deck-stage">
+
+    <!-- ══════════════════════════════════════════════
+         SLIDE 1 — TITLE
+    ══════════════════════════════════════════════ -->
+    <div class="slide is-active" data-slide="1" id="slide-1" role="region" aria-label="Slide 1 of 3">
+      <div class="slide-border-top" aria-hidden="true"></div>
+      <div class="slide-content s1-inner">
+        <div class="s1-logo-area">International Auction House &nbsp;·&nbsp; Market Intelligence Division</div>
+        <div class="section-marker">Auction Results 2024</div>
+        <h1 class="s1-title">
+          Post-War and Contemporary Art Auction Values Reached $9.4 Billion in the First Half of 2024, Representing the Second-Highest Semi-Annual Total on Record Despite a 12 Percent Reduction in Lot Volume from Peak 2022 Levels.
+        </h1>
+        <p class="s1-abstract">
+          The global fine art auction market demonstrated exceptional per-lot value discipline in the first half of 2024, with fewer works achieving markedly higher average realizations. This analysis examines the structural drivers behind sustained market strength amid macroeconomic headwinds affecting discretionary asset allocation.
+        </p>
+        <div class="deco-divider" aria-hidden="true"></div>
+        <div class="s1-detail-row">
+          <div class="s1-detail-col">
+            <div class="s1-detail-label">Period</div>
+            <div class="s1-detail-value">January – June 2024</div>
+          </div>
+          <div class="s1-detail-col">
+            <div class="s1-detail-label">Coverage</div>
+            <div class="s1-detail-value">42 Major Auction Houses Globally</div>
+          </div>
+          <div class="s1-detail-col">
+            <div class="s1-detail-label">Categories</div>
+            <div class="s1-detail-value">Post-War, Contemporary, Modern</div>
+          </div>
+          <div class="s1-detail-col">
+            <div class="s1-detail-label">Benchmark</div>
+            <div class="s1-detail-value">IAH Global Art Market Index™</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-folio" aria-label="Slide 1">01 / 03</div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         SLIDE 2 — EVIDENCE + ASIDE
+    ══════════════════════════════════════════════ -->
+    <div class="slide" data-slide="2" id="slide-2" role="region" aria-label="Slide 2 of 3">
+      <div class="slide-border-top" aria-hidden="true"></div>
+      <div class="slide-content s2-inner">
+        <div class="section-marker">Institutional Recognition Premium</div>
+        <h2 class="s2-headline">
+          Works by Artists Who Achieved Museum Retrospectives Within Five Years of Their First Major Auction Appearance Appreciated at 3.4 Times the Rate of Comparable Debut Artists Without Institutional Recognition Over a Ten-Year Measurement Window.
+        </h2>
+        <div class="s2-stats-row">
+          <div class="stat-col">
+            <div class="stat-overline" aria-hidden="true"></div>
+            <div class="stat-number"><span>3.4</span><span class="stat-unit">×</span></div>
+            <div class="stat-label">Appreciation rate multiple vs. non-institutional debut artists (10-year window)</div>
+          </div>
+          <div class="stat-col">
+            <div class="stat-overline" aria-hidden="true"></div>
+            <div class="stat-number">68<span class="stat-unit">%</span></div>
+            <div class="stat-label">Of retrospective-linked artists achieved top-decile price growth within 7 years</div>
+          </div>
+          <div class="stat-col">
+            <div class="stat-overline" aria-hidden="true"></div>
+            <div class="stat-number">$2.1<span class="stat-unit">M</span></div>
+            <div class="stat-label">Average lot realisation for retrospective-linked artists at 10-year mark</div>
+          </div>
+        </div>
+        <div class="s2-aside-wrap">
+          <p class="s2-evidence">
+            The correlation between museum institutional recognition and long-run price appreciation reflects the market's appetite for curatorial validation as a proxy for lasting cultural significance. Our analysis tracked 847 debut artists across the IAH Global Registry from 2010–2023, controlling for medium, geographic origin, and initial auction estimate range. Artists whose debut was followed by a solo retrospective at a Tier-1 institution — defined as a museum with an acquisition budget exceeding $10 million annually — demonstrated compound annual appreciation of 18.7 percent, compared with 5.5 percent for the control cohort. The differential persisted across all measured economic cycles, including the 2020 market contraction.
+          </p>
+          <div class="s2-aside aside-panel">
+            <div class="aside-stat">$610K</div>
+            <div class="aside-text">Median realisation premium commanded at auction by artists with two or more institutional retrospectives, compared with single-retrospective peers, based on 2019–2024 sale records across 18 major houses.</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-folio" aria-label="Slide 2">02 / 03</div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         SLIDE 3 — COMPARISON TABLE
+    ══════════════════════════════════════════════ -->
+    <div class="slide" data-slide="3" id="slide-3" role="region" aria-label="Slide 3 of 3">
+      <div class="slide-border-top" aria-hidden="true"></div>
+      <div class="slide-content s3-inner">
+        <div class="section-marker">Category Performance Comparison</div>
+        <h2 class="s3-headline">
+          Blue-Chip Post-War Works With Documented Provenance From Three or More Distinguished Collections Outperform All Other Auction Categories on Per-Lot Return, Price Consistency, and Long-Term Capital Appreciation Across Every Measured Economic Cycle.
+        </h2>
+        <table class="deco-table" aria-label="Auction category performance comparison">
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">H1 2024 Total Value</th>
+              <th scope="col">Avg. Per Lot</th>
+              <th scope="col">Price Consistency Score</th>
+              <th scope="col">10-Yr CAGR</th>
+              <th scope="col">Rank</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Contemporary (No Provenance)</td>
+              <td>$1.82B</td>
+              <td>$218K</td>
+              <td>61 / 100</td>
+              <td>+7.2%</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>Post-War (Single Collection)</td>
+              <td>$2.14B</td>
+              <td>$344K</td>
+              <td>74 / 100</td>
+              <td>+9.8%</td>
+              <td>4</td>
+            </tr>
+            <tr class="row-highlight">
+              <td>Blue-Chip Post-War (3+ Collections) ★</td>
+              <td>$3.07B</td>
+              <td>$892K</td>
+              <td>94 / 100</td>
+              <td>+17.4%</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>Modern (Institutional Provenance)</td>
+              <td>$1.48B</td>
+              <td>$510K</td>
+              <td>88 / 100</td>
+              <td>+12.1%</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td>Contemporary (Retrospective-Linked)</td>
+              <td>$0.89B</td>
+              <td>$376K</td>
+              <td>81 / 100</td>
+              <td>+10.6%</td>
+              <td>3</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="footnote">† Price Consistency Score measures standard deviation of hammer-to-estimate ratio across all lots in category, 2014–2024; higher scores indicate tighter realisation clustering. CAGR calculated on median lot value, inflation-adjusted to 2024 USD. Source: IAH Global Art Market Registry; Christie's, Sotheby's, Phillips public records. "Distinguished Collections" defined as estates or foundations with confirmed museum loan histories spanning ≥ 15 years.</p>
+      </div>
+      <div class="slide-folio" aria-label="Slide 3">03 / 03</div>
+    </div>
+
+  </div><!-- #deck-stage -->
+</div><!-- #stage-wrapper -->
+
+<!-- ══════════════════════════════════════════════
+     NAV BAR
+══════════════════════════════════════════════ -->
+<nav id="nav-bar" aria-label="Presentation navigation">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide" onclick="window.__goToSlide(window.__currentSlide - 1)">&#8592; Prev</button>
+  <div class="nav-dots" role="list" id="dot-container"></div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide" onclick="window.__goToSlide(window.__currentSlide + 1)">Next &#8594;</button>
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>
+

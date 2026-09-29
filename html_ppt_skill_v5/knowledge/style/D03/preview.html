@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>D03 — brutalist-editorial · Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500;700&display=swap');
+
+:root {
+  --color-bg:             oklch(0.97 0.008 80);
+  --color-surface:        oklch(0.93 0.006 78);
+  --color-raised-surface: oklch(0.90 0.005 76);
+  --color-border:         oklch(0.74 0.006 78);
+  --color-border-light:   oklch(0.86 0.005 78);
+  --color-border-heavy:   oklch(0.12 0 0);
+  --color-heading:        oklch(0.08 0 0);
+  --color-body:           oklch(0.14 0 0);
+  --color-muted:          oklch(0.38 0 0);
+  --color-dim:            oklch(0.56 0 0);
+  --color-accent:         oklch(0.62 0.24 38);
+  --color-accent-dark:    oklch(0.48 0.22 36);
+  --color-accent-light:   oklch(0.76 0.20 44);
+  --color-accent-bg:      oklch(0.96 0.04 60);
+  --color-positive:       oklch(0.44 0.18 145);
+  --type-display: 'Barlow Condensed', sans-serif;
+  --type-body:    'Barlow', sans-serif;
+  --type-label:   'Barlow', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--type-body); font-size: 18px;
+  color: var(--color-body); line-height: 1.65;
+}
+
+.deck-stage { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+
+#brutal-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: var(--color-bg);
+}
+
+/* Ghost numeral — printing-press artifact */
+.ghost-num {
+  position: absolute; bottom: -40px; right: 80px; z-index: 0;
+  font-family: var(--type-display); font-size: 320px; font-weight: 900;
+  color: var(--color-heading); opacity: 0.04;
+  line-height: 1; user-select: none; pointer-events: none;
+  letter-spacing: -0.04em;
+}
+
+/* ── Slides ─────────────────────────────────────────────────── */
+.slide {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; padding: 60px 160px 52px;
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+
+/* ── Shared components ──────────────────────────────────────── */
+.section-row { display: flex; align-items: baseline; gap: 16px; margin-bottom: 6px; }
+.section-num {
+  font-family: var(--type-label); font-size: 11px; font-weight: 700;
+  color: var(--color-accent); letter-spacing: 0.18em;
+}
+.section-label {
+  font-family: var(--type-label); font-size: 11px; font-weight: 700;
+  color: var(--color-muted); letter-spacing: 0.18em; text-transform: uppercase;
+}
+.brutal-rule { width: 100%; height: 8px; background: var(--color-border-heavy); }
+.hairline    { width: 100%; height: 1px; background: var(--color-border); }
+
+/* ── Slide 1: Title ─────────────────────────────────────────── */
+.s1-headline {
+  font-family: var(--type-display); font-size: 100px; font-weight: 900;
+  color: var(--color-heading); line-height: 0.95; letter-spacing: -0.01em;
+  max-width: 1480px; margin: 12px 0 20px;
+}
+.s1-sub {
+  font-family: var(--type-body); font-size: 20px; font-weight: 400;
+  color: var(--color-muted); max-width: 1040px; line-height: 1.70; margin-bottom: 36px;
+}
+.s1-detail-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--color-border); padding-top: 16px;
+}
+.s1-detail-item { display: flex; flex-direction: column; gap: 4px; padding-right: 24px; }
+.s1-detail-label {
+  font-family: var(--type-label); font-size: 10px; font-weight: 700;
+  color: var(--color-dim); text-transform: uppercase; letter-spacing: 0.22em;
+}
+.s1-detail-value {
+  font-family: var(--type-body); font-size: 15px; font-weight: 400; color: var(--color-muted);
+}
+.slide-folio {
+  position: absolute; bottom: 36px; right: 160px;
+  font-family: var(--type-label); font-size: 10px; font-weight: 700;
+  color: var(--color-dim); text-transform: uppercase; letter-spacing: 0.22em;
+}
+
+/* ── Slide 2: Stats ─────────────────────────────────────────── */
+.s2-headline {
+  font-family: var(--type-display); font-size: 52px; font-weight: 900;
+  color: var(--color-heading); line-height: 1.04; letter-spacing: -0.01em;
+  max-width: 1560px; margin: 10px 0 12px;
+}
+.s2-stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 18px 0; }
+.stat-block {
+  display: flex; flex-direction: column;
+  padding-right: 48px; border-right: 1px solid var(--color-border);
+}
+.stat-block:first-child { padding-left: 0; }
+.stat-block:last-child  { border-right: none; padding-left: 48px; padding-right: 0; }
+.stat-block:nth-child(2){ padding-left: 48px; }
+.stat-block__accent-line { width: 36px; height: 8px; background: var(--color-accent); margin-bottom: 10px; }
+.stat-block__value {
+  font-family: var(--type-display); font-size: 80px; font-weight: 900;
+  color: var(--color-heading); line-height: 0.90;
+  font-variant-numeric: lining-nums tabular-nums; letter-spacing: -0.01em;
+}
+.stat-block__label {
+  font-family: var(--type-label); font-size: 11px; font-weight: 700;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.14em;
+  margin-top: 14px; line-height: 1.55;
+}
+.s2-body { display: grid; grid-template-columns: 1fr 420px; gap: 56px; flex: 1; overflow: hidden; margin-top: 4px; }
+.s2-text { font-size: 17px; line-height: 1.80; color: var(--color-body); }
+.s2-aside { display: flex; flex-direction: column; }
+.aside-item { padding: 13px 0; border-bottom: 1px solid var(--color-border-light); }
+.aside-item:first-child { border-top: 1px solid var(--color-border-light); }
+.aside-item__label {
+  font-family: var(--type-label); font-size: 10px; font-weight: 700;
+  color: var(--color-dim); text-transform: uppercase; letter-spacing: 0.22em; margin-bottom: 4px;
+}
+.aside-item__value {
+  font-family: var(--type-body); font-size: 14px; font-weight: 400;
+  color: var(--color-muted); line-height: 1.60;
+}
+
+/* ── Slide 3: Table ─────────────────────────────────────────── */
+.s3-headline {
+  font-family: var(--type-display); font-size: 48px; font-weight: 900;
+  color: var(--color-heading); line-height: 1.04; letter-spacing: -0.01em;
+  max-width: 1480px; margin: 10px 0 12px;
+}
+.s3-body { flex: 1; display: flex; flex-direction: column; margin-top: 8px; overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--type-label); font-size: 11px; font-weight: 700;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.14em;
+  text-align: left; padding: 9px 14px;
+  border-bottom: 3px solid var(--color-border-heavy);
+}
+.data-table th:not(:first-child) { text-align: right; }
+.data-table td {
+  font-family: var(--type-body); font-size: 16px; font-weight: 400;
+  color: var(--color-body); padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border-light);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table td:not(:first-child) { text-align: right; font-family: var(--type-label); font-weight: 500; font-size: 15px; }
+.data-table tr.highlight td { background: var(--color-accent-bg); }
+.data-table tr.highlight td:first-child { color: var(--color-heading); font-weight: 700; }
+.win  { color: var(--color-accent-dark); font-weight: 700; }
+.good { color: var(--color-positive); }
+.footnote {
+  font-family: var(--type-label); font-size: 11px; font-weight: 400;
+  color: var(--color-dim); border-top: 1px solid var(--color-border-light);
+  padding-top: 10px; margin-top: auto; letter-spacing: 0.02em; line-height: 1.65;
+}
+
+/* ── Nav ────────────────────────────────────────────────────── */
+#nav { position: fixed; bottom: 16px; right: 20px; z-index: 100; display: flex; gap: 8px; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 0;
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  color: var(--color-body); font-family: var(--type-label); font-size: 13px;
+  font-weight: 700; cursor: pointer;
+}
+.nav-btn:hover { background: var(--color-raised-surface); }
+#slide-info {
+  position: fixed; bottom: 16px; left: 20px; z-index: 100;
+  font-family: var(--type-label); font-size: 12px; font-weight: 700; color: var(--color-muted);
+  text-transform: uppercase; letter-spacing: 0.10em;
+}
+
+html.preview-mode #nav, html.preview-mode #slide-info { display: none; }
+
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+<div class="deck-stage">
+  <div id="brutal-bg"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide" data-slide="1">
+    <div class="ghost-num">01</div>
+    <div class="section-row">
+      <span class="section-num">01</span>
+      <span class="section-label">Urban Housing Research · Policy Evidence Review · Autumn 2026</span>
+    </div>
+    <div class="brutal-rule"></div>
+    <h1 class="s1-headline">Rent Controls Do Not Reduce<br>Housing Costs. They Reduce<br>Housing Supply.</h1>
+    <p class="s1-sub">The Werkbund Urban Policy Lab analyzed rent regulation outcomes across 34 metropolitan areas in 14 countries, comparing pre- and post-intervention rental markets over five-year windows. Every study population showed the same effect: short-run rent stabilization followed by sustained reduction in rental supply and long-run cost escalation in unregulated segments adjacent to the controlled market. The policy achieves the opposite of its stated goal within a decade.</p>
+    <div class="s1-detail-row">
+      <div class="s1-detail-item">
+        <div class="s1-detail-label">Metropolitan areas</div>
+        <div class="s1-detail-value">34 across 14 countries</div>
+      </div>
+      <div class="s1-detail-item">
+        <div class="s1-detail-label">Observation window</div>
+        <div class="s1-detail-value">5-year pre/post intervention</div>
+      </div>
+      <div class="s1-detail-item">
+        <div class="s1-detail-label">Study period</div>
+        <div class="s1-detail-value">1985–2025</div>
+      </div>
+      <div class="s1-detail-item">
+        <div class="s1-detail-label">Classification</div>
+        <div class="s1-detail-value">Policy evidence review</div>
+      </div>
+    </div>
+    <div class="slide-folio">Werkbund Urban Policy Lab · Policy Evidence Review 2026 · 01</div>
+  </div>
+
+  <!-- Slide 2: Stats -->
+  <div class="slide" data-slide="2">
+    <div class="ghost-num">02</div>
+    <div class="section-row">
+      <span class="section-num">02</span>
+      <span class="section-label">Supply Effect · Quantitative Findings</span>
+    </div>
+    <div class="brutal-rule"></div>
+    <h2 class="s2-headline">Rental supply in controlled markets falls 19% within five years — and uncontrolled adjacent rents rise 34% as demand displaces into the unregulated segment.</h2>
+    <div class="hairline"></div>
+    <div class="s2-stat-row">
+      <div class="stat-block">
+        <div class="stat-block__accent-line"></div>
+        <div class="stat-block__value">−19%</div>
+        <div class="stat-block__label">Median rental supply reduction in controlled segments within five years of intervention, across all 34 study metropolitan areas</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block__accent-line"></div>
+        <div class="stat-block__value">+34%</div>
+        <div class="stat-block__label">Median rent increase in uncontrolled adjacent segments within five years, driven by demand displacement from controlled units</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block__accent-line"></div>
+        <div class="stat-block__value">8yr</div>
+        <div class="stat-block__label">Median time before total system rent cost (controlled + adjacent) exceeds counterfactual no-intervention baseline — the policy breaks even against itself in eight years</div>
+      </div>
+    </div>
+    <div class="hairline" style="margin-bottom:14px"></div>
+    <div class="s2-body">
+      <p class="s2-text">The supply mechanism is straightforward and consistent across all 34 study populations. When rent controls are introduced, landlords of existing stock convert units to owner-occupancy, short-term rental, or commercial use at rates 2.8× higher than in the pre-intervention period. New rental construction in the controlled zone falls by 44% within three years as developers shift to for-sale product outside the regulation perimeter. The resulting supply contraction tightens the uncontrolled market, driving the +34% adjacent rent increase. By year eight, the combined cost burden on the metropolitan rental population — controlled tenants who remain (a self-selected group with high tenure security) plus new market entrants who cannot access controlled stock — exceeds the counterfactual path in every study cohort but one. The exception, Stockholm 1942–1990, reversed on decontrol: rents in the decontrolled segment rose 65% in the first year, confirming accumulated suppression rather than structural cost reduction.</p>
+      <div class="s2-aside">
+        <div class="aside-item">
+          <div class="aside-item__label">San Francisco 2019–2024</div>
+          <div class="aside-item__value">Rental supply in controlled buildings fell 22% in five years. Adjacent uncontrolled segment rose 41%. Net new rental starts in city limits fell from 4,200/yr to 1,600/yr, the lowest since 1978.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__label">Berlin 2020–2024</div>
+          <div class="aside-item__value">Mietendeckel declared unconstitutional after 14 months. In that period, controlled supply fell 16%, shadow rents in the informal market rose 28%, and new construction permits declined 19%.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__label">Amsterdam 2022–2026</div>
+          <div class="aside-item__value">Mid-market segment deregulation reversed by the Points system extension. Institutional landlord exits of 7,400 units in 18 months compressed available mid-market stock by 31%.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__label">Vienna 1920–2026 (exception)</div>
+          <div class="aside-item__value">The one long-run apparent counter-case: sustained public housing supply (60% of market) substituted for private supply destruction. The intervention was housing construction, not price control; the Gemeindebau is the mechanism, not the rent regulation.</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-folio">Werkbund Urban Policy Lab · Policy Evidence Review 2026 · 02</div>
+  </div>
+
+  <!-- Slide 3: Comparison table -->
+  <div class="slide" data-slide="3">
+    <div class="ghost-num">03</div>
+    <div class="section-row">
+      <span class="section-num">03</span>
+      <span class="section-label">Intervention Comparison · Five-Year Outcomes</span>
+    </div>
+    <div class="brutal-rule"></div>
+    <h2 class="s3-headline">Supply-side interventions outperform demand-side controls on every five-year affordability metric — the evidence is consistent across income band, geography, and decade.</h2>
+    <div class="s3-body">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Intervention type</th>
+            <th>Supply effect (5yr)</th>
+            <th>Adjacent rent effect</th>
+            <th>Affordability (broad market)</th>
+            <th>Displacement risk</th>
+            <th>10yr cost vs. baseline</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Hard rent cap (price ceiling)</td><td>−19%</td><td>+34%</td><td>Worsens</td><td>High (conversion)</td><td>+12%</td></tr>
+          <tr><td>Rent stabilization (CPI-linked)</td><td>−9%</td><td>+18%</td><td>Neutral to worsening</td><td>Medium</td><td>+5%</td></tr>
+          <tr><td>Inclusionary zoning (10–20%)</td><td>−4%</td><td>+6%</td><td>Marginal improvement</td><td>Low</td><td>+1%</td></tr>
+          <tr><td>Demand subsidy (housing voucher)</td><td>+2%</td><td>+8%</td><td>Improves for recipients</td><td>Low</td><td>+4%</td></tr>
+          <tr class="highlight"><td>Public supply construction (Vienna model)</td><td class="win">+28%</td><td class="win">−12%</td><td class="win">Improves broadly</td><td class="win">Very low</td><td class="win">−8%</td></tr>
+        </tbody>
+      </table>
+      <div class="footnote">Supply effect: percentage change in available private rental units in the study zone five years after intervention, versus a matched control metropolitan area without intervention. Adjacent rent effect: percentage change in median asking rent in the immediately adjacent uncontrolled segment. Affordability (broad market): qualitative assessment of median rent-to-income ratio for new market entrants (not incumbent controlled tenants). Displacement risk: assessed rate of existing tenant displacement through conversion, renovation-eviction, or owner-occupancy changes. 10yr cost vs. baseline: total median rental expenditure for a new-entrant household 10 years post-intervention versus projected counterfactual no-intervention path; negative values indicate net saving vs. baseline. Public supply construction outcomes from Vienna, Helsinki, and Singapore programs with 40%+ public housing share; these require capital expenditure not reflected in the 10yr cost figure for private households. Data: Werkbund Urban Policy Lab primary analysis; national housing statistics, Eurostat, and municipal housing authority records. All rent figures CPI-adjusted to 2025 values.</div>
+    </div>
+    <div class="slide-folio">Werkbund Urban Policy Lab · Policy Evidence Review 2026 · 03</div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn" id="prev">◀</button>
+  <button class="nav-btn" id="next">▶</button>
+</div>
+<div id="slide-info">D03 brutalist-editorial · <span id="cur">1</span> / 3</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

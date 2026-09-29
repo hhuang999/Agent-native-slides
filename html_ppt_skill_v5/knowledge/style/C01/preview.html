@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>C01 — film-noir · Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;700&display=swap');
+
+:root {
+  --color-bg:             oklch(0.10 0.016 50);
+  --color-surface:        oklch(0.14 0.014 48);
+  --color-raised-surface: oklch(0.18 0.014 48);
+  --color-border:         oklch(0.28 0.018 50);
+  --color-border-light:   oklch(0.22 0.014 48);
+  --color-shadow:         oklch(0.04 0.010 45 / 0.80);
+  --color-heading:        oklch(0.96 0.010 80);
+  --color-body:           oklch(0.82 0.012 75);
+  --color-muted:          oklch(0.54 0.014 68);
+  --color-dim:            oklch(0.38 0.012 62);
+  --color-accent:         oklch(0.52 0.24 22);
+  --color-accent-dim:     oklch(0.36 0.18 22);
+  --color-accent-glow:    oklch(0.52 0.24 22 / 0.20);
+  --color-accent-light:   oklch(0.72 0.18 24);
+  --color-positive:       oklch(0.70 0.18 145);
+  --color-negative:       oklch(0.62 0.22 22);
+  --vignette: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 30%, oklch(0.02 0.010 40 / 0.75) 100%);
+  --type-display: 'Bebas Neue', sans-serif;
+  --type-body:    'IBM Plex Mono', monospace;
+  --type-label:   'IBM Plex Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--type-body); font-size: 18px;
+  color: var(--color-body); line-height: 1.68;
+  letter-spacing: 0.01em;
+}
+
+.deck-stage { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+
+/* ── Background: grain + vignette ───────────────────────── */
+#noir-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: var(--color-bg);
+}
+#noir-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23grain)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  background-repeat: repeat;
+}
+#noir-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--vignette);
+}
+
+/* ── Slides ──────────────────────────────────────────────── */
+.slide {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; padding: 68px 100px;
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+
+/* ── Shared ──────────────────────────────────────────────── */
+.accent-rule {
+  width: 100%; height: 2px;
+  background: var(--color-accent);
+}
+.sep-rule {
+  width: 100%; height: 1px;
+  background: var(--color-border);
+}
+.eyebrow {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.14em;
+}
+.noir-tag {
+  display: inline-flex; align-items: center;
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-body); letter-spacing: 0.10em; text-transform: uppercase;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 5px 16px; border-radius: 2px;
+}
+
+/* ── Slide 1: Title ──────────────────────────────────────── */
+.s1-eyebrow {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.16em;
+  margin-bottom: 12px;
+}
+.s1-headline {
+  font-family: var(--type-display); font-size: 88px;
+  color: var(--color-heading); line-height: 0.94; letter-spacing: 0.01em;
+  max-width: 1340px; margin-bottom: 30px;
+}
+.s1-sub {
+  font-size: 20px; font-weight: 400; color: var(--color-muted);
+  max-width: 960px; line-height: 1.70; margin-bottom: 48px;
+}
+.s1-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+.s1-footer {
+  position: absolute; bottom: 52px; left: 100px; right: 100px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.s1-footer-text {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-dim); text-transform: uppercase; letter-spacing: 0.12em;
+}
+
+/* ── Slide 2: Stats ──────────────────────────────────────── */
+.s2-eyebrow {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.14em;
+  margin-bottom: 10px;
+}
+.s2-headline {
+  font-family: var(--type-body); font-size: 22px; font-weight: 400;
+  color: var(--color-heading); line-height: 1.48;
+  max-width: 1540px; margin-bottom: 18px;
+}
+.s2-stat-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  margin-bottom: 18px;
+}
+.stat-col {
+  padding: 28px 32px; border-right: 1px solid var(--color-border);
+  display: flex; flex-direction: column;
+}
+.stat-col:first-child { padding-left: 0; }
+.stat-col:last-child { border-right: none; }
+.stat-col__overline {
+  width: 40px; height: 2px; background: var(--color-accent);
+  margin-bottom: 10px;
+}
+.stat-col__value {
+  font-family: var(--type-display); font-size: 88px;
+  color: var(--color-heading); line-height: 0.88; letter-spacing: 0.01em;
+  margin-bottom: 12px;
+}
+.stat-col__label {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.12em;
+  line-height: 1.6;
+}
+.s2-body {
+  display: grid; grid-template-columns: 1fr 420px; gap: 48px;
+  flex: 1; overflow: hidden; margin-top: 4px;
+}
+.s2-text { font-size: 17px; line-height: 1.80; color: var(--color-body); }
+.s2-aside { display: flex; flex-direction: column; gap: 0; justify-content: flex-start; }
+.aside-item { padding: 13px 0; border-bottom: 1px solid var(--color-border-light); }
+.aside-item:first-child { border-top: 1px solid var(--color-border-light); }
+.aside-item__title {
+  font-family: var(--type-label); font-size: 12px; font-weight: 700;
+  color: var(--color-heading); letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.aside-item__body {
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-muted); line-height: 1.58;
+}
+
+/* ── Slide 3: Table ──────────────────────────────────────── */
+.s3-eyebrow {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.14em;
+  margin-bottom: 10px;
+}
+.s3-headline {
+  font-family: var(--type-body); font-size: 22px; font-weight: 400;
+  color: var(--color-heading); line-height: 1.48;
+  max-width: 1500px; margin-bottom: 16px;
+}
+.s3-body { flex: 1; display: flex; flex-direction: column; margin-top: 10px; overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.10em;
+  text-align: left; padding: 10px 14px;
+  border-bottom: 2px solid var(--color-border);
+}
+.data-table th:not(:first-child) { text-align: right; }
+.data-table td {
+  font-size: 16px; color: var(--color-body); padding: 13px 14px;
+  border-bottom: 1px solid var(--color-border-light);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table td:not(:first-child) { text-align: right; font-family: var(--type-label); font-weight: 300; }
+.data-table tr.highlight { background: oklch(0.52 0.24 22 / 0.06); }
+.data-table tr.highlight td:first-child { font-weight: 700; color: var(--color-heading); }
+.win { color: var(--color-accent-light); font-weight: 700; }
+.good { color: var(--color-positive); }
+.footnote {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-dim); border-top: 1px solid var(--color-border-light);
+  padding-top: 10px; margin-top: auto; letter-spacing: 0.02em; line-height: 1.6;
+}
+
+/* ── Nav ─────────────────────────────────────────────────── */
+#nav { position: fixed; bottom: 16px; right: 20px; z-index: 100; display: flex; gap: 8px; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 2px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-body); font-family: var(--type-label); font-size: 13px;
+  font-weight: 300; cursor: pointer;
+}
+.nav-btn:hover { background: var(--color-raised-surface); }
+#slide-info {
+  position: fixed; bottom: 16px; left: 20px; z-index: 100;
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-muted);
+}
+.preview-mode #nav, .preview-mode #slide-info { display: none; }
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { margin: 0; width: 1920px; height: auto !important; overflow: visible !important; background: var(--color-bg); }
+  .deck-stage { position: static !important; transform: none !important; width: 1920px !important; height: auto !important; overflow: visible !important; }
+  .slide {
+    position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important;
+    visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+    break-after: page; page-break-after: always; overflow: hidden;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  #nav, #slide-info { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="deck-stage">
+  <div id="noir-bg"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide is-active" data-slide="1">
+    <div class="s1-eyebrow">Investigative Report · Financial Intelligence · Q1 2026</div>
+    <div class="accent-rule" style="margin-bottom:28px"></div>
+    <h1 class="s1-headline">Shell Company<br>Networks Collapse<br>Under Wire Audit.</h1>
+    <p class="s1-sub">Meridian Forensic Intelligence traced 14,200 flagged transactions across 39 jurisdictions. In every case, the same structural signature preceded account seizure: three-hop beneficial ownership obscured through nominee directors in shelf corporations registered within 18 months of the primary transaction date.</p>
+    <div class="s1-tags">
+      <div class="noir-tag">39 jurisdictions analyzed</div>
+      <div class="noir-tag">14,200 flagged transactions</div>
+      <div class="noir-tag">FinCEN SAR-correlated</div>
+      <div class="noir-tag">FATF Rec. 25 methodology</div>
+      <div class="noir-tag">March 2026 field data</div>
+    </div>
+    <div class="s1-footer">
+      <div class="s1-footer-text">Meridian Forensic Intelligence · Restricted Distribution · Matter No. MFI-2026-0038</div>
+      <div class="s1-footer-text">Confidential — Not for Public Release</div>
+    </div>
+  </div>
+
+  <!-- Slide 2: Stats -->
+  <div class="slide" data-slide="2">
+    <div class="s2-eyebrow">02 / 04 — Quantitative Findings</div>
+    <h2 class="s2-headline">Three-hop beneficial ownership is the decisive structural marker: every seizure in the dataset was preceded by at least one intermediary registered in a non-disclosure jurisdiction within 18 months of the primary transaction.</h2>
+    <div class="accent-rule" style="margin-bottom:0"></div>
+    <div class="s2-stat-row">
+      <div class="stat-col">
+        <div class="stat-col__overline"></div>
+        <div class="stat-col__value">94%</div>
+        <div class="stat-col__label">Of seizures preceded by nominee director registration within 18 months of primary transaction</div>
+      </div>
+      <div class="stat-col">
+        <div class="stat-col__overline"></div>
+        <div class="stat-col__value">3.1</div>
+        <div class="stat-col__label">Average hop count from source account to beneficial owner — above 2.8 correlates with seizure at 89%</div>
+      </div>
+      <div class="stat-col">
+        <div class="stat-col__overline"></div>
+        <div class="stat-col__value">18M</div>
+        <div class="stat-col__label">Days: median gap between shelf corp registration and first suspicious wire — consistent across all jurisdictions</div>
+      </div>
+    </div>
+    <div class="sep-rule" style="margin-bottom:18px"></div>
+    <div class="s2-body">
+      <p class="s2-text">Across all 14,200 transactions, 11,330 (79.8%) involved at least one beneficial owner obscured behind a nominee director. Of those, 94% were ultimately associated with confirmed seizure orders. The remaining 6% involved partial asset recovery where primary account holders cooperated with jurisdiction authorities before full trace completion. The 18-month registration window appears across all 39 jurisdictions regardless of local corporate disclosure requirements — suggesting a coordinated operational pattern rather than independent opportunism.</p>
+      <div class="s2-aside">
+        <div class="aside-item">
+          <div class="aside-item__title">Non-disclosure jurisdictions</div>
+          <div class="aside-item__body">Top-5 intermediary registrations: Seychelles, Belize, Marshall Islands, St. Kitts & Nevis, Vanuatu. All below FATF threshold for nominee director disclosure.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">SAR correlation rate</div>
+          <div class="aside-item__body">61% of flagged transactions had a corresponding FinCEN SAR filed within 90 days. SAR-correlated cases resolved 2.3× faster in asset recovery proceedings.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Shelf corporation age</div>
+          <div class="aside-item__body">78% of nominee-director intermediaries were registered between 12 and 24 months prior to the flagged transaction. Older shelves (5+ years) present in only 4% of cases.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Wire amount threshold</div>
+          <div class="aside-item__body">Median flagged transaction: $218,000. 91% fall between $50,000 and $990,000 — consistently below CTR reporting thresholds in all jurisdictions.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Comparison table -->
+  <div class="slide" data-slide="3">
+    <div class="s3-eyebrow">03 / 04 — Jurisdictional Risk Matrix</div>
+    <h2 class="s3-headline">Seizure recovery rate drops by 44 percentage points when the intermediary jurisdiction scores below 60 on FATF compliance — the single strongest predictor in the dataset.</h2>
+    <div class="accent-rule" style="margin-bottom:0; margin-top:10px"></div>
+    <div class="s3-body">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Intermediary jurisdiction</th>
+            <th>FATF score</th>
+            <th>Cases (n)</th>
+            <th>Nominee disclosure req.</th>
+            <th>Avg. resolution (days)</th>
+            <th>Asset recovery rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Cayman Islands</td><td>72</td><td>1,840</td><td>Partial (2023 reform)</td><td>318</td><td>61%</td></tr>
+          <tr><td>British Virgin Islands</td><td>68</td><td>2,210</td><td>Partial</td><td>402</td><td>54%</td></tr>
+          <tr><td>Seychelles</td><td>41</td><td>2,880</td><td>None</td><td>698</td><td>19%</td></tr>
+          <tr><td>Marshall Islands</td><td>38</td><td>1,960</td><td>None</td><td>841</td><td>14%</td></tr>
+          <tr><td>Belize</td><td>34</td><td>2,150</td><td>None</td><td>912</td><td>11%</td></tr>
+          <tr class="highlight"><td>FATF score ≥ 65 (pooled)</td><td class="win">avg. 70</td><td>6,380</td><td class="good">Partial–full</td><td class="win">248</td><td class="win">69%</td></tr>
+        </tbody>
+      </table>
+      <div class="footnote">FATF score: Financial Action Task Force Mutual Evaluation composite score (2024 cycle, 100-point scale). Cases: number of flagged transactions in dataset routed through this intermediary jurisdiction. Nominee disclosure req.: current regulatory status for beneficial owner disclosure of nominee directors. Resolution days: median calendar days from SAR filing to final asset determination. Asset recovery rate: percentage of transaction value recovered or frozen across all cases in jurisdiction category. Data: Meridian Forensic Intelligence proprietary dataset, Q1 2026. FATF scores: public mutual evaluation reports, accessed March 2026.</div>
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn" id="prev">◀</button>
+  <button class="nav-btn" id="next">▶</button>
+</div>
+<div id="slide-info">C01 film-noir · <span id="cur">1</span> / 3</div>
+
+<script>
+const slideEls = Array.from(document.querySelectorAll('.slide'))
+const total = slideEls.length
+
+function goTo(n) {
+  n = Math.min(Math.max(1, Math.round(+n) || 1), total)
+  slideEls.forEach((s, i) => s.classList.toggle('is-active', i === n - 1))
+  window.__currentSlide = n
+  const info = document.getElementById('cur')
+  if (info) info.textContent = n
+}
+window.__goToSlide = goTo
+window.__currentSlide = 1
+
+document.getElementById('next').onclick = () => goTo(window.__currentSlide + 1)
+document.getElementById('prev').onclick = () => goTo(window.__currentSlide - 1)
+document.addEventListener('keydown', e => {
+  const k = e.key
+  if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') { e.preventDefault(); goTo(window.__currentSlide + 1) }
+  else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); goTo(window.__currentSlide - 1) }
+  else if (k === 'Home') goTo(1)
+  else if (k === 'End') goTo(total)
+})
+
+window.__deckPlan = {
+  title: 'Shell Company Networks Collapse Under Wire Audit.',
+  style_id: 'C01',
+  total_slides: 3,
+  slides: [
+    { index: 1, assertion: 'Shell Company Networks Collapse Under Wire Audit.', type: 'title',
+      speaker_notes: { purpose: 'Frame the investigative finding as a structural discovery, not a collection of individual cases.', key_points: ['14,200 transactions, 39 jurisdictions', 'Three-hop beneficial ownership: the structural signature', 'Nominee directors registered within 18 months of transaction — consistent pattern across all jurisdictions', 'FinCEN SAR-correlated methodology'], timing: '~1 min', tone: 'Authoritative, measured — forensic not alarmist' } },
+    { index: 2, assertion: 'Three-hop beneficial ownership is the decisive structural marker: every seizure in the dataset was preceded by at least one intermediary registered in a non-disclosure jurisdiction within 18 months of the primary transaction.', type: 'evidence',
+      speaker_notes: { purpose: 'Stack the quantitative proof before the jurisdictional breakdown.', key_points: ['94% of seizures: nominee director registered within 18 months', 'Average hop count 3.1 — above 2.8 correlates with seizure at 89%', '18-month registration window consistent across all 39 jurisdictions', 'Median transaction $218,000 — systematically below CTR thresholds'], transition: 'Where does jurisdiction matter most for recovery outcomes?', timing: '~3 min' } },
+    { index: 3, assertion: 'Seizure recovery rate drops by 44 percentage points when the intermediary jurisdiction scores below 60 on FATF compliance — the single strongest predictor in the dataset.', type: 'comparison',
+      speaker_notes: { purpose: 'Quantify the jurisdiction effect — FATF score below 60 is the single most predictive factor for recovery failure.', key_points: ['FATF ≥65: 69% recovery rate, 248-day median resolution', 'Seychelles/Marshall Islands/Belize: 11–19% recovery, 698–912 days', 'Nominee disclosure reform (partial) shows improvement — Cayman at 61% vs. Belize at 11%', 'Policy implication: FATF threshold enforcement is the primary leverage point'], timing: '~2 min' } }
+  ]
+}
+
+const q = new URLSearchParams(location.search)
+if (q.has('print')) document.documentElement.classList.add('print-mode')
+if (q.has('preview')) document.documentElement.classList.add('preview-mode')
+goTo(q.has('preview') ? parseInt(q.get('preview'), 10) || 1 : 1)
+</script>
+</body>
+</html>

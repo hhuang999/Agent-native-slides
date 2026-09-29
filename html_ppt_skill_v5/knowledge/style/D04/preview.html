@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D04 Dark Swiss — Solaris Systems Reliability Institute</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&family=IBM+Plex+Sans+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Tokens ───────────────────────────────────────────── */
+:root {
+  --color-bg:             oklch(0.08 0 0);
+  --color-surface:        oklch(0.13 0 0);
+  --color-raised-surface: oklch(0.18 0 0);
+  --color-border:         oklch(0.22 0 0);
+  --color-border-light:   oklch(0.16 0 0);
+  --color-border-bright:  oklch(0.30 0 0);
+
+  --color-heading:        oklch(0.97 0 0);
+  --color-body:           oklch(0.82 0 0);
+  --color-muted:          oklch(0.58 0 0);
+  --color-dim:            oklch(0.40 0 0);
+
+  --color-accent:         oklch(0.80 0.16 200);
+  --color-accent-dark:    oklch(0.62 0.14 200);
+  --color-accent-light:   oklch(0.90 0.10 200);
+  --color-accent-bg:      oklch(0.13 0.04 200);
+
+  --color-positive:       oklch(0.72 0.18 145);
+  --color-negative:       oklch(0.62 0.22 22);
+  --color-warn:           oklch(0.78 0.18 78);
+
+  --type-display: 'IBM Plex Sans Condensed', sans-serif;
+  --type-body:    'IBM Plex Sans', sans-serif;
+  --type-label:   'IBM Plex Sans', sans-serif;
+}
+
+/* ── Viewport wrapper ─────────────────────────────────── */
+body {
+  background: oklch(0.04 0 0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: var(--type-body);
+}
+
+/* ── Stage: fixed 1920×1080, scaled to viewport ───────── */
+.deck-wrapper {
+  position: relative;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deck-stage {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  transform-origin: top center;
+  overflow: hidden;
+  background: var(--color-bg);
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+/* ── Slide base ───────────────────────────────────────── */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  overflow: hidden;
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+
+/* ── Background layer ─────────────────────────────────── */
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--color-bg);
+}
+
+/* ── Content layer ────────────────────────────────────── */
+.slide-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 72px 120px 72px 120px;
+}
+
+/* ── Structural elements ──────────────────────────────── */
+.accent-bar {
+  width: 80px;
+  height: 2px;
+  background: var(--color-accent);
+  margin-bottom: 4px;
+}
+.struct-rule {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border-bright);
+}
+.hairline {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* ── Section marker ───────────────────────────────────── */
+.section-marker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.section-num {
+  font-family: var(--type-label);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-accent);
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+}
+.section-label {
+  font-family: var(--type-label);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-muted);
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+}
+
+/* ── Headlines ────────────────────────────────────────── */
+.headline-display {
+  font-family: var(--type-display);
+  font-size: 90px;
+  font-weight: 700;
+  color: var(--color-heading);
+  line-height: 0.96;
+  letter-spacing: -0.015em;
+  max-width: 1540px;
+  margin-bottom: 0;
+}
+.headline-h1 {
+  font-family: var(--type-display);
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--color-heading);
+  line-height: 1.0;
+  letter-spacing: -0.010em;
+  max-width: 1300px;
+}
+
+/* ── Abstract / body ──────────────────────────────────── */
+.abstract {
+  font-family: var(--type-body);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--color-muted);
+  line-height: 1.55;
+  max-width: 1060px;
+  margin-top: 20px;
+}
+.body-text {
+  font-family: var(--type-body);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--color-body);
+  line-height: 1.68;
+  max-width: 820px;
+}
+
+/* ── Detail row (title slide footer) ─────────────────── */
+.detail-row {
+  display: flex;
+  gap: 0;
+  margin-top: auto;
+  padding-top: 32px;
+  border-top: 1px solid var(--color-border);
+}
+.detail-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 48px;
+  border-right: 1px solid var(--color-border);
+  margin-right: 48px;
+}
+.detail-col:last-child {
+  border-right: none;
+  margin-right: 0;
+}
+.detail-label {
+  font-family: var(--type-label);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+.detail-value {
+  font-family: var(--type-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+/* ── Stat columns ─────────────────────────────────────── */
+.stat-row {
+  display: flex;
+  gap: 0;
+  padding: 28px 0;
+}
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  padding-right: 56px;
+  border-right: 1px solid var(--color-border);
+  margin-right: 56px;
+}
+.stat-col:last-child {
+  border-right: none;
+  padding-right: 0;
+  margin-right: 0;
+}
+.stat-col__overline {
+  width: 28px;
+  height: 2px;
+  background: var(--color-accent);
+  margin-bottom: 10px;
+}
+.stat-col__value {
+  font-family: var(--type-display);
+  font-size: 80px;
+  font-weight: 700;
+  color: var(--color-heading);
+  line-height: 0.90;
+  letter-spacing: -0.015em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.stat-col__label {
+  font-family: var(--type-label);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-top: 14px;
+  line-height: 1.55;
+}
+
+/* ── Two-column evidence layout ──────────────────────── */
+.evidence-body {
+  display: flex;
+  gap: 60px;
+  flex: 1;
+  padding-top: 20px;
+}
+.evidence-main {
+  flex: 1;
+}
+.evidence-aside {
+  width: 400px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--color-border);
+  padding-left: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.aside-block__label {
+  font-family: var(--type-label);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.20em;
+  margin-bottom: 6px;
+}
+.aside-block__value {
+  font-family: var(--type-display);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--color-accent);
+  line-height: 1.0;
+  letter-spacing: -0.01em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.aside-block__text {
+  font-family: var(--type-body);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-muted);
+  line-height: 1.60;
+  margin-top: 6px;
+}
+
+/* ── Data table ───────────────────────────────────────── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table th {
+  font-family: var(--type-label);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-align: left;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--color-border-bright);
+  white-space: nowrap;
+}
+.data-table th:first-child { padding-left: 0; }
+.data-table td {
+  font-family: var(--type-body);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-body);
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+.data-table td:first-child { padding-left: 0; }
+.data-table tr.highlight td {
+  background: var(--color-accent-bg);
+}
+.data-table tr.highlight td:first-child {
+  color: var(--color-heading);
+  font-weight: 700;
+}
+.win  { color: var(--color-accent); font-weight: 700; }
+.good { color: var(--color-positive); }
+.warn { color: var(--color-warn); }
+.bad  { color: var(--color-negative); }
+
+/* Table footnote */
+.table-footnote {
+  font-family: var(--type-label);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-dim);
+  line-height: 1.55;
+  margin-top: 14px;
+}
+
+/* ── Folio ────────────────────────────────────────────── */
+.slide-folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  z-index: 2;
+  font-family: var(--type-label);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+/* ── Nav controls ─────────────────────────────────────── */
+#deck-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  align-items: center;
+}
+#deck-nav button {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-bright);
+  color: var(--color-body);
+  font-family: var(--type-label);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.14s, border-color 0.14s, color 0.14s;
+}
+#deck-nav button:hover {
+  background: var(--color-raised-surface);
+  border-color: var(--color-accent);
+  color: var(--color-heading);
+}
+#deck-nav button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+#slide-counter {
+  font-family: var(--type-label);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-muted);
+  letter-spacing: 0.12em;
+  min-width: 52px;
+  text-align: center;
+}
+
+/* ── Nav hidden in preview-mode ───────────────────────── */
+html.preview-mode #deck-nav { display: none; }
+
+/* ── Print ────────────────────────────────────────────── */
+
+
+/* ── Reduced motion ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+
+<div class="deck-wrapper" id="deck-wrapper">
+  <div class="deck-stage" id="deck-stage">
+
+    <!-- ══════════════════════════════════════════════
+         SLIDE 1 — TITLE
+         Solaris Systems Reliability Institute
+         Cloud Infrastructure Outage Analysis 2019–2025
+    ═══════════════════════════════════════════════ -->
+    <div class="slide is-active" data-slide="1" id="slide-1" role="region" aria-label="Slide 1 of 3: Title">
+      <div class="slide-bg" id="dark-swiss-bg"></div>
+      <div class="slide-content">
+
+        <div class="section-marker">
+          <span class="section-num">01</span>
+          <span class="section-label">Solaris Systems Reliability Institute · Cloud Infrastructure Analysis</span>
+        </div>
+
+        <div class="accent-bar"></div>
+        <div class="struct-rule"></div>
+
+        <div style="height:32px"></div>
+
+        <h1 class="headline-display">
+          Availability-Zone Isolation Failures<br>
+          Propagate Beyond a Single Zone in<br>
+          68 Percent of Outages Exceeding Four Hours.
+        </h1>
+
+        <div style="height:28px"></div>
+        <div class="hairline"></div>
+        <div style="height:28px"></div>
+
+        <p class="abstract">
+          A longitudinal study of 312 documented hyperscale data center outage events across 47 facilities and 6 infrastructure architectures, 2019–2025. Recovery time, blast radius, and zone isolation integrity are analyzed by control-plane topology and physical interconnect design.
+        </p>
+
+        <div class="detail-row">
+          <div class="detail-col">
+            <span class="detail-label">Institution</span>
+            <span class="detail-value">Solaris Systems Reliability Institute</span>
+          </div>
+          <div class="detail-col">
+            <span class="detail-label">Scope</span>
+            <span class="detail-value">312 outage events · 47 facilities</span>
+          </div>
+          <div class="detail-col">
+            <span class="detail-label">Period</span>
+            <span class="detail-value">2019 – 2025</span>
+          </div>
+          <div class="detail-col">
+            <span class="detail-label">Architectures Reviewed</span>
+            <span class="detail-value">6 isolation topologies</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="slide-folio" aria-hidden="true">SSRI · CLOUD-2025 · 01</div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         SLIDE 2 — EVIDENCE
+         Cross-zone propagation statistics
+    ═══════════════════════════════════════════════ -->
+    <div class="slide" data-slide="2" id="slide-2" role="region" aria-label="Slide 2 of 3: Evidence">
+      <div class="slide-bg"></div>
+      <div class="slide-content">
+
+        <div class="section-marker">
+          <span class="section-num">02</span>
+          <span class="section-label">Failure Propagation · Blast Radius · Recovery Metrics</span>
+        </div>
+
+        <div class="accent-bar"></div>
+        <div class="struct-rule"></div>
+
+        <div style="height:24px"></div>
+
+        <h2 class="headline-h1">
+          Multi-Zone Failures Are Not Edge Cases.<br>They Are the Dominant Failure Mode.
+        </h2>
+
+        <div style="height:20px"></div>
+        <div class="struct-rule"></div>
+
+        <div class="stat-row">
+          <div class="stat-col">
+            <div class="stat-col__overline"></div>
+            <span class="stat-col__value">68%</span>
+            <span class="stat-col__label">Cross-zone propagation<br>rate · outages &gt;4 hr</span>
+          </div>
+          <div class="stat-col">
+            <div class="stat-col__overline"></div>
+            <span class="stat-col__value">4.7hr</span>
+            <span class="stat-col__label">Median recovery time<br>multi-zone events</span>
+          </div>
+          <div class="stat-col">
+            <div class="stat-col__overline"></div>
+            <span class="stat-col__value">23×</span>
+            <span class="stat-col__label">Blast radius multiplier<br>vs. single-zone events</span>
+          </div>
+        </div>
+
+        <div class="struct-rule"></div>
+
+        <div class="evidence-body">
+          <div class="evidence-main">
+            <p class="body-text">
+              Analysis of 312 events reveals that shared control-plane architectures are the primary propagation vector. When the management and data planes share physical network fabric, a localized failure in zone isolation can cascade as control-plane components attempt remediation and amplify the fault signal.
+            </p>
+            <div style="height:18px"></div>
+            <p class="body-text">
+              Hardware-isolated zone architectures — where control plane traffic traverses physically independent paths — show a cross-zone propagation rate of 11%, compared to 74% in shared-fabric designs. The difference is not primarily a software problem. It is an infrastructure topology decision made at the time of facility design.
+            </p>
+          </div>
+          <div class="evidence-aside">
+            <div class="aside-block">
+              <div class="aside-block__label">Shared fabric · propagation rate</div>
+              <div class="aside-block__value">74%</div>
+              <div class="aside-block__text">Outages in shared-fabric architectures that cross zone boundaries within the first 30 minutes of a primary fault event.</div>
+            </div>
+            <div style="height:1px; background:var(--color-border)"></div>
+            <div class="aside-block">
+              <div class="aside-block__label">Hardware-isolated · propagation rate</div>
+              <div class="aside-block__value" style="color: var(--color-positive)">11%</div>
+              <div class="aside-block__text">Same metric for architectures with physically separate control-plane interconnects across zone boundaries.</div>
+            </div>
+            <div style="height:1px; background:var(--color-border)"></div>
+            <div class="aside-block">
+              <div class="aside-block__label">Mean customer impact · multi-zone</div>
+              <div class="aside-block__value">€4.2M</div>
+              <div class="aside-block__text">Estimated direct revenue impact per event across surveyed enterprise tenants during cross-zone outages.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="slide-folio" aria-hidden="true">SSRI · CLOUD-2025 · 02</div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         SLIDE 3 — COMPARISON TABLE
+         Isolation topologies by architecture type
+    ═══════════════════════════════════════════════ -->
+    <div class="slide" data-slide="3" id="slide-3" role="region" aria-label="Slide 3 of 3: Architecture Comparison">
+      <div class="slide-bg"></div>
+      <div class="slide-content">
+
+        <div class="section-marker">
+          <span class="section-num">03</span>
+          <span class="section-label">Architecture Comparison · Isolation Topology · 6 Types Reviewed</span>
+        </div>
+
+        <div class="accent-bar"></div>
+        <div class="struct-rule"></div>
+
+        <div style="height:22px"></div>
+
+        <h2 class="headline-h1">
+          Hardware-Isolated Zones Outperform Shared Topologies<br>
+          on Every Reliability Metric Over a Five-Year Horizon.
+        </h2>
+
+        <div style="height:18px"></div>
+        <div class="struct-rule"></div>
+        <div style="height:18px"></div>
+
+        <table class="data-table" role="table" aria-label="Isolation topology comparison">
+          <thead>
+            <tr>
+              <th>Isolation Topology</th>
+              <th>Cross-Zone Failure Rate</th>
+              <th>Median Recovery (hr)</th>
+              <th>5yr Availability</th>
+              <th>Blast Radius Index</th>
+              <th>Cost Premium</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Shared physical fabric</td>
+              <td class="bad">74%</td>
+              <td class="bad">6.8 hr</td>
+              <td class="bad">99.41%</td>
+              <td class="bad">31×</td>
+              <td>Baseline</td>
+            </tr>
+            <tr>
+              <td>Software-defined isolation</td>
+              <td class="warn">52%</td>
+              <td class="warn">4.9 hr</td>
+              <td class="warn">99.61%</td>
+              <td class="warn">18×</td>
+              <td>+8%</td>
+            </tr>
+            <tr>
+              <td>Partial hardware separation</td>
+              <td class="warn">34%</td>
+              <td>3.4 hr</td>
+              <td>99.74%</td>
+              <td>12×</td>
+              <td>+19%</td>
+            </tr>
+            <tr class="highlight">
+              <td>Hardware-isolated zones</td>
+              <td class="win">11%</td>
+              <td class="win">1.6 hr</td>
+              <td class="win">99.94%</td>
+              <td class="win">3×</td>
+              <td>+34%</td>
+            </tr>
+            <tr>
+              <td>Geo-distributed micro-zones</td>
+              <td class="good">9%</td>
+              <td class="good">1.2 hr</td>
+              <td class="good">99.97%</td>
+              <td class="good">2×</td>
+              <td>+61%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="table-footnote">
+          Blast Radius Index: multiple of single-zone failure impact on tenant workloads. Availability: 5yr mean across surveyed facilities in each topology class. Cost Premium: infrastructure capex/opex vs. shared-fabric baseline at equivalent capacity. Hardware-isolated zones represent the optimal cost-reliability inflection point: +34% premium, 83% reduction in cross-zone propagation.
+        </p>
+
+      </div>
+      <div class="slide-folio" aria-hidden="true">SSRI · CLOUD-2025 · 03</div>
+    </div>
+
+  </div><!-- /deck-stage -->
+</div><!-- /deck-wrapper -->
+
+<!-- Nav -->
+<div id="deck-nav" role="navigation" aria-label="Slide navigation">
+  <button id="prev" aria-label="Previous slide">← Prev</button>
+  <span id="cur" aria-live="polite" aria-atomic="true">1</span>
+  <button id="next" aria-label="Next slide">Next →</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

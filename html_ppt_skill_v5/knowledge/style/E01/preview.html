@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E01 · fog-grey-nordic · Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Token System ─────────────────────────────────────────────── */
+:root {
+  --color-bg:      oklch(0.940 0.005 205);
+  --color-surface: oklch(0.920 0.007 210);
+  --color-border:  oklch(0.820 0.008 215);
+  --color-muted:   oklch(0.580 0.008 220);
+  --color-body:    oklch(0.280 0.010 230);
+  --color-heading: oklch(0.180 0.012 235);
+  --color-accent:  oklch(0.520 0.140 220);
+  --font-heading:  'Hanken Grotesk', 'Noto Sans', sans-serif;
+  --font-body:     'Hanken Grotesk', 'Noto Sans', sans-serif;
+  --scale: 1;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px 16px 40px;
+  gap: 20px;
+  font-family: var(--font-body);
+}
+
+/* ── Stage ────────────────────────────────────────────────────── */
+.stage-wrap {
+  width: 100%;
+  max-width: 960px;
+  aspect-ratio: 16/9;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+
+.slide-stage {
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+  transform: scale(var(--scale));
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Background ───────────────────────────────────────────────── */
+@property --drift-l {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0.940;
+}
+
+.bg-nordic {
+  position: absolute; inset: 0; z-index: 0;
+  background: radial-gradient(
+    ellipse 130% 90% at 28% 52%,
+    oklch(0.948 0.008 200 / 0.7),
+    oklch(0.932 0.005 215)
+  );
+  animation: nordic-drift 12s ease-in-out infinite alternate;
+}
+
+@keyframes nordic-drift {
+  from { background-position: 0% 0%; opacity: 0.95; }
+  to   { background-position: 3% 2%; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-nordic { animation: none; background: oklch(0.940 0.005 205); }
+}
+
+/* ── Slides ───────────────────────────────────────────────────── */
+.slide {
+  position: absolute; inset: 0;
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in-out, visibility 0.28s;
+  z-index: 2;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+
+/* ── Slide 1 ──────────────────────────────────────────────────── */
+#slide-1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 200px 120px 200px;
+}
+
+.s1-eyebrow {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--color-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 48px;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.s1-assertion {
+  font-size: 104px;
+  font-weight: 300;
+  line-height: 1.08;
+  color: var(--color-heading);
+  letter-spacing: -0.02em;
+  max-width: 1200px;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.s1-assertion em {
+  font-style: normal;
+  color: var(--color-accent);
+  font-weight: 400;
+}
+
+.s1-divider {
+  width: 64px;
+  height: 1px;
+  background: var(--color-accent);
+  margin: 56px 0 40px;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.s1-body {
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--color-body);
+  max-width: 680px;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.s1-footer {
+  position: absolute;
+  bottom: 72px; left: 200px; right: 200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+}
+.s1-footer span {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--color-muted);
+  letter-spacing: 0.06em;
+}
+
+/* ── Slide 2 ──────────────────────────────────────────────────── */
+#slide-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr auto;
+  padding: 100px 200px;
+  gap: 0;
+}
+
+.s2-label {
+  grid-column: 1 / -1;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--color-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.s2-left {
+  padding-right: 80px;
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.s2-left h2 {
+  font-size: 58px;
+  font-weight: 300;
+  line-height: 1.12;
+  color: var(--color-heading);
+  letter-spacing: -0.02em;
+}
+
+.s2-left p {
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--color-body);
+  max-width: 560px;
+}
+
+.s2-right {
+  padding-left: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.principle {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.principle-num {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-accent);
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+  min-width: 24px;
+}
+
+.principle-text {
+  font-size: 23px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--color-body);
+}
+
+.principle-text strong {
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+.s2-footer {
+  grid-column: 1 / -1;
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  opacity: 0;
+}
+.s2-footer span {
+  font-size: 17px;
+  color: var(--color-muted);
+  letter-spacing: 0.06em;
+}
+
+/* ── Nav ──────────────────────────────────────────────────────── */
+.slide-nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.slide-nav button {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid #666;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  padding: 0;
+}
+.slide-nav button.active {
+  background: #ccc;
+  border-color: #ccc;
+}
+.nav-label {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 12px;
+  color: #666;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.preview-mode .slide-nav,
+.preview-mode .nav-label {
+  display: none;
+}
+
+/* ── Print / PDF ──────────────────────────────────────────────── */
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body {
+    margin: 0; padding: 0; width: 1920px; height: auto !important;
+    overflow: visible !important; background: var(--color-bg);
+    display: block;
+  }
+  .stage-wrap {
+    width: 1920px !important; max-width: none !important; aspect-ratio: auto !important;
+    overflow: visible !important; box-shadow: none !important; border-radius: 0 !important;
+  }
+  .slide-stage {
+    position: static !important; transform: none !important;
+    width: 1920px !important; height: auto !important; overflow: visible !important;
+  }
+  .slide {
+    position: relative !important; inset: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+    break-after: page; page-break-after: always; overflow: hidden;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  .slide-nav, .nav-label { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="stage-wrap">
+  <div class="slide-stage" id="stage">
+    <div class="bg-nordic" aria-hidden="true"></div>
+
+    <!-- Slide 1 -->
+    <div class="slide is-active" id="slide-1" data-slide="1" aria-hidden="false" role="region" aria-label="Slide 1">
+      <div class="s1-eyebrow" id="s1-eyebrow">E01 · fog-grey-nordic</div>
+      <h1 class="s1-assertion" id="s1-assertion">
+        Simplicity is the<br>
+        <em>result of discipline,</em><br>
+        not the absence of effort
+      </h1>
+      <div class="s1-divider" id="s1-divider"></div>
+      <p class="s1-body" id="s1-body">
+        Nordic design removes everything unnecessary — what remains is not empty, it is honest.
+      </p>
+      <div class="s1-footer" aria-hidden="true">
+        <span>Design Principles · 2025</span>
+        <span>01 / 02</span>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide" id="slide-2" data-slide="2" aria-hidden="true" role="region" aria-label="Slide 2">
+      <div class="s2-label" id="s2-label">Three operating principles</div>
+      <div class="s2-left" id="s2-left">
+        <h2>Restraint produces clarity</h2>
+        <p>Each decision to remove is worth more than ten decisions to add. A page that communicates one thing clearly beats one that communicates five things poorly.</p>
+      </div>
+      <div class="s2-right" id="s2-right">
+        <div class="principle">
+          <span class="principle-num">01</span>
+          <span class="principle-text"><strong>One claim per surface.</strong> Everything else is evidence or context.</span>
+        </div>
+        <div class="principle">
+          <span class="principle-num">02</span>
+          <span class="principle-text"><strong>Whitespace is structure,</strong> not emptiness. Generous margins signal intent.</span>
+        </div>
+        <div class="principle">
+          <span class="principle-num">03</span>
+          <span class="principle-text"><strong>Color carries meaning.</strong> One accent hue, used sparingly, creates direction.</span>
+        </div>
+      </div>
+      <div class="s2-footer" id="s2-footer">
+        <span>E01 · fog-grey-nordic · preview</span>
+        <span>02 / 02</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide-nav" role="navigation" aria-label="Slide navigation">
+  <button data-slide="0" class="active" aria-label="Slide 1" aria-current="true"></button>
+  <button data-slide="1" aria-label="Slide 2"></button>
+</div>
+<div class="nav-label">← → or click dots</div>
+
+<script>
+const stage = document.getElementById('stage');
+const wrap  = document.querySelector('.stage-wrap');
+
+function setScale() {
+  const s = wrap.clientWidth / 1920;
+  document.documentElement.style.setProperty('--scale', s);
+  wrap.style.height = (1080 * s) + 'px';
+}
+window.addEventListener('resize', setScale);
+
+const slides = Array.from(document.querySelectorAll('.slide'));
+const dots   = Array.from(document.querySelectorAll('.slide-nav button'));
+slides.forEach((s, i) => { s.dataset.slide = i + 1; });
+
+window.__deckPlan = {
+  title: 'E01 · fog-grey-nordic',
+  total_slides: slides.length,
+  slides: [
+    { index: 1, type: 'title', assertion: 'Simplicity is the result of discipline, not the absence of effort' },
+    { index: 2, type: 'content', assertion: 'Restraint produces clarity — three operating principles' },
+  ],
+};
+window.__currentSlide = 1;
+
+function goToSlide(n) {
+  const total = slides.length;
+  n = Math.min(Math.max(1, Math.round(+n) || 1), total);
+  const idx = n - 1;
+  slides.forEach((s, i) => {
+    const active = i === idx;
+    s.classList.toggle('is-active', active);
+    s.setAttribute('aria-hidden', active ? 'false' : 'true');
+  });
+  dots.forEach((d, i) => {
+    const active = i === idx;
+    d.classList.toggle('active', active);
+    if (active) d.setAttribute('aria-current', 'true');
+    else d.removeAttribute('aria-current');
+  });
+  window.__currentSlide = n;
+  runEntrance(idx);
+}
+window.__goToSlide = goToSlide;
+
+dots.forEach(btn => btn.addEventListener('click', () => goToSlide(+btn.dataset.slide + 1)));
+document.addEventListener('keydown', e => {
+  const k = e.key;
+  if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') { e.preventDefault(); goToSlide(window.__currentSlide + 1); }
+  else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); goToSlide(window.__currentSlide - 1); }
+  else if (k === 'Home') goToSlide(1);
+  else if (k === 'End') goToSlide(slides.length);
+});
+
+function fadeUp(el, delay, dur = 300) {
+  if (!el) return;
+  el.style.transition = 'none';
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(10px)';
+  setTimeout(() => {
+    el.style.transition = `opacity ${dur}ms ease-out, transform ${dur}ms ease-out`;
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  }, delay);
+}
+
+function fadeIn(el, delay, dur = 280) {
+  if (!el) return;
+  el.style.transition = 'none';
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.style.transition = `opacity ${dur}ms ease-out`;
+    el.style.opacity = '1';
+  }, delay);
+}
+
+function expandLine(el, delay) {
+  if (!el) return;
+  el.style.transition = 'none';
+  el.style.opacity = '0';
+  el.style.transform = 'scaleX(0)';
+  setTimeout(() => {
+    el.style.transition = 'opacity 200ms ease-out, transform 380ms ease-out';
+    el.style.opacity = '1';
+    el.style.transform = 'scaleX(1)';
+  }, delay);
+}
+
+function runEntrance(idx) {
+  if (idx === 0) {
+    fadeUp(document.getElementById('s1-eyebrow'), 40);
+    fadeUp(document.getElementById('s1-assertion'), 140);
+    expandLine(document.getElementById('s1-divider'), 320);
+    fadeUp(document.getElementById('s1-body'), 400);
+    fadeIn(document.querySelector('.s1-footer'), 520, 260);
+  } else {
+    fadeUp(document.getElementById('s2-label'), 40);
+    fadeUp(document.getElementById('s2-left'), 140);
+    fadeUp(document.getElementById('s2-right'), 260);
+    fadeIn(document.getElementById('s2-footer'), 400, 260);
+  }
+}
+
+const q = new URLSearchParams(location.search);
+if (q.has('print')) document.documentElement.classList.add('print-mode');
+if (q.has('preview')) document.documentElement.classList.add('preview-mode');
+
+document.fonts.ready.then(() => {
+  setScale();
+  goToSlide(q.has('preview') ? (parseInt(q.get('preview'), 10) || 1) : 1);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>C04 — cinematic-amber · Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400;1,9..144,700&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap');
+
+:root {
+  --color-bg:             oklch(0.08 0.022 55);
+  --color-surface:        oklch(0.12 0.020 58);
+  --color-raised-surface: oklch(0.17 0.018 58);
+  --color-border:         oklch(0.28 0.022 60);
+  --color-border-light:   oklch(0.20 0.018 58);
+  --wash-top:             oklch(0.06 0.018 240 / 0.08);
+  --wash-bottom:          oklch(0.20 0.030 68 / 0.12);
+  --color-heading:        oklch(0.97 0.008 82);
+  --color-body:           oklch(0.80 0.014 74);
+  --color-muted:          oklch(0.52 0.014 68);
+  --color-dim:            oklch(0.36 0.012 62);
+  --color-accent:         oklch(0.78 0.22 78);
+  --color-accent-light:   oklch(0.88 0.16 84);
+  --color-accent-bg:      oklch(0.14 0.028 72 / 0.32);
+  --color-positive:       oklch(0.70 0.18 145);
+  --type-display: 'Fraunces', serif;
+  --type-body:    'Plus Jakarta Sans', sans-serif;
+  --type-label:   'Plus Jakarta Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--type-body); font-size: 18px;
+  color: var(--color-body); line-height: 1.72;
+}
+
+.deck-stage { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+
+/* ── Background: deep warm near-black + directional wash ────── */
+#amber-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: var(--color-bg);
+}
+#amber-bg::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, var(--wash-top) 0%, transparent 45%, var(--wash-bottom) 100%);
+}
+
+/* ── Slides ─────────────────────────────────────────────────── */
+.slide {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; padding: 70px 120px 62px;
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+
+/* ── Shared components ──────────────────────────────────────── */
+.eyebrow {
+  font-family: var(--type-display); font-size: 11px; font-weight: 400;
+  font-variation-settings: 'opsz' 9;
+  color: var(--color-accent); letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.accent-rule { width: 100%; height: 2px; background: var(--color-accent); opacity: 0.60; }
+.hairline    { width: 100%; height: 1px; background: var(--color-border); }
+
+/* ── Slide 1: Title ─────────────────────────────────────────── */
+.s1-headline {
+  font-family: var(--type-display); font-weight: 700;
+  font-variation-settings: 'opsz' 144;
+  font-size: 86px; color: var(--color-heading);
+  line-height: 0.96; letter-spacing: -0.02em;
+  max-width: 1460px; margin: 18px 0 24px;
+}
+.s1-sub {
+  font-family: var(--type-body); font-size: 20px; font-weight: 400;
+  color: var(--color-muted); max-width: 1040px; line-height: 1.70; margin-bottom: 40px;
+}
+.s1-tags { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.amber-tag {
+  display: inline-flex; align-items: center;
+  font-family: var(--type-label); font-size: 11px; font-weight: 400;
+  color: var(--color-muted); letter-spacing: 0.08em;
+  border: 1px solid var(--color-border-light); padding: 4px 12px; border-radius: 2px;
+}
+.s1-footer {
+  margin-top: auto; border-top: 1px solid var(--color-border-light);
+  padding-top: 14px; display: flex; justify-content: space-between;
+}
+.s1-footer-text {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-dim); letter-spacing: 0.06em;
+}
+
+/* ── Slide 2: Stats ─────────────────────────────────────────── */
+.s2-headline {
+  font-family: var(--type-display); font-weight: 700;
+  font-variation-settings: 'opsz' 72;
+  font-size: 46px; color: var(--color-heading);
+  line-height: 1.10; letter-spacing: -0.015em;
+  max-width: 1560px; margin: 14px 0 16px;
+}
+.s2-stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; padding: 22px 0; }
+.stat-col {
+  display: flex; flex-direction: column;
+  padding-right: 44px; border-right: 1px solid var(--color-border-light);
+}
+.stat-col:first-child { padding-left: 0; }
+.stat-col:last-child  { border-right: none; padding-left: 44px; padding-right: 0; }
+.stat-col:nth-child(2){ padding-left: 44px; }
+.stat-col__overline {
+  width: 32px; height: 2px; background: var(--color-accent);
+  margin-bottom: 10px; opacity: 0.75;
+}
+.stat-col__value {
+  font-family: var(--type-display); font-size: 80px; font-weight: 700;
+  font-variation-settings: 'opsz' 144;
+  color: var(--color-heading); line-height: 0.9;
+  font-variant-numeric: lining-nums tabular-nums; letter-spacing: -0.01em;
+}
+.stat-col__label {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.12em;
+  margin-top: 12px; line-height: 1.55;
+}
+.s2-body { display: grid; grid-template-columns: 1fr 400px; gap: 56px; flex: 1; overflow: hidden; margin-top: 4px; }
+.s2-text  { font-size: 17px; line-height: 1.82; color: var(--color-body); }
+.s2-aside { display: flex; flex-direction: column; }
+.aside-item { padding: 14px 0; border-bottom: 1px solid var(--color-border-light); }
+.aside-item:first-child { border-top: 1px solid var(--color-border-light); }
+.aside-item__title {
+  font-family: var(--type-label); font-size: 12px; font-weight: 500;
+  color: var(--color-heading); letter-spacing: 0.06em; margin-bottom: 5px;
+}
+.aside-item__body {
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-muted); line-height: 1.60;
+}
+
+/* ── Slide 3: Table ─────────────────────────────────────────── */
+.s3-headline {
+  font-family: var(--type-display); font-weight: 700;
+  font-variation-settings: 'opsz' 72;
+  font-size: 42px; color: var(--color-heading);
+  line-height: 1.10; letter-spacing: -0.015em;
+  max-width: 1520px; margin: 14px 0 14px;
+}
+.s3-body { flex: 1; display: flex; flex-direction: column; margin-top: 8px; overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--type-label); font-size: 11px; font-weight: 500;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.10em;
+  text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--color-border);
+}
+.data-table th:not(:first-child) { text-align: right; }
+.data-table td {
+  font-family: var(--type-body); font-size: 16px; font-weight: 400;
+  color: var(--color-body); padding: 13px 14px;
+  border-bottom: 1px solid var(--color-border-light);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table td:not(:first-child) { text-align: right; font-family: var(--type-label); font-weight: 300; font-size: 15px; }
+.data-table tr.highlight td { background: var(--color-accent-bg); }
+.data-table tr.highlight td:first-child { color: var(--color-heading); font-weight: 500; }
+.win  { color: var(--color-accent-light); font-weight: 500; }
+.good { color: var(--color-positive); }
+.footnote {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-dim); border-top: 1px solid var(--color-border-light);
+  padding-top: 10px; margin-top: auto; letter-spacing: 0.02em; line-height: 1.65;
+}
+
+/* ── Nav ────────────────────────────────────────────────────── */
+#nav { position: fixed; bottom: 16px; right: 20px; z-index: 100; display: flex; gap: 8px; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 3px;
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  color: var(--color-body); font-family: var(--type-label); font-size: 13px;
+  font-weight: 400; cursor: pointer;
+}
+.nav-btn:hover { background: var(--color-raised-surface); }
+#slide-info {
+  position: fixed; bottom: 16px; left: 20px; z-index: 100;
+  font-family: var(--type-label); font-size: 12px; font-weight: 300; color: var(--color-muted);
+}
+html.preview-mode #nav, html.preview-mode #slide-info { display: none; }
+
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { margin: 0; width: 1920px; height: auto !important; overflow: visible !important; background: var(--color-bg); }
+  .deck-stage { position: static !important; transform: none !important; width: 1920px !important; height: auto !important; overflow: visible !important; }
+  .slide { position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important;
+           visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+           break-after: page; page-break-after: always; overflow: hidden; }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  #nav, #slide-info { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="deck-stage">
+  <div id="amber-bg"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide is-active" data-slide="1">
+    <div class="eyebrow">Spirits Investment · Brand Economics · Autumn 2026</div>
+    <div class="accent-rule"></div>
+    <h1 class="s1-headline">Whisky Buyers Who Visit the Distillery<br>Spend Four Times More Than Those<br>Who Never Will.</h1>
+    <p class="s1-sub">Cairn &amp; Stave Distilleries analyzed purchasing data from 28 Scottish single malt distilleries across five years, tracking lifetime spend, allocated-release conversion, and waitlist engagement. In every tier — from accessible expressions to limited cask releases — visitors exhibited materially higher loyalty and significantly greater tolerance for premium pricing than buyers acquired through retail or online channels alone.</p>
+    <div class="s1-tags">
+      <div class="amber-tag">28 distilleries</div>
+      <div class="amber-tag">Scotland · Japan · Kentucky</div>
+      <div class="amber-tag">2020–2025 cohort</div>
+      <div class="amber-tag">Proprietary dataset</div>
+      <div class="amber-tag">Strategy brief</div>
+    </div>
+    <div class="s1-footer">
+      <div class="s1-footer-text">Cairn &amp; Stave Distilleries · Strategic Planning &amp; Brand Investment · Confidential Working Document</div>
+      <div class="s1-footer-text">Not for External Distribution · Autumn 2026</div>
+    </div>
+  </div>
+
+  <!-- Slide 2: Stats -->
+  <div class="slide" data-slide="2">
+    <div class="eyebrow">02 / 04 — Provenance Economics</div>
+    <div class="accent-rule"></div>
+    <h2 class="s2-headline">Visitors convert to allocated-release buyers at 4.2× the rate of non-visitors — and their median annual spend holds above £2,800 for at least five years after the first visit.</h2>
+    <div class="hairline"></div>
+    <div class="s2-stat-row">
+      <div class="stat-col">
+        <div class="stat-col__overline"></div>
+        <div class="stat-col__value">4.2×</div>
+        <div class="stat-col__label">Allocated-release conversion rate, visitors vs. non-visitors, across all 28 distilleries in the cohort</div>
+      </div>
+      <div class="stat-col">
+        <div class="stat-col__overline"></div>
+        <div class="stat-col__value">£2,800</div>
+        <div class="stat-col__label">Median annual spend, cellar-door acquaintance customers, maintained for five or more years post-visit</div>
+      </div>
+      <div class="stat-col">
+        <div class="stat-col__overline"></div>
+        <div class="stat-col__value">34%</div>
+        <div class="stat-col__label">Share of total distillery revenue from direct-to-consumer in 2025 — up from 8% in 2019</div>
+      </div>
+    </div>
+    <div class="hairline" style="margin-bottom:16px"></div>
+    <div class="s2-body">
+      <p class="s2-text">The provenance effect in luxury spirits has long been observed qualitatively — the idea that visiting a distillery deepens brand attachment — but this cohort provides the first cross-distillery quantification. Visitor conversion to allocated releases was 4.2× higher than non-visitor rates; this gap widened with the prestige of the release, reaching 6.1× for bottles priced above £500. The mechanism appears to be two-directional: visitors self-select for existing engagement, but the visit itself measurably increases spend in the following 12 months by a median of 38% versus the same customer's pre-visit baseline. Distilleries that added overnight immersive experiences since 2021 show the strongest effect — median annual spend from this cohort now accounts for 34% of total revenue, up from single digits five years ago.</p>
+      <div class="s2-aside">
+        <div class="aside-item">
+          <div class="aside-item__title">Speyside cluster, 2020–2025</div>
+          <div class="aside-item__body">Seven Speyside distilleries in the study showed visitor-acquired customers with a 78-month median engagement window — nearly twice the 42-month window for non-visitors. The gap held across all price tiers.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Waitlist tolerance</div>
+          <div class="aside-item__body">Visitors accepted waitlists of 18+ months for allocated releases at 3.8× the rate of non-visitors. Among overnight-experience alumni this rose to 5.2×, with 91% of waitlist positions held to completion.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Price elasticity effect</div>
+          <div class="aside-item__body">Visitor-acquired buyers showed 22% lower price elasticity on annual increases versus non-visitors — absorbing premium adjustments at a point where non-visitors churned at 11%.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Comparison table -->
+  <div class="slide" data-slide="3">
+    <div class="eyebrow">03 / 04 — Visitor Programme Comparison</div>
+    <div class="accent-rule"></div>
+    <h2 class="s3-headline">Distilleries with residential cask programmes generate six times the allocated-release loyalty of those running standard hour-long tours — visit depth is the leverage point.</h2>
+    <div class="s3-body">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Visitor programme tier</th>
+            <th>Duration</th>
+            <th>Price point</th>
+            <th>5-yr alloc. conversion</th>
+            <th>Avg. annual spend</th>
+            <th>Waitlist retention</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Standard distillery tour</td><td>1–2 hr</td><td>£18–£35</td><td>8%</td><td>£340</td><td>44%</td></tr>
+          <tr><td>Extended tasting experience</td><td>3–4 hr</td><td>£85–£150</td><td>22%</td><td>£780</td><td>61%</td></tr>
+          <tr><td>Overnight warehouse stay</td><td>1–2 nights</td><td>£350–£680</td><td>48%</td><td>£2,100</td><td>79%</td></tr>
+          <tr><td>Multi-day blending residency</td><td>3–5 days</td><td>£1,200–£2,400</td><td>64%</td><td>£3,600</td><td>88%</td></tr>
+          <tr class="highlight"><td>Residential cask programme</td><td class="win">Ongoing</td><td class="win">£8,000+</td><td class="win">91%</td><td class="win">£6,800</td><td class="win">97%</td></tr>
+        </tbody>
+      </table>
+      <div class="footnote">Allocated-release conversion: percentage of programme participants who purchased at least one allocated or limited release within five years. Average annual spend: median annual spend across all whisky purchases (direct, allocated, secondary) for five years following programme participation. Waitlist retention: percentage of participants who held their waitlist position to completion when placed on a queue of 12 months or more. Residential cask programme: customer purchases and holds a cask at the distillery with regular access, bottling rights, and priority allocated-release status. Data: Cairn &amp; Stave Distilleries proprietary customer dataset (2020–2025), supplemented by anonymized cohort data from five partner distilleries under NDA. All figures in GBP at 2025 values.</div>
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn" id="prev">◀</button>
+  <button class="nav-btn" id="next">▶</button>
+</div>
+<div id="slide-info">C04 cinematic-amber · <span id="cur">1</span> / 3</div>
+
+<script>
+const slideEls = Array.from(document.querySelectorAll('.slide'))
+const total = slideEls.length
+
+function goTo(n) {
+  n = Math.min(Math.max(1, Math.round(+n) || 1), total)
+  slideEls.forEach((s, i) => s.classList.toggle('is-active', i === n - 1))
+  document.getElementById('cur').textContent = n
+  window.__currentSlide = n
+  return n
+}
+
+document.getElementById('next').onclick = () => goTo(window.__currentSlide + 1)
+document.getElementById('prev').onclick = () => goTo(window.__currentSlide - 1)
+document.addEventListener('keydown', e => {
+  const k = e.key
+  if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') { e.preventDefault(); goTo(window.__currentSlide + 1) }
+  else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); goTo(window.__currentSlide - 1) }
+  else if (k === 'Home') goTo(1)
+  else if (k === 'End') goTo(total)
+})
+
+window.__currentSlide = 1
+window.__goToSlide = goTo
+window.__deckPlan = {
+  title: 'Whisky Buyers Who Visit the Distillery Spend Four Times More Than Those Who Never Will.',
+  style_id: 'C04',
+  total_slides: total,
+  slides: [
+    { index: 1, assertion: 'Whisky Buyers Who Visit the Distillery Spend Four Times More Than Those Who Never Will.', type: 'title',
+      speaker_notes: { purpose: 'Frame the provenance economics claim before the data — distillery visits are not hospitality overhead, they are the most efficient customer acquisition and retention mechanism in luxury spirits.', key_points: ['28 distilleries, Scotland + Japan + Kentucky, 2020–2025', 'Visitor-acquired buyers show 4× higher lifetime value', 'Direct-to-consumer now 34% of total revenue, up from 8% in 2019', 'The visit is the product — it makes the whisky more valuable in the buyer\'s perception'], timing: '~1 min', tone: 'Measured, confident, prestige — a brand that has done the numbers' } },
+    { index: 2, assertion: 'Visitors convert to allocated-release buyers at 4.2× the rate of non-visitors — and their median annual spend holds above £2,800 for at least five years after the first visit.', type: 'evidence',
+      speaker_notes: { purpose: 'Stack the quantitative case: conversion rate, spend durability, and revenue share all confirm the provenance premium is real, measurable, and persistent.', key_points: ['4.2× allocated-release conversion, widening to 6.1× for bottles above £500', '£2,800 median annual spend sustained 5+ years post-visit', '34% of total revenue from DTC in 2025, up from 8%', 'Overnight experience cohort shows strongest effect — visit depth matters'], transition: 'How does this vary across visitor programme tiers?', timing: '~3 min' } },
+    { index: 3, assertion: 'Distilleries with residential cask programmes generate six times the allocated-release loyalty of those running standard hour-long tours — visit depth is the leverage point.', type: 'comparison',
+      speaker_notes: { purpose: 'Quantify the programme depth effect: standard tours create marginal uplift; residential cask ownership creates near-total loyalty and permanently changes the customer\'s relationship to the brand.', key_points: ['Standard tour: 8% allocated conversion, £340 annual spend', 'Residential cask: 91% conversion, £6,800 annual spend, 97% waitlist retention', 'One overnight stay outperforms ten standard tours in five-year revenue', 'Investment implication: hospitality infrastructure spend should be evaluated as customer acquisition cost, not event revenue'], timing: '~2 min' } }
+  ]
+}
+
+const q = new URLSearchParams(location.search)
+if (q.has('print')) document.documentElement.classList.add('print-mode')
+if (q.has('preview')) document.documentElement.classList.add('preview-mode')
+goTo(q.has('preview') ? parseInt(q.get('preview'), 10) || 1 : 1)
+</script>
+</body>
+</html>

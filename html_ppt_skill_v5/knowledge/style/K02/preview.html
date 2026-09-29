@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K02 Gold Dark Premium — Alternative Investment Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Color Tokens ──────────────────────────────────────── */
+:root {
+  --bg-base:          oklch(0.08 0.010 35);
+  --bg-raised:        oklch(0.11 0.010 35);
+  --bg-recessed:      oklch(0.06 0.008 35);
+  --bg-table-alt:     oklch(0.10 0.009 35);
+  --bg-highlight:     oklch(0.13 0.012 45);
+
+  --text-primary:     oklch(0.94 0.014 72);
+  --text-secondary:   oklch(0.72 0.012 65);
+  --text-muted:       oklch(0.52 0.010 55);
+  --text-label:       oklch(0.62 0.011 60);
+
+  --gold:             oklch(0.72 0.14 72);
+  --gold-dim:         oklch(0.62 0.11 72);
+  --gold-bright:      oklch(0.82 0.14 72);
+  --gold-subtle:      oklch(0.72 0.07 72);
+
+  --border-hairline:  oklch(0.72 0.11 72 / 0.60);
+  --border-cell:      oklch(0.20 0.008 35);
+  --border-highlight: oklch(0.72 0.14 72 / 0.85);
+
+  --folio-color:      oklch(0.72 0.14 72);
+  --dot-active:       oklch(0.72 0.14 72);
+  --dot-inactive:     oklch(0.35 0.008 35);
+  --nav-bg:           oklch(0.13 0.010 35 / 0.92);
+  --nav-border:       oklch(0.72 0.11 72 / 0.30);
+
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body:    'Lato', system-ui, sans-serif;
+
+  --text-xs:   0.694rem;
+  --text-sm:   0.833rem;
+  --text-base: 1rem;
+  --text-lg:   1.25rem;
+  --text-xl:   1.563rem;
+  --text-2xl:  1.953rem;
+  --text-3xl:  2.441rem;
+  --text-4xl:  3.052rem;
+
+  --weight-light:   300;
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semi:    600;
+
+  --leading-tight:  1.15;
+  --leading-snug:   1.30;
+  --leading-normal: 1.55;
+  --leading-loose:  1.70;
+
+  --tracking-label:   0.12em;
+  --tracking-section: 0.16em;
+}
+
+/* ── Stage & Viewport ──────────────────────────────────── */
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+#stage-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#deck-stage {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+  overflow: hidden;
+  background-color: var(--bg-base);
+  background-image:
+    radial-gradient(
+      ellipse 120% 100% at 50% 50%,
+      oklch(0.11 0.012 42 / 0.0) 0%,
+      oklch(0.09 0.010 38 / 0.4) 55%,
+      oklch(0.05 0.008 30 / 0.7) 100%
+    );
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  color: var(--text-primary);
+}
+
+/* ── Slides ────────────────────────────────────────────── */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 80px 120px 100px;
+  z-index: 1;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.slide.is-active {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Common Elements ───────────────────────────────────── */
+.section-marker {
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-section);
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.hairline {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--border-hairline);
+  border: none;
+}
+
+.hairline--short {
+  width: 56px;
+  margin-top: 24px;
+  margin-bottom: 0;
+}
+
+.folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: var(--text-xs);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: var(--tracking-label);
+  color: var(--folio-color);
+  opacity: 0.7;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* ── Slide 1 — Title ──────────────────────────────────── */
+.s1-top-rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border-hairline);
+}
+
+.s1-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 1200px;
+}
+
+.s1-institution {
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-section);
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 32px;
+}
+
+.s1-headline {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  max-width: 1100px;
+}
+
+.s1-abstract {
+  margin-top: 36px;
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: var(--text-lg);
+  line-height: var(--leading-loose);
+  color: var(--text-secondary);
+  max-width: 900px;
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--border-hairline);
+  margin-top: 48px;
+}
+
+.detail-cell {
+  padding: 20px 20px 20px 0;
+  border-left: 1px solid var(--border-hairline);
+  padding-left: 20px;
+}
+
+.detail-cell:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+
+.detail-value {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--gold);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+}
+
+.detail-label {
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* ── Slide 2 — Evidence ───────────────────────────────── */
+.s2-headline {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  max-width: 1100px;
+  margin-bottom: 0;
+}
+
+.stats-aside-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 340px;
+  gap: 0;
+  margin-top: 40px;
+  flex-shrink: 0;
+}
+
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 28px 24px;
+  border-left: 1px solid var(--border-hairline);
+}
+
+.stat-col:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--gold);
+  line-height: var(--leading-tight);
+}
+
+.stat-label {
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-label);
+  line-height: var(--leading-normal);
+}
+
+.stat-note {
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.aside-panel {
+  background: var(--bg-raised);
+  border-left: 2px solid var(--gold-subtle);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aside-stat {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--gold);
+  line-height: var(--leading-tight);
+}
+
+.aside-label {
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-label);
+}
+
+.aside-divider {
+  height: 1px;
+  background: var(--border-hairline);
+  margin: 4px 0;
+}
+
+.aside-body {
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: var(--leading-loose);
+}
+
+.evidence-para {
+  margin-top: 32px;
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: var(--text-base);
+  line-height: var(--leading-loose);
+  color: var(--text-secondary);
+  max-width: 1200px;
+}
+
+/* ── Slide 3 — Comparison ─────────────────────────────── */
+.s3-headline {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  max-width: 1400px;
+  margin-bottom: 0;
+}
+
+.table-wrap {
+  margin-top: 32px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+}
+
+.data-table thead th {
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-label);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-hairline);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.data-table thead th:not(:first-child) {
+  text-align: right;
+}
+
+.data-table tbody td {
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border-cell);
+  font-variant-numeric: lining-nums tabular-nums;
+  vertical-align: middle;
+}
+
+.data-table tbody td:not(:first-child) {
+  text-align: right;
+}
+
+.data-table tbody td.td-name {
+  font-weight: var(--weight-regular);
+  color: var(--text-primary);
+}
+
+.data-table tbody tr:nth-child(odd) {
+  background: var(--bg-table-alt);
+}
+
+.data-table tbody tr.highlighted {
+  background: var(--bg-highlight);
+  box-shadow: inset 3px 0 0 var(--border-highlight);
+}
+
+.data-table tbody tr.highlighted td {
+  color: var(--text-primary);
+}
+
+.data-table tbody tr.highlighted td.td-sharpe,
+.data-table tbody tr.highlighted td.td-cagr {
+  color: var(--gold);
+  font-weight: var(--weight-regular);
+}
+
+.data-table tbody tr.highlighted td.td-name {
+  color: var(--gold-bright);
+}
+
+.badge {
+  display: inline-block;
+  background: oklch(0.72 0.14 72 / 0.15);
+  color: var(--gold);
+  border: 1px solid oklch(0.72 0.14 72 / 0.35);
+  border-radius: 3px;
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  margin-left: 10px;
+  vertical-align: middle;
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+}
+
+.footnote {
+  margin-top: 16px;
+  font-family: var(--font-body);
+  font-weight: var(--weight-light);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  line-height: var(--leading-normal);
+}
+
+/* ── Nav Bar ───────────────────────────────────────────── */
+#nav-bar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--nav-bg);
+  border: 1px solid var(--nav-border);
+  border-radius: 999px;
+  padding: 10px 20px;
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  user-select: none;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transition: color 0.15s, background 0.15s;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.nav-btn:hover { color: var(--gold); background: oklch(0.72 0.14 72 / 0.10); }
+.nav-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.nav-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dot-inactive);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  border: none;
+  padding: 0;
+}
+
+.nav-dot.active {
+  background: var(--dot-active);
+  transform: scale(1.35);
+}
+
+.nav-dot:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* ── Reduced Motion ────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .nav-btn, .nav-dot { transition: none; }
+}
+
+@media print {
+  * { animation: none !important; transition: none !important; }
+  #nav-bar, .nav-bar, .slide-nav { display: none !important; }
+  html, body { width: 1920px !important; height: auto !important; overflow: visible !important; display: block !important; }
+  #stage-wrapper, #deck-stage { position: static !important; overflow: visible !important; transform: none !important; width: 1920px !important; height: auto !important; }
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    break-after: page; page-break-after: always;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+}
+</style>
+</head>
+<body>
+<div id="stage-wrapper">
+<div id="deck-stage">
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- SLIDE 1 — TITLE                                    -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="slide is-active" data-slide="1" id="slide-1" role="region" aria-label="Slide 1 of 3">
+    <div class="s1-top-rule" aria-hidden="true"></div>
+
+    <div class="s1-content">
+      <p class="s1-institution">Meridian Private Wealth — Alternative Investment Strategy 2024</p>
+
+      <h1 class="s1-headline">
+        Ultra-High-Net-Worth Portfolios That Allocated 22 to 28 Percent to Alternative Assets — Including Private Equity, Infrastructure Debt, and Tangible Collectibles — Achieved 340 Basis Points Higher Risk-Adjusted Returns Over the 2019–2024 Period.
+      </h1>
+
+      <p class="s1-abstract">
+        Drawing on five-year performance data across 186 UHNW mandates above $25 million, this analysis documents the return premium attributable to structured alternative exposure in multi-asset private wealth portfolios. The evidence supports a deliberate reallocation framework for clients seeking durable outperformance beyond traditional 60/40 benchmarks.
+      </p>
+
+      <div class="detail-row" aria-label="Key summary statistics">
+        <div class="detail-cell">
+          <div class="detail-value">186</div>
+          <div class="detail-label">Mandates Analysed</div>
+        </div>
+        <div class="detail-cell">
+          <div class="detail-value">+340 bps</div>
+          <div class="detail-label">Risk-Adj. Return Premium</div>
+        </div>
+        <div class="detail-cell">
+          <div class="detail-value">2019–2024</div>
+          <div class="detail-label">Observation Period</div>
+        </div>
+        <div class="detail-cell">
+          <div class="detail-value">&gt; $25M</div>
+          <div class="detail-label">Minimum Mandate Size</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="folio" aria-hidden="true">K02 · 01</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- SLIDE 2 — EVIDENCE                                 -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="slide" data-slide="2" id="slide-2" role="region" aria-label="Slide 2 of 3">
+
+    <p class="section-marker">Infrastructure Debt — Downside Protection</p>
+
+    <h2 class="s2-headline">
+      Infrastructure Debt Allocations Within the 8–12 Percent Range Provided the Strongest Downside Protection During 2022 Market Volatility, Delivering Positive Real Returns in All Four Quarters While Public Market Equivalents Contracted.
+    </h2>
+    <span class="hairline hairline--short" aria-hidden="true"></span>
+
+    <div class="stats-aside-row" aria-label="Key statistics and supplementary data">
+      <div class="stat-col">
+        <div class="stat-value">+1.4%</div>
+        <div class="stat-label">Average Real Return, 2022</div>
+        <div class="stat-note">All four quarters positive</div>
+      </div>
+      <div class="stat-col">
+        <div class="stat-value">−8.7%</div>
+        <div class="stat-label">Public Market Equiv. 2022</div>
+        <div class="stat-note">Aggregate MSCI ACWI real return</div>
+      </div>
+      <div class="stat-col">
+        <div class="stat-value">8–12%</div>
+        <div class="stat-label">Optimal Allocation Band</div>
+        <div class="stat-note">Mandates within this range outperformed</div>
+      </div>
+      <div class="aside-panel">
+        <div class="aside-label">Spread Premium vs. Sovereign</div>
+        <div class="aside-stat">+210 bps</div>
+        <div class="aside-divider" aria-hidden="true"></div>
+        <div class="aside-body">
+          Infrastructure debt in the 8–12% allocation band delivered a consistent illiquidity premium versus 10-year sovereign equivalents across all studied geographies, compensating investors for lock-up without materially increasing credit risk exposure.
+        </div>
+      </div>
+    </div>
+
+    <p class="evidence-para">
+      Analysis across 62 mandates that held infrastructure debt within the 8–12% band shows a maximum drawdown of −2.1% versus −14.3% for the public market equivalent cohort during the same period. The stability derives from contracted long-duration cash flows, inflation-linked revenue structures, and the essential-service nature of the underlying assets — water, energy transmission, toll roads, and regulated utilities — which exhibit near-zero correlation to equity risk premia during risk-off periods.
+    </p>
+
+    <div class="folio" aria-hidden="true">K02 · 02</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- SLIDE 3 — COMPARISON TABLE                         -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="slide" data-slide="3" id="slide-3" role="region" aria-label="Slide 3 of 3">
+
+    <p class="section-marker">Portfolio Construction — Sharpe Ratio Comparison</p>
+
+    <h2 class="s3-headline">
+      The Barbell Allocation Combining Illiquid Private Infrastructure at 10 Percent With Liquid Multi-Strategy Alternatives at 18 Percent Outperforms Both Pure-Liquid and Pure-Illiquid Portfolios on Sharpe Ratio Across All Evaluated Time Horizons.
+    </h2>
+    <span class="hairline hairline--short" aria-hidden="true"></span>
+
+    <div class="table-wrap">
+      <table class="data-table" aria-label="Portfolio strategy comparison">
+        <thead>
+          <tr>
+            <th scope="col">Strategy</th>
+            <th scope="col">Alt. Alloc.</th>
+            <th scope="col">Sharpe Ratio</th>
+            <th scope="col">Max Drawdown</th>
+            <th scope="col">5Y CAGR</th>
+            <th scope="col">Liquidity Profile</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-name">Traditional 60/40</td>
+            <td>0%</td>
+            <td>0.61</td>
+            <td>−18.4%</td>
+            <td>6.2%</td>
+            <td>Full</td>
+          </tr>
+          <tr>
+            <td class="td-name">Liquid Alts Only</td>
+            <td>18%</td>
+            <td>0.74</td>
+            <td>−14.8%</td>
+            <td>7.1%</td>
+            <td>Semi-liquid</td>
+          </tr>
+          <tr class="highlighted">
+            <td class="td-name">Barbell (10% Infra + 18% Liquid Alts) <span class="badge">Optimal</span></td>
+            <td>28%</td>
+            <td class="td-sharpe">0.91</td>
+            <td>−9.6%</td>
+            <td class="td-cagr">8.9%</td>
+            <td>Blended</td>
+          </tr>
+          <tr>
+            <td class="td-name">Pure Illiquid Private</td>
+            <td>25%</td>
+            <td>0.78</td>
+            <td>−7.1%</td>
+            <td>8.3%</td>
+            <td>Illiquid</td>
+          </tr>
+          <tr>
+            <td class="td-name">Broad Alternatives (22–28%)</td>
+            <td>25% avg</td>
+            <td>0.85</td>
+            <td>−11.2%</td>
+            <td>8.6%</td>
+            <td>Mixed</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="footnote">
+      * Based on 186 UHNW mandates, 2019–2024. Sharpe ratio calculated using 3-month U.S. Treasury bill as risk-free rate. Max Drawdown measured peak-to-trough over full observation window. CAGR figures net of management fees. Liquidity profile reflects redemption terms: Full = T+2; Semi-liquid = quarterly; Blended = mix; Illiquid = 5–7yr lock-up. Past performance is not indicative of future results.
+    </p>
+
+    <div class="folio" aria-hidden="true">K02 · 03</div>
+  </div>
+
+</div><!-- /deck-stage -->
+</div><!-- /stage-wrapper -->
+
+<!-- ── Nav Bar ─────────────────────────────────────────── -->
+<nav id="nav-bar" aria-label="Slide navigation">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide" onclick="window.__goToSlide(window.__currentSlide - 1)">&#8592;</button>
+  <div class="nav-dots" role="list" aria-label="Slide indicators">
+    <button class="nav-dot active" id="dot-1" role="listitem" aria-label="Slide 1" onclick="window.__goToSlide(1)"></button>
+    <button class="nav-dot"        id="dot-2" role="listitem" aria-label="Slide 2" onclick="window.__goToSlide(2)"></button>
+    <button class="nav-dot"        id="dot-3" role="listitem" aria-label="Slide 3" onclick="window.__goToSlide(3)"></button>
+  </div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide" onclick="window.__goToSlide(window.__currentSlide + 1)">&#8594;</button>
+</nav>
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = Math.min(Math.max(1, Math.round(+n)||1), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  window.__deckPlan = {
+    title: 'K02 gold-dark-premium',
+    total_slides: _total,
+    slides: _slides.map(function (_, i) {
+      return { index: i + 1, type: i === 0 ? 'title' : 'content', assertion: '' }
+    })
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

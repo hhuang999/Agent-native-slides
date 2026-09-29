@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L01 deep-ai-dark — Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ─── Tokens ─────────────────────────────── */
+  :root {
+    --color-bg:      oklch(0.08 0.02 270);
+    --color-surface: oklch(0.13 0.03 265);
+    --color-border:  oklch(0.28 0.06 240);
+    --color-muted:   oklch(0.50 0.08 230);
+    --color-body:    oklch(0.78 0.04 225);
+    --color-heading: oklch(0.95 0.02 220);
+    --color-accent:  oklch(0.65 0.22 235);
+    --color-glow:    oklch(0.55 0.20 235);
+    --font-heading:  'Syne', sans-serif;
+    --font-mono:     'Geist Mono', 'Courier New', monospace;
+    --scale: 1;
+  }
+
+  @property --mx { syntax: '<percentage>'; inherits: false; initial-value: 25%; }
+  @property --my { syntax: '<percentage>'; inherits: false; initial-value: 60%; }
+
+  /* ─── Stage ─────────────────────────────── */
+  body {
+    background: oklch(0.04 0.02 270);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 16px;
+    padding: 24px;
+    font-family: var(--font-heading);
+  }
+
+  .stage-wrapper {
+    position: relative;
+  }
+
+  .slide-stage {
+    width: 1920px;
+    height: 1080px;
+    transform-origin: top left;
+    transform: scale(var(--scale));
+    position: relative;
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .slide.is-active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* ─── Background mesh ────────────────────── */
+  .bg-mesh {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 65% 50% at var(--mx) var(--my),
+        oklch(0.45 0.20 235 / 0.35), transparent 65%),
+      radial-gradient(ellipse 45% 40% at 78% 25%,
+        oklch(0.38 0.16 255 / 0.20), transparent 60%),
+      radial-gradient(ellipse 35% 30% at 15% 20%,
+        oklch(0.35 0.12 220 / 0.15), transparent 55%),
+      oklch(0.08 0.02 270);
+    animation: mesh-drift 20s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+
+  @keyframes mesh-drift {
+    to { --mx: 65%; --my: 35%; }
+  }
+
+  /* Fine grid lines overlay */
+  .bg-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(oklch(0.30 0.06 235 / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(0.30 0.06 235 / 0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    z-index: 1;
+  }
+
+  /* Canvas for particles */
+  canvas.particles {
+    position: absolute; inset: 0; pointer-events: none;
+    z-index: 2;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-mesh { animation: none !important; }
+    [data-anim] { opacity: 1 !important; transform: none !important; filter: none !important; animation: none !important; }
+  }
+
+  /* ─── Slide 1: Cover ─────────────────────── */
+  .s1-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 160px;
+    z-index: 10;
+  }
+
+  .s1-tagline {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 44px;
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(10px);
+    animation: blur-in 0.5s 0.15s ease-out forwards;
+  }
+
+  .s1-title {
+    font-family: var(--font-heading);
+    font-size: 132px;
+    font-weight: 800;
+    line-height: 0.95;
+    color: var(--color-heading);
+    letter-spacing: -0.03em;
+    max-width: 1200px;
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(24px);
+    animation: blur-in 0.8s 0.35s ease-out forwards;
+  }
+
+  .s1-title .glow {
+    color: var(--color-accent);
+    text-shadow:
+      0 0 30px oklch(0.65 0.22 235 / 0.6),
+      0 0 80px oklch(0.55 0.20 235 / 0.25);
+  }
+
+  .s1-sep {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin: 60px 0 48px;
+    opacity: 0;
+    animation: blur-in 0.4s 0.85s ease-out forwards;
+  }
+
+  .s1-sep-line {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(to right, var(--color-accent), transparent);
+  }
+
+  .s1-sep-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 8px var(--color-glow);
+  }
+
+  .s1-meta-row {
+    display: flex;
+    gap: 80px;
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(8px);
+    animation: blur-in 0.5s 1.05s ease-out forwards;
+  }
+
+  .s1-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .s1-meta-key {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .s1-meta-val {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--color-body);
+  }
+
+  /* Corner decoration */
+  .s1-corner {
+    position: absolute;
+    right: 120px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 520px;
+    height: 520px;
+    z-index: 5;
+    opacity: 0;
+    animation: blur-in 1.2s 0.5s ease-out forwards;
+  }
+
+  /* ─── Slide 2: Evidence ───────────────────── */
+  .s2-header-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 38px 160px;
+    border-bottom: 1px solid oklch(0.28 0.06 240 / 0.5);
+    z-index: 10;
+    opacity: 0;
+    animation: blur-in 0.4s 0.1s ease-out forwards;
+  }
+
+  .s2-header-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .s2-header-folio {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-muted);
+  }
+
+  .s2-body {
+    position: absolute;
+    inset: 0;
+    padding: 124px 160px 80px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 96px;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .s2-left {}
+
+  .s2-number-hero {
+    font-family: var(--font-heading);
+    font-size: 180px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--color-accent);
+    letter-spacing: -0.04em;
+    text-shadow:
+      0 0 40px oklch(0.65 0.22 235 / 0.55),
+      0 0 100px oklch(0.55 0.20 235 / 0.2);
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(20px);
+    animation: blur-in 0.7s 0.3s ease-out forwards;
+  }
+
+  .s2-number-unit {
+    font-size: 64px;
+    font-weight: 400;
+    vertical-align: super;
+    color: oklch(0.65 0.22 235 / 0.7);
+  }
+
+  .s2-assertion {
+    font-family: var(--font-heading);
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-heading);
+    letter-spacing: -0.02em;
+    margin-top: 16px;
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(12px);
+    animation: blur-in 0.6s 0.55s ease-out forwards;
+  }
+
+  .s2-sub {
+    margin-top: 32px;
+    font-family: var(--font-mono);
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--color-body);
+    max-width: 600px;
+    opacity: 0;
+    animation: blur-in 0.5s 0.8s ease-out forwards;
+  }
+
+  /* Metrics panel */
+  .s2-panel {
+    background: oklch(0.13 0.03 265 / 0.7);
+    border: 1px solid oklch(0.28 0.06 240 / 0.5);
+    border-radius: 6px;
+    padding: 52px 52px;
+    box-shadow:
+      inset 0 1px 0 oklch(0.40 0.10 230 / 0.25),
+      0 20px 60px oklch(0.04 0.02 270 / 0.8);
+    opacity: 0;
+    transform: translateY(16px);
+    animation: blur-in 0.7s 0.5s ease-out forwards;
+  }
+
+  .s2-panel-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 44px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid oklch(0.28 0.06 240 / 0.4);
+  }
+
+  .s2-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .s2-metric {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 16px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid oklch(0.22 0.04 240 / 0.4);
+  }
+
+  .s2-metric:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .s2-metric-label {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--color-body);
+    line-height: 1.4;
+  }
+
+  .s2-metric-bar-wrap {
+    margin-top: 10px;
+    height: 2px;
+    background: oklch(0.22 0.04 240 / 0.5);
+    border-radius: 1px;
+    overflow: hidden;
+    grid-column: 1 / -1;
+  }
+
+  .s2-metric-bar {
+    height: 100%;
+    background: linear-gradient(to right, var(--color-accent), oklch(0.55 0.18 260));
+    box-shadow: 0 0 8px var(--color-glow);
+    border-radius: 1px;
+    transform-origin: left;
+    animation: bar-grow 1s 0.9s ease-out both;
+  }
+
+  @keyframes bar-grow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+
+  .s2-metric-value {
+    font-family: var(--font-heading);
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--color-accent);
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 20px oklch(0.65 0.22 235 / 0.4);
+    white-space: nowrap;
+  }
+
+  /* ─── Shared anim ─────────────────────────── */
+  @keyframes blur-in {
+    from { opacity: 0; filter: blur(8px); transform: translateY(12px); }
+    to   { opacity: 1; filter: blur(0);   transform: translateY(0); }
+  }
+
+  /* ─── Nav ────────────────────────────────── */
+  .slide-nav {
+    display: flex;
+    gap: 12px;
+  }
+
+  .slide-nav button {
+    width: 38px; height: 38px;
+    border: 1px solid oklch(0.28 0.06 240 / 0.5);
+    background: oklch(0.10 0.02 265 / 0.7);
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 4px;
+  }
+
+  .slide-nav button.active {
+    background: oklch(0.65 0.22 235 / 0.15);
+    border-color: oklch(0.65 0.22 235 / 0.5);
+    color: var(--color-accent);
+    box-shadow: 0 0 12px oklch(0.65 0.22 235 / 0.15);
+  }
+
+  .slide-nav button:hover:not(.active) {
+    background: oklch(0.15 0.03 265 / 0.7);
+    color: var(--color-body);
+  }
+
+  /* ─── Print ──────────────────────────────── */
+  @media print {
+    * { animation: none !important; transition: none !important; }
+    .slide-nav { display: none !important; }
+
+    html, body {
+      width: 1920px !important;
+      height: auto !important;
+      overflow: visible !important;
+      display: block !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: #fff !important;
+    }
+
+    .stage-wrapper,
+    .slide-stage,
+    #stage {
+      position: static !important;
+      display: block !important;
+      transform: none !important;
+      width: 1920px !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    .slide {
+      position: relative !important;
+      inset: auto !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      width: 1920px !important;
+      height: 1080px !important;
+      break-after: page;
+      page-break-after: always;
+      overflow: hidden;
+    }
+
+    .slide:last-child {
+      break-after: auto;
+      page-break-after: auto;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage-wrapper">
+  <div class="slide-stage" id="stage" aria-live="polite">
+
+    <!-- ── Slide 1: Cover ───────────────────── -->
+    <div class="slide is-active" data-slide="1" id="slide-1" aria-hidden="false">
+      <div class="bg-mesh"></div>
+      <div class="bg-grid"></div>
+      <canvas class="particles" id="p0"></canvas>
+
+      <div class="s1-content">
+        <div class="s1-tagline" data-anim>ICML 2024 · Best Paper</div>
+        <h1 class="s1-title" data-anim>
+          The <span class="glow">Reasoning</span><br>Frontier
+        </h1>
+        <div class="s1-sep" data-anim>
+          <div class="s1-sep-line"></div>
+          <div class="s1-sep-dot"></div>
+        </div>
+        <div class="s1-meta-row" data-anim>
+          <div class="s1-meta-item">
+            <span class="s1-meta-key">Authors</span>
+            <span class="s1-meta-val">Wei, Wang et al.</span>
+          </div>
+          <div class="s1-meta-item">
+            <span class="s1-meta-key">Published</span>
+            <span class="s1-meta-val">July 2024</span>
+          </div>
+          <div class="s1-meta-item">
+            <span class="s1-meta-key">Models</span>
+            <span class="s1-meta-val">12 evaluated</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decorative rings SVG -->
+      <svg class="s1-corner" viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="260" cy="260" r="240" stroke="oklch(0.65 0.22 235 / 0.08)" stroke-width="1"/>
+        <circle cx="260" cy="260" r="200" stroke="oklch(0.60 0.18 250 / 0.07)" stroke-width="0.5"/>
+        <circle cx="260" cy="260" r="160" stroke="oklch(0.55 0.14 235 / 0.06)" stroke-width="0.5"/>
+        <circle cx="260" cy="260" r="8" fill="oklch(0.65 0.22 235 / 0.8)">
+          <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="8;10;8" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+        <line x1="260" y1="60" x2="260" y2="180" stroke="oklch(0.65 0.22 235 / 0.3)" stroke-width="0.5"/>
+        <line x1="60" y1="260" x2="180" y2="260" stroke="oklch(0.65 0.22 235 / 0.3)" stroke-width="0.5"/>
+        <line x1="460" y1="260" x2="340" y2="260" stroke="oklch(0.65 0.22 235 / 0.3)" stroke-width="0.5"/>
+        <line x1="260" y1="460" x2="260" y2="340" stroke="oklch(0.65 0.22 235 / 0.3)" stroke-width="0.5"/>
+        <path d="M 260 60 A 200 200 0 0 1 440 200" stroke="oklch(0.65 0.22 235 / 0.4)" stroke-width="1" stroke-linecap="round" fill="none"/>
+        <circle cx="440" cy="200" r="3" fill="oklch(0.65 0.22 235 / 0.7)">
+          <animate attributeName="opacity" values="0.7;0.2;0.7" dur="3s" begin="0.5s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+
+    <!-- ── Slide 2: Evidence ─────────────────── -->
+    <div class="slide" data-slide="2" id="slide-2" aria-hidden="true">
+      <div class="bg-mesh"></div>
+      <div class="bg-grid"></div>
+      <canvas class="particles" id="p1"></canvas>
+
+      <div class="s2-header-bar">
+        <span class="s2-header-label">Core Finding</span>
+        <span class="s2-header-folio">02 / 02</span>
+      </div>
+
+      <div class="s2-body">
+        <div class="s2-left">
+          <div class="s2-number-hero">
+            +47<span class="s2-number-unit">%</span>
+          </div>
+          <h2 class="s2-assertion">Chain-of-thought triples accuracy on hard math</h2>
+          <p class="s2-sub">
+            Across MATH-500 and AIME subsets, models using extended step-by-step reasoning outperform direct-answer baselines by 47 percentage points on average.
+          </p>
+        </div>
+        <div class="s2-right">
+          <div class="s2-panel">
+            <div class="s2-panel-title">Benchmark breakdown</div>
+            <div class="s2-metrics">
+              <div class="s2-metric">
+                <span class="s2-metric-label">MATH-500 (competition)</span>
+                <span class="s2-metric-value">+52%</span>
+                <div class="s2-metric-bar-wrap">
+                  <div class="s2-metric-bar" style="width: 88%"></div>
+                </div>
+              </div>
+              <div class="s2-metric">
+                <span class="s2-metric-label">GSM8K (grade school)</span>
+                <span class="s2-metric-value">+31%</span>
+                <div class="s2-metric-bar-wrap">
+                  <div class="s2-metric-bar" style="width: 60%; animation-delay: 1.05s;"></div>
+                </div>
+              </div>
+              <div class="s2-metric">
+                <span class="s2-metric-label">AIME 2024 (olympiad)</span>
+                <span class="s2-metric-value">+58%</span>
+                <div class="s2-metric-bar-wrap">
+                  <div class="s2-metric-bar" style="width: 96%; animation-delay: 1.15s;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /stage -->
+</div>
+
+<nav class="slide-nav" aria-label="Slides">
+  <button class="active" data-slide="1" aria-label="Slide 1">1</button>
+  <button data-slide="2" aria-label="Slide 2">2</button>
+</nav>
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = Math.min(Math.max(1, Math.round(+n)||1), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  window.__deckPlan = {
+    title: 'L01',
+    total_slides: _total,
+    slides: _slides.map(function (_, i) {
+      return { index: i + 1, type: i === 0 ? 'title' : 'content', assertion: '' }
+    })
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+}())
+</script>
+
+<script>
+  // ── Particles ─────────────────────────────────
+  function initParticles(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width  = 1920;
+    canvas.height = 1080;
+
+    const N = 60;
+    const pts = Array.from({ length: N }, () => ({
+      x: Math.random() * 1920,
+      y: Math.random() * 1080,
+      vx: (Math.random() - 0.5) * 0.18,
+      vy: (Math.random() - 0.5) * 0.12,
+      r: Math.random() * 1.5 + 0.5,
+      a: Math.random() * 0.5 + 0.1,
+    }));
+
+    let raf;
+    function draw() {
+      ctx.clearRect(0, 0, 1920, 1080);
+      pts.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = 1920; if (p.x > 1920) p.x = 0;
+        if (p.y < 0) p.y = 1080; if (p.y > 1080) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `oklch(0.65 0.22 235 / ${p.a})`;
+        ctx.fill();
+      });
+      raf = requestAnimationFrame(draw);
+    }
+    draw();
+    return () => cancelAnimationFrame(raf);
+  }
+
+  initParticles('p0');
+  initParticles('p1');
+
+  // ── Scale ──────────────────────────────────────
+  const stage = document.getElementById('stage');
+  function setScale() {
+    const s = Math.min(
+      (window.innerWidth  - 48) / 1920,
+      (window.innerHeight - 100) / 1080
+    );
+    document.documentElement.style.setProperty('--scale', s);
+    const w = stage.parentElement;
+    w.style.width  = Math.round(1920 * s) + 'px';
+    w.style.height = Math.round(1080 * s) + 'px';
+    w.style.overflow = 'hidden';
+  }
+  window.addEventListener('resize', setScale);
+
+  // ── Nav ────────────────────────────────────────
+  const btns = Array.from(document.querySelectorAll('.slide-nav button'));
+  btns.forEach(b => b.addEventListener('click', () => {
+    window.__goToSlide(+b.dataset.slide);
+    btns.forEach(x => x.classList.toggle('active', x === b));
+  }));
+
+  document.fonts.ready.then(setScale);
+</script>
+</body>
+</html>

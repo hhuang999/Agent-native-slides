@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>A01 — circuit-engineered · Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --color-bg:             oklch(0.10 0.015 240);
+  --color-surface:        oklch(0.14 0.015 240);
+  --color-raised-surface: oklch(0.18 0.012 240);
+  --color-border:         oklch(0.26 0.018 240);
+  --color-heading:        oklch(0.96 0.008 200);
+  --color-body:           oklch(0.78 0.015 220);
+  --color-muted:          oklch(0.52 0.020 225);
+  --color-accent:         oklch(0.76 0.18 205);
+  --color-accent-dim:     oklch(0.60 0.14 205);
+  --color-accent-glow:    oklch(0.76 0.18 205 / 0.18);
+  --color-positive:       oklch(0.62 0.18 145);
+  --color-negative:       oklch(0.58 0.20 25);
+  --circuit-grid:         24px;
+  --type-display: 'Geist Mono', monospace;
+  --type-body:    'Instrument Sans', sans-serif;
+  --type-label:   'Geist Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--type-body);
+  font-size: 20px;
+  color: var(--color-body);
+}
+
+/* ── Deck stage ─────────────────────────────────────────── */
+.deck-stage {
+  width: 1920px; height: 1080px;
+  position: relative; overflow: hidden;
+}
+
+/* ── Background canvas ──────────────────────────────────── */
+#circuit-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 0; opacity: 0.50;
+}
+
+/* ── Slide base ─────────────────────────────────────────── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  z-index: 1; padding: 64px 80px;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+
+/* ── Slide 1: Title ─────────────────────────────────────── */
+.s1-eyebrow {
+  font-family: var(--type-label); font-size: 13px;
+  color: var(--color-accent); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 12px;
+}
+.s1-rule {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-border) 60%, transparent 100%);
+  margin-bottom: 40px;
+}
+.s1-headline {
+  font-family: var(--type-display); font-size: 72px; font-weight: 600;
+  color: var(--color-heading); line-height: 1.1;
+  max-width: 1200px; margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+.s1-sub {
+  font-size: 26px; color: var(--color-muted);
+  max-width: 840px; line-height: 1.5; margin-bottom: 64px;
+}
+.s1-meta {
+  font-family: var(--type-label); font-size: 15px;
+  color: var(--color-muted); display: flex; gap: 32px;
+}
+.s1-meta span { display: flex; align-items: center; gap: 8px; }
+.s1-meta span::before { content: ''; width: 6px; height: 6px; background: var(--color-accent); border-radius: 50%; }
+.s1-bottom-rule {
+  position: absolute; bottom: 64px; left: 80px; right: 80px;
+  height: 1px; background: var(--color-border);
+}
+
+/* ── Slide 2: Content ───────────────────────────────────── */
+.s2-header {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 20px; margin-bottom: 40px;
+}
+.s2-slide-num {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-accent); letter-spacing: 0.10em; margin-bottom: 10px;
+}
+.s2-headline {
+  font-family: var(--type-display); font-size: 48px; font-weight: 500;
+  color: var(--color-heading); line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+.s2-body {
+  display: grid; grid-template-columns: 1fr 380px;
+  gap: 48px; flex: 1;
+}
+.s2-main { display: flex; flex-direction: column; gap: 24px; }
+.s2-text { font-size: 20px; line-height: 1.7; color: var(--color-body); }
+
+.data-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.data-card {
+  background: var(--color-raised-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px; padding: 20px;
+}
+.data-card__value {
+  font-family: var(--type-display); font-size: 36px; font-weight: 600;
+  color: var(--color-accent); line-height: 1;
+  margin-bottom: 6px;
+}
+.data-card__delta {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-positive);
+}
+.data-card__label {
+  font-size: 14px; color: var(--color-muted); margin-top: 4px;
+}
+
+.s2-aside { display: flex; flex-direction: column; gap: 16px; }
+.step-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 6px; padding: 16px;
+}
+.step-item__num {
+  font-family: var(--type-label); font-size: 11px;
+  color: var(--color-accent); margin-bottom: 6px; letter-spacing: 0.08em;
+}
+.step-item__title { font-size: 16px; font-weight: 600; color: var(--color-heading); margin-bottom: 4px; }
+.step-item__body { font-size: 14px; color: var(--color-muted); line-height: 1.5; }
+
+/* ── Slide 3: Code/Data ─────────────────────────────────── */
+.s3-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; flex: 1; }
+.code-block {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px; overflow: hidden; display: flex; flex-direction: column;
+}
+.code-block__header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; background: var(--color-raised-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+.cb-dots { display: flex; gap: 5px; }
+.cb-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.cb-dots span:nth-child(1) { background: oklch(0.55 0.22 25); }
+.cb-dots span:nth-child(2) { background: oklch(0.65 0.20 90); }
+.cb-dots span:nth-child(3) { background: oklch(0.55 0.22 145); }
+.cb-filename {
+  font-family: var(--type-label); font-size: 12px;
+  color: var(--color-muted); margin-left: 8px;
+}
+.code-block__body {
+  padding: 20px; flex: 1;
+  font-family: var(--type-label); font-size: 15px;
+  line-height: 1.75; color: var(--color-body); overflow: hidden;
+}
+.kw  { color: oklch(0.68 0.20 295); }
+.fn  { color: var(--color-accent); }
+.str { color: oklch(0.68 0.18 145); }
+.cm  { color: var(--color-muted); font-style: italic; }
+.num { color: oklch(0.72 0.16 60); }
+
+.chart-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px; padding: 24px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.chart-title {
+  font-family: var(--type-label); font-size: 13px;
+  color: var(--color-muted); letter-spacing: 0.06em; text-transform: uppercase;
+}
+.bar-chart { flex: 1; display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+.bar-row { display: flex; align-items: center; gap: 12px; }
+.bar-label { font-family: var(--type-label); font-size: 13px; color: var(--color-muted); width: 80px; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; height: 20px; background: var(--color-raised-surface); border-radius: 3px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.bar-fill.ours { background: var(--color-accent); }
+.bar-fill.base { background: var(--color-accent-dim); }
+.bar-val { font-family: var(--type-label); font-size: 13px; color: var(--color-body); width: 44px; flex-shrink: 0; }
+
+/* ── Slide nav (preview only) ───────────────────────────── */
+#nav {
+  position: fixed; bottom: 16px; right: 20px; z-index: 100;
+  display: flex; gap: 8px;
+}
+.nav-btn {
+  padding: 6px 14px; border-radius: 5px;
+  background: var(--color-raised-surface); border: 1px solid var(--color-border);
+  color: var(--color-body); font-family: var(--type-label); font-size: 13px; cursor: pointer;
+}
+.nav-btn:hover { background: var(--color-border); }
+#slide-info {
+  position: fixed; bottom: 16px; left: 20px; z-index: 100;
+  font-family: var(--type-label); font-size: 12px; color: var(--color-muted);
+}
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+<div class="deck-stage">
+  <canvas id="circuit-bg"></canvas>
+
+  <!-- Slide 1: Title -->
+  <div class="slide is-active" data-slide="1">
+    <div class="s1-eyebrow">ICLR 2025 · Poster Session 3B</div>
+    <div class="s1-rule"></div>
+    <h1 class="s1-headline">Scalable Sparse Attention via<br>Learned Circuit Routing</h1>
+    <p class="s1-sub">We reduce transformer attention complexity from O(n²) to O(n log n) using a differentiable gate that routes tokens along sparse circuit paths without sacrificing downstream accuracy.</p>
+    <div class="s1-meta">
+      <span>Wei Chen, Sarah Park, Raj Iyer</span>
+      <span>MIT CSAIL</span>
+      <span>arxiv:2501.09841</span>
+    </div>
+    <div class="s1-bottom-rule"></div>
+  </div>
+
+  <!-- Slide 2: Content -->
+  <div class="slide" data-slide="2">
+    <div class="s2-header">
+      <div class="s2-slide-num">02 / 08 — RESULTS</div>
+      <h2 class="s2-headline">Circuit routing cuts FLOPs by 3.4× while retaining 98.7% of full-attention accuracy on LM benchmarks.</h2>
+    </div>
+    <div class="s2-body">
+      <div class="s2-main">
+        <p class="s2-text">On a 1.3B parameter language model trained on C4, learned circuit routing reduces attention FLOPs from 2.1T to 0.62T per forward pass. The gating network adds only 1.2M parameters and trains end-to-end without pretraining the base model.</p>
+        <div class="data-cards">
+          <div class="data-card">
+            <div class="data-card__value">3.4×</div>
+            <div class="data-card__delta">↑ FLOPs reduction</div>
+            <div class="data-card__label">vs. full attention (1.3B)</div>
+          </div>
+          <div class="data-card">
+            <div class="data-card__value">98.7%</div>
+            <div class="data-card__delta">↑ accuracy retained</div>
+            <div class="data-card__label">avg. 8 LM benchmarks</div>
+          </div>
+          <div class="data-card">
+            <div class="data-card__value">O(n log n)</div>
+            <div class="data-card__delta">↓ from O(n²)</div>
+            <div class="data-card__label">attention complexity</div>
+          </div>
+          <div class="data-card">
+            <div class="data-card__value">1.2M</div>
+            <div class="data-card__delta">← gate overhead</div>
+            <div class="data-card__label">additional parameters</div>
+          </div>
+        </div>
+      </div>
+      <div class="s2-aside">
+        <div class="step-item">
+          <div class="step-item__num">STEP 01</div>
+          <div class="step-item__title">Token Routing Gate</div>
+          <div class="step-item__body">Lightweight MLP predicts per-token routing mask at every layer.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-item__num">STEP 02</div>
+          <div class="step-item__title">Sparse Circuit Assembly</div>
+          <div class="step-item__body">Top-k tokens form sparse attention circuits; others skip via residual.</div>
+        </div>
+        <div class="step-item">
+          <div class="step-item__num">STEP 03</div>
+          <div class="step-item__title">End-to-End Training</div>
+          <div class="step-item__body">Gate and backbone train jointly; no two-stage pretraining needed.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Code + Chart -->
+  <div class="slide" data-slide="3">
+    <div class="s2-header">
+      <div class="s2-slide-num">04 / 08 — IMPLEMENTATION</div>
+      <h2 class="s2-headline">A single differentiable gate replaces the QK dot-product with learned sparse topology.</h2>
+    </div>
+    <div class="s3-layout">
+      <div class="code-block">
+        <div class="code-block__header">
+          <div class="cb-dots"><span></span><span></span><span></span></div>
+          <span class="cb-filename">circuit_attention.py</span>
+        </div>
+        <div class="code-block__body">
+<span class="kw">class</span> <span class="fn">CircuitAttention</span>(nn.Module):<br>
+&nbsp;&nbsp;<span class="kw">def</span> <span class="fn">__init__</span>(self, dim, k=<span class="num">32</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;super().__init__()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self.gate = nn.Linear(dim, dim)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;self.k = k<br><br>
+&nbsp;&nbsp;<span class="kw">def</span> <span class="fn">forward</span>(self, x):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># Route tokens via sparse gate</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;scores = self.gate(x)  <span class="cm"># [B, N, D]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;topk = scores.topk(self.k, dim=-<span class="num">1</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mask = torch.zeros_like(scores)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mask.scatter_(-<span class="num">1</span>, topk.indices, <span class="num">1.0</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># Sparse attention over circuit</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> F.scaled_dot_product_attention(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x, x, x, attn_mask=mask<br>
+&nbsp;&nbsp;&nbsp;&nbsp;)
+        </div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">Benchmark Accuracy vs. Sparsity</div>
+        <div class="bar-chart" id="bar-chart">
+          <div class="bar-row">
+            <div class="bar-label">HellaSwag</div>
+            <div class="bar-track"><div class="bar-fill ours" style="width:0%" data-w="91%"></div></div>
+            <div class="bar-val">91.2</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Baseline</div>
+            <div class="bar-track"><div class="bar-fill base" style="width:0%" data-w="87%"></div></div>
+            <div class="bar-val">87.4</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">PIQA</div>
+            <div class="bar-track"><div class="bar-fill ours" style="width:0%" data-w="84%"></div></div>
+            <div class="bar-val">84.1</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Baseline</div>
+            <div class="bar-track"><div class="bar-fill base" style="width:0%" data-w="79%"></div></div>
+            <div class="bar-val">79.3</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">WinoGrande</div>
+            <div class="bar-track"><div class="bar-fill ours" style="width:0%" data-w="77%"></div></div>
+            <div class="bar-val">77.8</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">Baseline</div>
+            <div class="bar-track"><div class="bar-fill base" style="width:0%" data-w="74%"></div></div>
+            <div class="bar-val">74.2</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;font-family:var(--type-label);font-size:12px;color:var(--color-muted);">
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:var(--color-accent);border-radius:2px;"></span>Circuit (ours)</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:var(--color-accent-dim);border-radius:2px;"></span>Full Attn.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Preview nav -->
+<div id="nav">
+  <button class="nav-btn" id="prev">◀</button>
+  <button class="nav-btn" id="next">▶</button>
+</div>
+<div id="slide-info">A01 circuit-engineered · <span id="cur">1</span> / 3</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

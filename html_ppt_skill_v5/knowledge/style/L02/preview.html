@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L02 Purple AI Immersive — LLM Inference Efficiency Q4 2024</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   L02 — purple-ai-immersive
+   Fixed 1920×1080 deck stage, CSS transform scale for responsive
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --color-bg:           oklch(0.10 0.025 290);
+  --color-surface:      oklch(0.14 0.030 290);
+  --color-surface-hi:   oklch(0.18 0.035 290);
+  --color-border:       oklch(0.30 0.060 290);
+  --color-border-hi:    oklch(0.42 0.120 295);
+  --color-accent:       oklch(0.65 0.28 295);
+  --color-accent-dim:   oklch(0.52 0.20 295);
+  --color-accent-faint: oklch(0.22 0.06 290);
+  --color-text-primary:   oklch(0.96 0.010 290);
+  --color-text-secondary: oklch(0.72 0.025 290);
+  --color-text-tertiary:  oklch(0.48 0.020 290);
+  --color-highlight-row:  oklch(0.22 0.055 295);
+  --color-highlight-text: oklch(0.90 0.040 295);
+  --glow-accent:    0 0 12px oklch(0.65 0.28 295 / 0.80);
+  --glow-accent-lg: 0 0 28px oklch(0.65 0.28 295 / 0.55), 0 0 60px oklch(0.65 0.28 295 / 0.25);
+  --glow-border:    0 0 8px  oklch(0.65 0.28 295 / 0.35);
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-mono:    'Geist Mono', 'Fira Code', monospace;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #0a0812;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ── Deck wrapper ── */
+#deck-wrapper {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+}
+
+/* ── Slide stage ── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  background: var(--color-bg);
+  overflow: hidden;
+  
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+
+/* ── Background mesh ── */
+.bg-mesh {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.bg-mesh::before {
+  content: '';
+  position: absolute;
+  width: 900px; height: 900px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(0.28 0.10 290 / 0.45) 0%, transparent 70%);
+  top: -200px; left: -150px;
+  animation: drift-a 28s ease-in-out infinite alternate;
+}
+.bg-mesh::after {
+  content: '';
+  position: absolute;
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(0.22 0.12 310 / 0.35) 0%, transparent 70%);
+  bottom: -180px; right: 80px;
+  animation: drift-b 34s ease-in-out infinite alternate;
+}
+@keyframes drift-a {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(120px, 80px) scale(1.15); }
+}
+@keyframes drift-b {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-90px, -60px) scale(1.10); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-mesh::before, .bg-mesh::after { animation: none; }
+}
+
+/* ── Content layer ── */
+.slide-content {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 72px 96px 90px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Section marker ── */
+.section-marker {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+.accent-rule {
+  width: 48px; height: 2px;
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
+  margin-bottom: 32px;
+}
+
+/* ── Headlines ── */
+.slide-title {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.10;
+  color: var(--color-text-primary);
+  max-width: 1400px;
+}
+.slide-title .accent-word {
+  color: var(--color-accent);
+  text-shadow: var(--glow-accent-lg);
+}
+.slide-headline {
+  font-family: var(--font-display);
+  font-size: 2.10rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.22;
+  color: var(--color-text-primary);
+  max-width: 1400px;
+}
+.slide-headline .accent-num {
+  color: var(--color-accent);
+  text-shadow: var(--glow-accent);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ── Abstract ── */
+.abstract {
+  font-family: var(--font-mono);
+  font-size: 0.975rem;
+  font-weight: 300;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+  max-width: 1100px;
+  margin-top: 28px;
+}
+
+/* ── Detail row (slide 1) ── */
+.detail-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: auto;
+  padding-top: 36px;
+  border-top: 1px solid var(--color-border);
+}
+.detail-cell .detail-label {
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--color-accent-dim);
+  margin-bottom: 6px;
+}
+.detail-cell .detail-value {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  color: var(--color-text-primary);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1.4;
+}
+
+/* ── Stat columns (slide 2) ── */
+.stats-row {
+  display: flex;
+  gap: 64px;
+  margin-top: 36px;
+  margin-bottom: 40px;
+}
+.stat-col { display: flex; flex-direction: column; gap: 10px; min-width: 200px; }
+.stat-bar {
+  width: 2px; height: 28px;
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
+  flex-shrink: 0;
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 700;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--color-accent);
+  text-shadow: var(--glow-accent);
+  line-height: 1;
+}
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}
+.stat-detail {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-text-tertiary);
+  line-height: 1.55;
+  max-width: 260px;
+}
+
+/* ── Evidence + aside layout (slide 2) ── */
+.evidence-layout {
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+  flex: 1;
+}
+.evidence-main { flex: 1; }
+.evidence-para {
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  font-weight: 300;
+  color: var(--color-text-secondary);
+  line-height: 1.70;
+  max-width: 860px;
+}
+.aside-panel {
+  width: 340px;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-hi);
+  border-left: 2px solid var(--color-accent);
+  box-shadow: var(--glow-border);
+  border-radius: 8px;
+  padding: 28px 30px;
+}
+.aside-stat-value {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--color-accent);
+  text-shadow: var(--glow-accent);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.aside-stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--color-accent-dim);
+  margin-bottom: 14px;
+}
+.aside-text {
+  font-family: var(--font-mono);
+  font-size: 0.80rem;
+  font-weight: 300;
+  color: var(--color-text-secondary);
+  line-height: 1.60;
+}
+
+/* ── Comparison table (slide 3) ── */
+.comp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  margin-top: 36px;
+}
+.comp-table thead tr {
+  background: var(--color-surface-hi);
+  border-bottom: 1px solid var(--color-border-hi);
+}
+.comp-table thead th {
+  padding: 14px 20px;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  color: var(--color-accent);
+  font-weight: 500;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.comp-table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background 0.15s;
+}
+.comp-table tbody tr.highlighted {
+  background: var(--color-highlight-row);
+  border-bottom: 1px solid var(--color-border-hi);
+}
+.comp-table tbody tr.highlighted td {
+  color: var(--color-highlight-text);
+  font-weight: 500;
+}
+.comp-table tbody td {
+  padding: 14px 20px;
+  color: var(--color-text-secondary);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.comp-table tbody td:first-child {
+  color: var(--color-text-primary);
+  font-weight: 400;
+}
+.highlight-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.60rem;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--color-accent);
+  background: var(--color-accent-faint);
+  border: 1px solid var(--color-border-hi);
+  border-radius: 3px;
+  padding: 2px 7px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* ── Footnote ── */
+.footnote {
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  color: var(--color-text-tertiary);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1.55;
+  margin-top: 18px;
+  border-top: 1px solid var(--color-border);
+  padding-top: 12px;
+}
+
+/* ── Folio ── */
+.folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  color: var(--color-text-tertiary);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: 0.08em;
+  z-index: 2;
+}
+
+/* ── Nav bar ── */
+#nav-bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: oklch(0.14 0.030 290 / 0.92);
+  border: 1px solid var(--color-border-hi);
+  box-shadow: 0 4px 24px oklch(0 0 0 / 0.50), var(--glow-border);
+  border-radius: 50px;
+  padding: 10px 20px;
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.nav-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  line-height: 1;
+  font-family: var(--font-mono);
+  transition: color 0.15s, background 0.15s;
+}
+.nav-btn:hover { color: var(--color-accent); background: var(--color-accent-faint); }
+.nav-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.nav-dots { display: flex; gap: 8px; align-items: center; }
+.nav-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--color-border-hi);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
+  padding: 0;
+}
+.nav-dot.active {
+  background: var(--color-accent);
+  box-shadow: var(--glow-accent);
+  transform: scale(1.3);
+}
+.nav-dot:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+
+<div id="deck-wrapper">
+
+  <!-- ===================== SLIDE 1 — TITLE ===================== -->
+  <div class="slide is-active" data-slide="1" id="slide-1">
+    <div class="bg-mesh"></div>
+    <div class="slide-content">
+      <div class="section-marker">AI Research Institute &mdash; LLM Inference Efficiency &mdash; Q4 2024</div>
+      <div class="accent-rule"></div>
+
+      <h1 class="slide-title">
+        <span class="accent-word">Speculative Decoding</span> With a 400-Million-Parameter Draft Model
+        Reduces LLM Inference Latency by <span class="accent-word">3.8&times;</span> on 70B-Parameter Targets
+        While Maintaining Output Fidelity Above <span class="accent-word">99.4&nbsp;Percent</span>
+        as Measured by Token-Level KL Divergence.
+      </h1>
+
+      <p class="abstract">
+        Speculative decoding leverages a lightweight draft model to propose candidate token sequences that the target model verifies in a single forward pass, unlocking parallelism unavailable in autoregressive generation.
+        This benchmark suite evaluates draft-quality, latency, and fidelity tradeoffs across six frontier 70B-parameter model families under sustained production-load conditions.
+      </p>
+
+      <div class="detail-row">
+        <div class="detail-cell">
+          <div class="detail-label">Study Period</div>
+          <div class="detail-value">Q4 2024 (Oct&ndash;Dec)</div>
+        </div>
+        <div class="detail-cell">
+          <div class="detail-label">Target Models Evaluated</div>
+          <div class="detail-value">6 model families, 70B params</div>
+        </div>
+        <div class="detail-cell">
+          <div class="detail-label">Draft Model</div>
+          <div class="detail-value">400M-parameter, same family</div>
+        </div>
+        <div class="detail-cell">
+          <div class="detail-label">Fidelity Metric</div>
+          <div class="detail-value">Token-level KL divergence</div>
+        </div>
+      </div>
+    </div>
+    <div class="folio">01 / 03</div>
+  </div>
+
+  <!-- =================== SLIDE 2 — EVIDENCE =================== -->
+  <div class="slide" data-slide="2" id="slide-2">
+    <div class="bg-mesh"></div>
+    <div class="slide-content">
+      <div class="section-marker">Draft Model Sizing &mdash; Efficiency Tradeoffs</div>
+      <div class="accent-rule"></div>
+
+      <h2 class="slide-headline">
+        Each <span class="accent-num">100M</span>-Parameter Reduction in Draft Model Size Below the Optimal
+        <span class="accent-num">400M</span> Threshold Costs <span class="accent-num">0.6&times;</span> in
+        Acceptance Rate and Recovers Only <span class="accent-num">0.4&times;</span> in Wall-Clock Speedup —
+        Making Under-Provisioning the Primary Source of Speculative Decoding Underperformance.
+      </h2>
+
+      <div class="stats-row">
+        <div class="stat-col">
+          <div class="stat-bar"></div>
+          <div class="stat-value">0.6&times;</div>
+          <div class="stat-label">Acceptance rate cost</div>
+          <div class="stat-detail">Per 100M-param reduction below 400M threshold; measured at p95 load</div>
+        </div>
+        <div class="stat-col">
+          <div class="stat-bar"></div>
+          <div class="stat-value">0.4&times;</div>
+          <div class="stat-label">Speedup recovered</div>
+          <div class="stat-detail">Wall-clock gain per 100M saved in draft size; net negative above 200M delta</div>
+        </div>
+        <div class="stat-col">
+          <div class="stat-bar"></div>
+          <div class="stat-value">74.2%</div>
+          <div class="stat-label">Under-provisioning share</div>
+          <div class="stat-detail">Of all observed speculative decoding underperformance events traced to draft size</div>
+        </div>
+      </div>
+
+      <div class="evidence-layout">
+        <div class="evidence-main">
+          <p class="evidence-para">
+            Systematic ablation across nine draft model sizes (100M–900M parameters) reveals a non-linear tradeoff surface:
+            models below 400M parameters exhibit disproportionate acceptance-rate collapse, as the draft distribution diverges
+            from the target beyond the threshold that speculative verification can correct within a single pass.
+            The 0.6&times; acceptance penalty per 100M reduction compounds with batch size: at batch&nbsp;=&nbsp;32,
+            under-provisioned drafts produce verification overhead that erases 88% of the theoretical latency gain.
+            Practitioners who size draft models purely on FLOP-budget considerations without profiling acceptance rate
+            under production-load distributions account for 74.2% of observed speculative decoding underperformance cases
+            in this cohort.
+          </p>
+        </div>
+        <div class="aside-panel">
+          <div class="aside-stat-value">88%</div>
+          <div class="aside-stat-label">Latency gain erased</div>
+          <div class="aside-text">
+            At batch&nbsp;=&nbsp;32 with a 200M draft, verification overhead erases 88% of the theoretical latency advantage —
+            reducing effective speedup to under 1.5&times; compared to 3.8&times; at optimal sizing.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="folio">02 / 03</div>
+  </div>
+
+  <!-- ================== SLIDE 3 — COMPARISON ================== -->
+  <div class="slide" data-slide="3" id="slide-3">
+    <div class="bg-mesh"></div>
+    <div class="slide-content">
+      <div class="section-marker">Strategy Comparison &mdash; Throughput &amp; Latency</div>
+      <div class="accent-rule"></div>
+
+      <h2 class="slide-headline">
+        Speculative Decoding With <span class="accent-num">Adaptive Draft Selection</span> Outperforms Static Speculative
+        Decoding, Continuous Batching Without Speculation, and KV-Cache Prefix Reuse on Total
+        Tokens-per-Second Throughput and P95 Latency Across All Six Evaluated Model Families.
+      </h2>
+
+      <table class="comp-table" role="table" aria-label="Inference strategy comparison">
+        <thead>
+          <tr>
+            <th scope="col">Strategy</th>
+            <th scope="col">Tok/s Throughput</th>
+            <th scope="col">P50 Latency</th>
+            <th scope="col">P95 Latency</th>
+            <th scope="col">Fidelity (KL &le;)</th>
+            <th scope="col">Families Beating Baseline</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlighted">
+            <td>Adaptive Speculative Decoding <span class="highlight-badge">best</span></td>
+            <td>4,820</td>
+            <td>38 ms</td>
+            <td>61 ms</td>
+            <td>0.0018</td>
+            <td>6 / 6</td>
+          </tr>
+          <tr>
+            <td>Static Speculative Decoding (400M)</td>
+            <td>4,310</td>
+            <td>44 ms</td>
+            <td>72 ms</td>
+            <td>0.0021</td>
+            <td>6 / 6</td>
+          </tr>
+          <tr>
+            <td>Static Speculative Decoding (200M)</td>
+            <td>2,640</td>
+            <td>78 ms</td>
+            <td>134 ms</td>
+            <td>0.0049</td>
+            <td>3 / 6</td>
+          </tr>
+          <tr>
+            <td>Continuous Batching (No Speculation)</td>
+            <td>1,270</td>
+            <td>148 ms</td>
+            <td>241 ms</td>
+            <td>N/A</td>
+            <td>0 / 6</td>
+          </tr>
+          <tr>
+            <td>KV-Cache Prefix Reuse</td>
+            <td>1,490</td>
+            <td>122 ms</td>
+            <td>198 ms</td>
+            <td>N/A</td>
+            <td>0 / 6</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="footnote">
+        Throughput (tokens/second) measured at sustained batch&nbsp;=&nbsp;32, sequence length 512, on 8&times;H100 SXM5. P50/P95 latency measured time-to-first-token (TTFT).
+        Fidelity KL divergence: lower is closer to autoregressive reference. Adaptive draft selection uses runtime acceptance-rate feedback to hot-swap draft checkpoints.
+        All strategies use identical KV-cache configuration; prefix reuse strategy applies 512-token prefix across 60% of requests.
+      </p>
+    </div>
+    <div class="folio">03 / 03</div>
+  </div>
+
+</div><!-- end deck-wrapper -->
+
+<!-- ══ Nav bar ══ -->
+<div id="nav-bar">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide">&#8592;</button>
+  <div class="nav-dots" role="tablist" aria-label="Slide navigation">
+    <button class="nav-dot active" role="tab" aria-label="Go to slide 1" data-slide="1"></button>
+    <button class="nav-dot"        role="tab" aria-label="Go to slide 2" data-slide="2"></button>
+    <button class="nav-dot"        role="tab" aria-label="Go to slide 3" data-slide="3"></button>
+  </div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide">&#8594;</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

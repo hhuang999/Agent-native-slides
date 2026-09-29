@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G04 Clean Academic Sans — Nature Climate Change Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+/* ── G04 Design Tokens ─────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --c-bg:          oklch(0.99 0 0);
+  --c-bg-raised:   oklch(0.97 0 0);
+  --c-bg-stripe:   oklch(0.975 0 0);
+  --c-border:      oklch(0.88 0 0);
+  --c-border-mid:  oklch(0.82 0 0);
+
+  /* Text */
+  --c-text-head:   oklch(0.13 0 0);
+  --c-text-body:   oklch(0.22 0 0);
+  --c-text-muted:  oklch(0.48 0 0);
+  --c-text-faint:  oklch(0.65 0 0);
+
+  /* Accent */
+  --c-accent:      oklch(0.46 0.14 252);
+  --c-accent-mid:  oklch(0.58 0.12 252);
+  --c-accent-pale: oklch(0.93 0.04 252);
+  --c-accent-line: oklch(0.46 0.14 252);
+
+  /* Semantic */
+  --c-row-hl-bg:   oklch(0.93 0.04 252);
+  --c-row-hl-text: oklch(0.22 0 0);
+
+  /* Typography */
+  --font-main: 'DM Sans', system-ui, sans-serif;
+  --ts-xs:   14px;
+  --ts-sm:   16px;
+  --ts-base: 18px;
+  --ts-md:   22px;
+  --ts-lg:   28px;
+  --ts-xl:   38px;
+  --ts-2xl:  52px;
+  --lh-tight:  1.15;
+  --lh-normal: 1.45;
+  --lh-loose:  1.65;
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+}
+
+/* ── Reset & Stage ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: oklch(0.93 0 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: var(--font-main);
+  overflow: hidden;
+}
+
+#deck-wrapper {
+  position: relative;
+  transform-origin: top left;
+}
+
+.deck-stage {
+  width: 1920px;
+  height: 1080px;
+  background: var(--c-bg);
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-main);
+  color: var(--c-text-body);
+}
+
+/* ── Slide Shell ───────────────────────────────────────────── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  position: absolute;
+  inset: 0;
+  
+  flex-direction: column;
+  background: var(--c-bg);
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+
+/* Top accent bar */
+.slide::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--c-accent);
+  z-index: 0;
+}
+
+/* All semantic content above background layer */
+.slide > * { position: relative; z-index: 1; }
+
+/* ── Folio ─────────────────────────────────────────────────── */
+.folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  font-size: var(--ts-xs);
+  color: var(--c-text-faint);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: 0.05em;
+  z-index: 1;
+}
+
+/* ── Section Marker ────────────────────────────────────────── */
+.section-marker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: var(--ts-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--c-text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.section-marker::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: var(--c-accent);
+  flex-shrink: 0;
+}
+
+/* ── Slide 1 — Title ───────────────────────────────────────── */
+
+.s1-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 52px;
+}
+.s1-journal-name {
+  font-size: var(--ts-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+.s1-meta {
+  font-size: var(--ts-xs);
+  color: var(--c-text-faint);
+  letter-spacing: 0.05em;
+}
+
+.s1-rule {
+  width: 100%;
+  height: 1px;
+  background: var(--c-border-mid);
+  margin-bottom: 64px;
+}
+.s1-rule-bottom {
+  width: 100%;
+  height: 1px;
+  background: var(--c-border);
+  margin-top: 56px;
+  margin-bottom: 48px;
+}
+
+.s1-headline {
+  font-size: var(--ts-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--c-text-head);
+  line-height: var(--lh-tight);
+  max-width: 1300px;
+  letter-spacing: -0.01em;
+  margin-bottom: 36px;
+}
+
+.s1-abstract {
+  font-size: var(--ts-base);
+  font-style: italic;
+  color: var(--c-text-body);
+  line-height: var(--lh-loose);
+  max-width: 900px;
+  font-weight: var(--fw-regular);
+}
+
+.s1-detail-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.s1-detail-col {
+  padding: 24px 32px;
+  border-right: 1px solid var(--c-border);
+}
+.s1-detail-col:first-child { padding-left: 0; }
+.s1-detail-col:last-child { border-right: none; }
+
+.s1-detail-label {
+  font-size: var(--ts-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--c-text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.s1-detail-value {
+  font-size: var(--ts-sm);
+  font-weight: var(--fw-medium);
+  color: var(--c-text-head);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ── Slide 2 — Evidence ────────────────────────────────────── */
+
+.s2-header {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 48px;
+}
+
+.s2-headline {
+  font-size: var(--ts-xl);
+  font-weight: var(--fw-bold);
+  color: var(--c-text-head);
+  line-height: var(--lh-tight);
+  max-width: 1100px;
+  letter-spacing: -0.01em;
+}
+
+.s2-body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 64px;
+  align-items: start;
+}
+
+.s2-main {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
+  padding: 32px 0;
+}
+
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 40px 0 20px;
+  border-left: 2px solid var(--c-accent-line);
+  margin-right: 20px;
+}
+.stat-col:first-child { padding-left: 0; }
+
+.stat-value {
+  font-size: var(--ts-lg);
+  font-weight: var(--fw-bold);
+  color: var(--c-text-head);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: var(--lh-tight);
+}
+.stat-sup {
+  font-size: 18px;
+  font-weight: var(--fw-semibold);
+  vertical-align: super;
+  color: var(--c-accent);
+}
+.stat-label {
+  font-size: var(--ts-sm);
+  font-weight: var(--fw-medium);
+  color: var(--c-text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.stat-note {
+  font-size: var(--ts-xs);
+  color: var(--c-text-faint);
+  font-style: italic;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.evidence-para {
+  font-size: var(--ts-base);
+  color: var(--c-text-body);
+  line-height: var(--lh-loose);
+  font-weight: var(--fw-regular);
+}
+
+.aside-panel {
+  background: var(--c-bg-raised);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  padding: 32px 28px;
+  margin-top: 4px;
+}
+.aside-stat {
+  font-size: 42px;
+  font-weight: var(--fw-bold);
+  color: var(--c-accent);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: 1;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+.aside-label {
+  font-size: var(--ts-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--c-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 16px;
+}
+.aside-text {
+  font-size: var(--ts-sm);
+  color: var(--c-text-body);
+  line-height: var(--lh-loose);
+}
+
+/* ── Slide 3 — Comparison Table ────────────────────────────── */
+
+.s3-header {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.s3-headline {
+  font-size: var(--ts-xl);
+  font-weight: var(--fw-bold);
+  color: var(--c-text-head);
+  line-height: var(--lh-tight);
+  max-width: 1200px;
+  letter-spacing: -0.01em;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ts-base);
+}
+.data-table th {
+  font-size: var(--ts-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--c-text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  border-bottom: 2px solid var(--c-border-mid);
+  text-align: left;
+  font-variant-numeric: lining-nums tabular-nums;
+  white-space: nowrap;
+}
+.data-table th.num { text-align: right; }
+.data-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--c-border);
+  color: var(--c-text-body);
+  font-variant-numeric: lining-nums tabular-nums;
+  vertical-align: middle;
+}
+.data-table td.num { text-align: right; }
+.data-table tr:nth-child(even) td { background: var(--c-bg-stripe); }
+.data-table tr.highlight td {
+  background: var(--c-row-hl-bg);
+  font-weight: var(--fw-semibold);
+  color: var(--c-row-hl-text);
+}
+.data-table tr.highlight td:first-child {
+  border-left: 3px solid var(--c-accent);
+}
+
+.footnote {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid var(--c-border);
+  font-size: var(--ts-xs);
+  color: var(--c-text-faint);
+  font-variant-numeric: lining-nums tabular-nums;
+  line-height: var(--lh-loose);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.03em;
+}
+
+/* ── Nav Bar ───────────────────────────────────────────────── */
+#nav-bar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: oklch(0.18 0 0 / 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 9999px;
+  padding: 10px 18px;
+  z-index: 9999;
+  user-select: none;
+}
+.nav-btn {
+  background: none;
+  border: none;
+  color: oklch(0.85 0 0);
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 16px;
+  border-radius: 9999px;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+.nav-btn:hover { background: oklch(0.35 0 0); color: #fff; }
+.nav-btn:focus-visible { outline: 2px solid var(--c-accent-mid); outline-offset: 2px; }
+.nav-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: oklch(0.55 0 0);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  border: none;
+  padding: 0;
+  flex-shrink: 0;
+}
+.nav-dot:hover { background: oklch(0.75 0 0); }
+.nav-dot.active { background: #fff; transform: scale(1.3); }
+.nav-dot:focus-visible { outline: 2px solid var(--c-accent-mid); outline-offset: 3px; }
+
+/* ── Reduced motion ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .nav-btn, .nav-dot { transition: none; }
+}
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+
+<div id="deck-wrapper">
+  <div class="deck-stage" id="deck-stage">
+
+    <!-- ═══ SLIDE 1 — TITLE ═══════════════════════════════════ -->
+    <section class="slide is-active" data-slide="1" id="slide-1" role="region" aria-label="Slide 1 of 3: Title">
+
+      <div class="s1-top-bar">
+        <span class="s1-journal-name">Nature Climate Change</span>
+        <span class="s1-meta">Research Article &nbsp;·&nbsp; Atmospheric Science &nbsp;·&nbsp; 2024</span>
+      </div>
+
+      <div class="s1-rule"></div>
+
+      <h1 class="s1-headline">
+        Tropical Reforestation Zones Established Between 2015 and 2022 Sequester Carbon at 2.4 Times the Rate Predicted by Standard IPCC Tier 1 Models When Mycorrhizal Network Density Exceeds 85 Percent.
+      </h1>
+
+      <p class="s1-abstract">
+        We report a systematic empirical assessment of net carbon sequestration across 140,000 ha of monitored tropical reforestation sites in Brazil, Indonesia, and the Democratic Republic of Congo spanning 2015–2022.
+        Continuous eddy-covariance measurement paired with satellite-derived mycorrhizal network mapping reveals that mycorrhizal density is the primary modulating variable separating high- and low-performance sites, overriding rainfall, soil type, and stand age as predictors in multivariate regression.
+      </p>
+
+      <div class="s1-rule-bottom"></div>
+
+      <div class="s1-detail-row">
+        <div class="s1-detail-col">
+          <div class="s1-detail-label">Study Area</div>
+          <div class="s1-detail-value">140,000 ha across 3 continents</div>
+        </div>
+        <div class="s1-detail-col">
+          <div class="s1-detail-label">Observation Window</div>
+          <div class="s1-detail-value">2015–2022 (7 yr)</div>
+        </div>
+        <div class="s1-detail-col">
+          <div class="s1-detail-label">Sites Monitored</div>
+          <div class="s1-detail-value">312 eddy-covariance towers</div>
+        </div>
+        <div class="s1-detail-col">
+          <div class="s1-detail-label">Model Comparison</div>
+          <div class="s1-detail-value">IPCC Tier 1 baseline (2019 Refinement)</div>
+        </div>
+      </div>
+
+      <div class="folio">1 / 3</div>
+    </section>
+
+    <!-- ═══ SLIDE 2 — EVIDENCE ════════════════════════════════ -->
+    <section class="slide" data-slide="2" id="slide-2" role="region" aria-label="Slide 2 of 3: Evidence">
+
+      <div class="s2-header">
+        <div class="section-marker">Results · Quantitative Analysis</div>
+        <h2 class="s2-headline">
+          Each Percentage Point Increase in Mycorrhizal Network Density Above the 60 Percent Threshold Adds 0.31 tCO₂ per Hectare per Year to Net Sequestration, Compounding Across the Full 140,000-Hectare Study Area.
+        </h2>
+      </div>
+
+      <div class="s2-body">
+        <div class="s2-main">
+
+          <div class="stat-row" role="list">
+            <div class="stat-col" role="listitem">
+              <span class="stat-value">0.31 <span style="font-size:18px;font-weight:500;color:var(--c-accent)">tCO₂/ha/yr</span></span>
+              <span class="stat-label">Marginal gain per 1% MN density</span>
+              <span class="stat-note">Above 60% threshold; 95% CI [0.27, 0.35]</span>
+            </div>
+            <div class="stat-col" role="listitem">
+              <span class="stat-value">+2.4×</span>
+              <span class="stat-label">Sequestration vs. IPCC Tier 1</span>
+              <span class="stat-note">High-density sites (MN &gt; 85%); p &lt; 0.001</span>
+            </div>
+            <div class="stat-col" role="listitem">
+              <span class="stat-value">43,400 <span style="font-size:18px;font-weight:500;color:var(--c-accent)">tCO₂</span></span>
+              <span class="stat-label">Additional annual sequestration</span>
+              <span class="stat-note">Compounded gain across full 140,000 ha</span>
+            </div>
+          </div>
+
+          <p class="evidence-para">
+            Fixed-effects panel regression across all 312 monitored sites isolates mycorrhizal network density as an independent predictor of net sequestration after controlling for mean annual precipitation, soil organic carbon baseline, stand age, and canopy closure. The estimated marginal effect of 0.31 tCO₂/ha/yr per percentage point remains stable across all three regional subsamples (Brazil, Indonesia, DRC), suggesting a mechanism consistent with enhanced phosphorus cycling and below-ground carbon allocation rather than site-specific edaphic conditions. Compounded across the 140,000-hectare study area, the modelled departure from IPCC Tier 1 projections represents an economically material underestimate of tropical reforestation as a near-term mitigation lever under Paris Agreement accounting frameworks.
+          </p>
+        </div>
+
+        <div class="aside-panel" role="complementary" aria-label="Supplementary statistic">
+          <div class="aside-stat">85%</div>
+          <div class="aside-label">MN density threshold</div>
+          <div class="aside-text">
+            Sites exceeding 85% mycorrhizal network density show a discontinuous jump in sequestration efficiency. Below this threshold, gains are approximately linear; above it, network redundancy appears to buffer seasonal drought stress, sustaining carbon uptake through dry periods that would otherwise halt net flux at lower-density stands.
+          </div>
+        </div>
+      </div>
+
+      <div class="folio">2 / 3</div>
+    </section>
+
+    <!-- ═══ SLIDE 3 — COMPARISON TABLE ═══════════════════════ -->
+    <section class="slide" data-slide="3" id="slide-3" role="region" aria-label="Slide 3 of 3: Comparison table">
+
+      <div class="s3-header">
+        <div class="section-marker">Results · Regional Comparison</div>
+        <h2 class="s3-headline">
+          Sites With Active Indigenous Land Management Show 34 Percent Higher Carbon Sequestration Rates Than Equivalent Unmanaged Reference Sites Across All Five Study Regions, Independent of Rainfall and Soil Type.
+        </h2>
+      </div>
+
+      <table class="data-table" aria-label="Carbon sequestration by region and land management type">
+        <thead>
+          <tr>
+            <th scope="col">Study Region</th>
+            <th scope="col" class="num">Managed Sites (n)</th>
+            <th scope="col" class="num">Seq. Rate — Managed (tCO₂/ha/yr)</th>
+            <th scope="col" class="num">Seq. Rate — Reference (tCO₂/ha/yr)</th>
+            <th scope="col" class="num">Difference (%)</th>
+            <th scope="col">MN Density — Managed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pará, Brazil</td>
+            <td class="num">68</td>
+            <td class="num">9.4</td>
+            <td class="num">7.1</td>
+            <td class="num">+32%</td>
+            <td>88% ± 4%</td>
+          </tr>
+          <tr class="highlight">
+            <td>Kalimantan, Indonesia ★</td>
+            <td class="num">54</td>
+            <td class="num">11.2</td>
+            <td class="num">7.8</td>
+            <td class="num">+44%</td>
+            <td>92% ± 3%</td>
+          </tr>
+          <tr>
+            <td>Équateur, DRC</td>
+            <td class="num">47</td>
+            <td class="num">8.7</td>
+            <td class="num">6.6</td>
+            <td class="num">+32%</td>
+            <td>84% ± 5%</td>
+          </tr>
+          <tr>
+            <td>Amazonas, Colombia</td>
+            <td class="num">39</td>
+            <td class="num">9.1</td>
+            <td class="num">6.9</td>
+            <td class="num">+32%</td>
+            <td>86% ± 6%</td>
+          </tr>
+          <tr>
+            <td>Riau, Sumatra</td>
+            <td class="num">41</td>
+            <td class="num">10.3</td>
+            <td class="num">7.4</td>
+            <td class="num">+39%</td>
+            <td>89% ± 4%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="footnote">
+        ★ Highest-performing region. Sequestration rates are annual means 2018–2022; reference sites matched on soil type, elevation, and historical precipitation within ±15%. Difference column reports deviation from reference mean; all differences significant at p &lt; 0.01 after Bonferroni correction. MN Density measured via satellite-calibrated hyperspectral imaging, validated against 840 field transects. Data: Nature Climate Change Supplementary Dataset S3 (2024).
+      </p>
+
+      <div class="folio">3 / 3</div>
+    </section>
+
+  </div><!-- /.deck-stage -->
+</div><!-- /#deck-wrapper -->
+
+<!-- ── Nav Bar ───────────────────────────────────────────────── -->
+<nav id="nav-bar" role="navigation" aria-label="Slide navigation">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide">&#8592;</button>
+  <div class="nav-dots" role="list" aria-label="Slide indicators">
+    <button class="nav-dot active" id="dot-1" aria-label="Slide 1" aria-current="true" role="listitem"></button>
+    <button class="nav-dot" id="dot-2" aria-label="Slide 2" role="listitem"></button>
+    <button class="nav-dot" id="dot-3" aria-label="Slide 3" role="listitem"></button>
+  </div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide">&#8594;</button>
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

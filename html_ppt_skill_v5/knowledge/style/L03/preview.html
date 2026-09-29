@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L03 teal-ai-light — Enterprise AI Safety Research Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Color tokens ── */
+:root {
+  --color-bg:             oklch(0.97 0.008 195);
+  --color-surface:        oklch(1.00 0.000 0);
+  --color-surface-tint:   oklch(0.95 0.020 192);
+  --color-surface-raised: oklch(0.98 0.006 195);
+  --color-heading:        oklch(0.14 0.010 220);
+  --color-body:           oklch(0.32 0.012 215);
+  --color-muted:          oklch(0.52 0.016 200);
+  --color-label:          oklch(0.60 0.020 195);
+  --color-accent:         oklch(0.65 0.18 192);
+  --color-accent-dim:     oklch(0.75 0.10 192);
+  --color-accent-subtle:  oklch(0.90 0.040 192);
+  --color-border:         oklch(0.88 0.012 195);
+  --color-border-strong:  oklch(0.78 0.025 192);
+  --color-nav-bg:         oklch(0.97 0.008 195 / 0.92);
+  --color-nav-dot:        oklch(0.78 0.040 192);
+  --color-nav-dot-active: oklch(0.65 0.18 192);
+
+  /* Type scale */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --text-xs:   13px;
+  --text-sm:   15px;
+  --text-base: 18px;
+  --text-md:   22px;
+  --text-lg:   28px;
+  --text-xl:   36px;
+  --text-2xl:  48px;
+  --text-3xl:  60px;
+  --text-hero: 72px;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: oklch(0.20 0.008 220);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+}
+
+/* ── Stage wrapper ── */
+#stage-wrapper {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+}
+
+/* ── Deck stage ── */
+.deck-stage {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+  color: var(--color-body);
+}
+
+/* ── Slides ── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  background: var(--color-bg);
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+
+/* ── Slide background layer z-index 0 ── */
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--color-bg);
+}
+.slide-bg::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 480px; height: 3px;
+  background: var(--color-accent);
+}
+
+/* ── Semantic content z-index 1 ── */
+.slide-content {
+  position: relative;
+  z-index: 1;
+  padding: 72px 120px 80px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Folio ── */
+.folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  z-index: 2;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-label);
+  letter-spacing: 0.08em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ── Section marker ── */
+.section-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 28px;
+}
+.section-marker::before {
+  content: '';
+  display: block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+
+/* ── Headline ── */
+.headline {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--color-heading);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  max-width: 1380px;
+}
+.headline-hero {
+  font-size: var(--text-hero);
+  font-weight: 800;
+  color: var(--color-heading);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  max-width: 1520px;
+}
+
+/* ── Rule ── */
+.rule {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 32px 0;
+}
+
+/* ────────────────────────────
+   SLIDE 1 — Title
+──────────────────────────── */
+.s1-org {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 40px;
+}
+
+.s1-abstract {
+  margin-top: 28px;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--color-muted);
+  line-height: 1.60;
+  max-width: 1280px;
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: auto;
+  padding-top: 32px;
+  border-top: 1px solid var(--color-border);
+}
+.detail-item {
+  padding: 0 36px;
+  border-right: 1px solid var(--color-border);
+}
+.detail-item:first-child { padding-left: 0; }
+.detail-item:last-child  { border-right: none; }
+.detail-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--color-label);
+  margin-bottom: 6px;
+}
+.detail-value {
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-heading);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ────────────────────────────
+   SLIDE 2 — Evidence + Aside
+──────────────────────────── */
+.evidence-row {
+  display: flex;
+  gap: 24px;
+  margin-top: 36px;
+  flex: 1;
+  min-height: 0;
+}
+
+.stats-area {
+  display: flex;
+  flex: 1;
+  background: var(--color-surface-tint);
+  border-radius: 12px;
+  padding: 40px 48px;
+  gap: 0;
+}
+.stat-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 40px;
+  border-right: 1px solid var(--color-border);
+}
+.stat-col:first-child { padding-left: 0; }
+.stat-col:last-child  { padding-right: 0; border-right: none; }
+
+.stat-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+.stat-value {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  color: var(--color-heading);
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+  margin-top: 4px;
+}
+.stat-unit {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-accent);
+  vertical-align: baseline;
+  margin-left: 2px;
+}
+.stat-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.40;
+  margin-top: 4px;
+}
+
+.aside-panel {
+  width: 340px;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.aside-stat {
+  font-size: 52px;
+  font-weight: 800;
+  color: var(--color-accent);
+  line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.aside-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--color-label);
+  margin-bottom: 4px;
+}
+.aside-text {
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-muted);
+  line-height: 1.65;
+}
+
+.evidence-para {
+  margin-top: 28px;
+  font-size: var(--text-base);
+  font-weight: 400;
+  color: var(--color-body);
+  line-height: 1.70;
+  max-width: 1380px;
+}
+
+/* ────────────────────────────
+   SLIDE 3 — Comparison Table
+──────────────────────────── */
+.table-wrap {
+  margin-top: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-base);
+  background: var(--color-surface);
+}
+.data-table thead {
+  background: var(--color-surface-raised);
+}
+.data-table th {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 18px 24px;
+  text-align: left;
+  border-bottom: 2px solid var(--color-border-strong);
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 18px 24px;
+  color: var(--color-body);
+  border-bottom: 1px solid var(--color-border);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tr.highlight td {
+  background: var(--color-surface-tint);
+  font-weight: 600;
+  color: var(--color-heading);
+}
+.data-table tr.highlight td:first-child {
+  border-left: 3px solid var(--color-accent);
+}
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+}
+
+.footnote {
+  margin-top: 16px;
+  font-size: var(--text-xs);
+  color: var(--color-label);
+  line-height: 1.60;
+}
+
+/* ────────────────────────────
+   Nav bar
+──────────────────────────── */
+#nav-bar {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--color-nav-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 10px 20px;
+  z-index: 1000;
+  user-select: none;
+}
+
+.nav-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-btn:hover { background: var(--color-accent-subtle); color: var(--color-accent); }
+.nav-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+.nav-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.nav-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--color-nav-dot);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  border: none;
+}
+.nav-dot.active {
+  background: var(--color-nav-dot-active);
+  transform: scale(1.35);
+}
+.nav-dot:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-dot        { transition: none; }
+  .nav-btn        { transition: none; }
+}
+
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+
+<div id="stage-wrapper">
+<div class="deck-stage" id="deck">
+
+  <!-- ══════════════════════════════════════
+       SLIDE 1 — Title
+  ══════════════════════════════════════ -->
+  <div class="slide is-active" data-slide="1" id="slide-1">
+
+      <div class="s1-org">Enterprise AI Safety Research Lab &nbsp;·&nbsp; System Reliability Report 2026</div>
+
+      <h1 class="headline-hero">
+        Large Language Models Deployed in Enterprise Settings Exhibit Measurably Lower Hallucination Rates When Retrieval-Augmented Generation Context Windows Exceed 2,048 Tokens, With Factual Error Rates Falling by 67 Percent at Full 8,192-Token Context.
+      </h1>
+
+      <p class="s1-abstract">
+        This report synthesises findings from 18 months of controlled deployment trials across six enterprise knowledge domains, covering 240 production LLM endpoints.
+        Results establish statistically significant context-length thresholds for hallucination suppression and present actionable RAG configuration guidance for enterprise operators.
+      </p>
+
+      <div class="detail-row">
+        <div class="detail-item">
+          <div class="detail-label">Study Period</div>
+          <div class="detail-value">Jan 2025 – Jun 2026</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Endpoints Monitored</div>
+          <div class="detail-value" style="font-variant-numeric:lining-nums tabular-nums">240</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Knowledge Domains</div>
+          <div class="detail-value" style="font-variant-numeric:lining-nums tabular-nums">6</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Error Rate Reduction</div>
+          <div class="detail-value" style="font-variant-numeric:lining-nums tabular-nums;color:var(--color-accent)">↓ 67%</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="folio">01 / 03</div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 2 — Evidence + Aside
+  ══════════════════════════════════════ -->
+  <div class="slide" data-slide="2" id="slide-2">
+    <div class="slide-bg"></div>
+    <div class="slide-content">
+
+      <div class="section-marker">Key Findings — Context Scaling Effects</div>
+
+      <h2 class="headline">
+        Every Doubling of RAG Context Window Size Above 512 Tokens Reduces Domain-Specific Hallucination Events by 28 Percent on Average, With Diminishing Returns Beginning at 6,144 Tokens Across All Six Evaluated Enterprise Knowledge Domains.
+      </h2>
+
+      <div class="evidence-row">
+        <div class="stats-area">
+          <div class="stat-col">
+            <div class="stat-dot"></div>
+            <div class="stat-value">28<span class="stat-unit">%</span></div>
+            <div class="stat-label">Avg. hallucination reduction per context doubling</div>
+          </div>
+          <div class="stat-col">
+            <div class="stat-dot"></div>
+            <div class="stat-value">6,144</div>
+            <div class="stat-label">Token threshold where diminishing returns begin</div>
+          </div>
+          <div class="stat-col">
+            <div class="stat-dot"></div>
+            <div class="stat-value">6</div>
+            <div class="stat-label">Enterprise knowledge domains evaluated consistently</div>
+          </div>
+        </div>
+
+        <div class="aside-panel">
+          <div class="aside-label">Compounded Gain</div>
+          <div class="aside-stat">×3.8</div>
+          <div class="aside-text">
+            Moving from a 512-token context to an 8,192-token context yields a 3.8× compounded reduction in hallucination frequency — equivalent to the benefit of fine-tuning on 50,000 labeled domain examples.
+          </div>
+        </div>
+      </div>
+
+      <p class="evidence-para">
+        The 28% per-doubling reduction follows a log-linear curve until the 6,144-token inflection point, beyond which marginal gains drop to under 4% per additional doubling. Retrieval quality (BM25 vs. dense passage) accounted for less than 8% of variance once context length was controlled, confirming that window size is the dominant configuration lever for enterprise RAG deployments.
+      </p>
+
+    </div>
+    <div class="folio">02 / 03</div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 3 — Comparison Table
+  ══════════════════════════════════════ -->
+  <div class="slide" data-slide="3" id="slide-3">
+    <div class="slide-bg"></div>
+    <div class="slide-content">
+
+      <div class="section-marker">Architecture Comparison — All Eight Retrieval Configurations</div>
+
+      <h2 class="headline">
+        Hybrid RAG Architecture Combining Dense Passage Retrieval With Structured Knowledge Graph Lookup Achieves the Lowest Enterprise Hallucination Rate, Highest Factual Precision Score, and Best Cost-Per-Accurate-Response Ratio Across All Eight Evaluated Retrieval Configurations.
+      </h2>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Retrieval Architecture</th>
+              <th>Hallucination Rate</th>
+              <th>Factual Precision</th>
+              <th>Latency (p95 ms)</th>
+              <th>Cost / Accurate Response</th>
+              <th>Assessment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Sparse BM25 only</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">18.4%</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">71.2%</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">112</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">$0.0041</td>
+              <td><span class="badge">Baseline</span></td>
+            </tr>
+            <tr>
+              <td>Dense passage retrieval (DPR)</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">11.7%</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">80.5%</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">148</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">$0.0038</td>
+              <td><span class="badge">Strong</span></td>
+            </tr>
+            <tr class="highlight">
+              <td>Hybrid: DPR + Knowledge Graph</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">4.1%</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">94.8%</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">201</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">$0.0029</td>
+              <td><span class="badge">Best</span></td>
+            </tr>
+            <tr>
+              <td>Knowledge graph lookup only</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">7.3%</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">88.1%</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">95</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">$0.0033</td>
+              <td><span class="badge">Strong</span></td>
+            </tr>
+            <tr>
+              <td>Re-ranking ensemble (cross-encoder)</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">8.9%</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">85.4%</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">340</td>
+              <td style="font-variant-numeric:lining-nums tabular-nums">$0.0051</td>
+              <td><span class="badge">Moderate</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="footnote">
+        * Hallucination rate measured by automated fact-verification against enterprise knowledge base ground truth, validated by expert annotation on a 2,400-sample subset (κ = 0.87).
+        Costs computed at median enterprise API pricing tiers as of Q2 2026. Latency measured at p95 over 10,000 production queries per configuration.
+      </p>
+
+    </div>
+    <div class="folio">03 / 03</div>
+  </div>
+
+</div><!-- /.deck-stage -->
+</div><!-- /#stage-wrapper -->
+
+<!-- ── Nav bar ── -->
+<div id="nav-bar">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide">&#8592;</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide">&#8594;</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

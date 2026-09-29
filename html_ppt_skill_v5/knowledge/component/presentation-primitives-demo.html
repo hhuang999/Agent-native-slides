@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Presentation primitives - visual reference</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght,SOFT@9..144,400..700,0..100&display=swap" rel="stylesheet">
+  <style>
+    /* === THEME TOKENS ===
+       Restrained light editorial system: warm paper ground, single terracotta
+       accent, serif display + mono label pairing. Every component below reads
+       these tokens only — no hard-coded colors/fonts inside component rules. */
+    :root {
+      --color-bg: oklch(0.975 0.012 95);
+      --color-surface: oklch(0.992 0.006 95);
+      --color-raised-surface: oklch(0.94 0.014 95);
+      --color-border: oklch(0.78 0.02 90);
+      --color-muted: oklch(0.48 0.025 75);
+      --color-body: oklch(0.27 0.018 80);
+      --color-heading: oklch(0.16 0.017 74);
+      --color-accent: oklch(0.52 0.16 36);
+
+      --type-display: "Fraunces", Georgia, serif;
+      --type-body: "Fraunces", Georgia, serif;
+      --type-label: "DM Mono", monospace;
+
+      --text-hero: 84px;
+      --text-title: 68px;
+      --text-subtitle: 34px;
+      --text-body: 25px;
+      --text-caption: 16px;
+      --text-code: 14px;
+
+      --space-xs: 8px;
+      --space-sm: 16px;
+      --space-md: 32px;
+      --space-lg: 64px;
+      --space-xl: 96px;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 16px;
+
+      --scale: 1;
+      --stage-bg: var(--color-heading);
+      --slide-bg: var(--color-bg);
+    }
+
+    * { box-sizing: border-box; }
+
+    /* === FIXED 1920x1080 STAGE ===
+       Stage is authored at fixed pixel dimensions and scaled as a whole via
+       transform; slide content never reflows per viewport. */
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--stage-bg, #000);
+    }
+    .deck-viewport {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: var(--stage-bg, #000);
+    }
+    .deck-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      transform-origin: 0 0;
+      transform: scale(var(--scale));
+      background: var(--slide-bg, #fff);
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      background: var(--slide-bg, #fff);
+    }
+    .slide.is-active {
+      display: flex;
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 1;
+    }
+    img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+    .deck-controls {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      z-index: 1000;
+    }
+
+    /* === SHARED DECK CHROME ===
+       Header/footer chrome and a faint content grid sit behind semantic
+       content, which is layered above via z-index: 1 on direct children. */
+    .slide {
+      flex-direction: column;
+      padding: 64px 88px var(--space-xl);
+      color: var(--color-body);
+      font-family: var(--type-body);
+    }
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(var(--color-border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.18;
+      mask-image: linear-gradient(to bottom, black, transparent 70%);
+    }
+    .slide > * { position: relative; z-index: 1; }
+    .deck-header, .deck-footer { display: flex; align-items: center; justify-content: space-between; }
+    .deck-header { height: 34px; margin-bottom: var(--space-lg); }
+    .deck-footer { margin-top: auto; padding-top: var(--space-sm); border-top: 1px solid var(--color-border); }
+    .eyebrow, .folio, .section-marker, .data-card__label, .table-caption,
+    .comparison__label, .timeline__label, .nav-label, .flow-kicker {
+      color: var(--color-muted);
+      font-family: var(--type-label);
+      font-size: var(--text-caption);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+    .folio { color: var(--color-body); font-variant-numeric: lining-nums tabular-nums; }
+    .section-marker { color: var(--color-accent); }
+    .deck-title { color: var(--color-heading); font-family: var(--type-label); font-size: var(--text-caption); letter-spacing: 0.04em; }
+
+    /* === PRIMITIVE: ASSERTION HEADLINE + SECTION MARKER === */
+    .assertion-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .assertion-grid::before {
+      content: "01";
+      color: var(--color-accent);
+      font-family: var(--type-display);
+      font-size: 200px;
+      line-height: 0.75;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    .assertion-copy h1 {
+      max-width: 1300px;
+      margin: 0;
+      color: var(--color-heading);
+      font-family: var(--type-display);
+      font-size: var(--text-hero);
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 1.08;
+    }
+    .assertion-copy p {
+      max-width: 760px;
+      margin: var(--space-md) 0 0;
+      color: var(--color-muted);
+      font-size: var(--text-body);
+      line-height: 1.35;
+    }
+
+    /* === PRIMITIVE: STAT COLUMNS / DATA CARD / COUNT-UP === */
+    .stat-columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); margin-top: var(--space-xl); }
+    .data-card {
+      min-height: 256px;
+      padding: 28px 30px;
+      border-top: 2px solid var(--color-heading);
+      background: var(--color-surface);
+    }
+    .data-card:nth-child(2) { border-top-color: var(--color-accent); background: var(--color-raised-surface); }
+    .data-card__value {
+      display: block;
+      margin-top: 38px;
+      color: var(--color-heading);
+      font-family: var(--type-display);
+      font-size: 96px;
+      font-variant-numeric: lining-nums tabular-nums;
+      font-weight: 500;
+      line-height: 0.85;
+      letter-spacing: 0;
+    }
+    .data-card__unit { color: var(--color-muted); font-family: var(--type-label); font-size: var(--text-body); }
+    .data-card__delta {
+      margin-top: var(--space-sm);
+      color: var(--color-body);
+      font-family: var(--type-label);
+      font-size: var(--text-caption);
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    .data-card__delta::before { content: "\2197 "; color: var(--color-accent); }
+
+    /* === PRIMITIVE: COMPARISON === */
+    .slide-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-lg); }
+    .slide-heading h2 {
+      max-width: 960px;
+      margin: 0;
+      color: var(--color-heading);
+      font-family: var(--type-display);
+      font-size: var(--text-title);
+      font-weight: 500;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+    .slide-heading p { max-width: 400px; margin: 0; color: var(--color-muted); font-size: var(--text-body); line-height: 1.25; }
+    .comparison { display: grid; grid-template-columns: 1fr 96px 1fr; gap: var(--space-md); align-items: stretch; margin-top: 64px; }
+    .comparison__col { min-height: 372px; padding: 38px 42px; border: 1px solid var(--color-border); background: var(--color-surface); }
+    .comparison__col--b { border-color: var(--color-accent); background: var(--color-raised-surface); }
+    .comparison__divider { display: grid; place-items: center; color: var(--color-accent); font-family: var(--type-display); font-size: var(--text-subtitle); font-style: italic; }
+    .comparison__content { margin-top: var(--space-md); }
+    .comparison__content strong { display: block; color: var(--color-heading); font-family: var(--type-display); font-size: 44px; font-weight: 500; line-height: 1; }
+    .comparison__content p { margin: var(--space-sm) 0 0; color: var(--color-body); font-size: var(--text-body); line-height: 1.32; }
+    .comparison__list { display: grid; gap: 12px; margin: 26px 0 0; padding: 0; list-style: none; color: var(--color-muted); font-family: var(--type-label); font-size: var(--text-caption); }
+    .comparison__list li { display: flex; align-items: center; gap: 10px; }
+    .comparison__list li::before { content: ""; width: 8px; height: 8px; background: var(--color-border); }
+    .comparison__col--b .comparison__list li::before { background: var(--color-accent); }
+
+    /* === PRIMITIVE: TIMELINE === */
+    .timeline { display: grid; grid-template-columns: repeat(4, 1fr); position: relative; gap: var(--space-md); margin-top: var(--space-md); }
+    .timeline::before { content: ""; position: absolute; top: 13px; right: 30px; left: 30px; height: 1px; background: var(--color-border); }
+    .timeline__item { position: relative; }
+    .timeline__dot { width: 27px; height: 27px; border: 6px solid var(--color-bg); border-radius: 50%; background: var(--color-heading); box-shadow: 0 0 0 1px var(--color-heading); }
+    .timeline__item:nth-child(3) .timeline__dot { background: var(--color-accent); box-shadow: 0 0 0 1px var(--color-accent); }
+    .timeline__label { margin-top: 28px; color: var(--color-accent); font-variant-numeric: lining-nums tabular-nums; }
+    .timeline__text { max-width: 288px; margin: 10px 0 0; color: var(--color-body); font-size: 22px; line-height: 1.25; }
+
+    /* === PRIMITIVE: STEP FLOW === */
+    .step-flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-lg); margin-top: var(--space-sm); }
+    .step-flow__item { display: grid; grid-template-columns: 64px 1fr; gap: var(--space-sm); align-items: start; }
+    .step-flow__num { display: grid; width: 64px; height: 64px; place-items: center; border: 1px solid var(--color-border); color: var(--color-accent); font-family: var(--type-label); font-size: var(--text-caption); font-variant-numeric: lining-nums tabular-nums; }
+    .step-flow__title { color: var(--color-heading); font-family: var(--type-display); font-size: var(--text-subtitle); font-weight: 500; line-height: 0.98; }
+    .step-flow__desc { margin-top: 10px; color: var(--color-muted); font-size: 20px; line-height: 1.25; }
+
+    /* === PRIMITIVE: QUOTE === */
+    .quote-block { max-width: 1350px; margin: var(--space-sm) 0 0; padding: 14px 0 16px 72px; border-left: 3px solid var(--color-accent); }
+    .quote-block__text { margin: 0; color: var(--color-heading); font-family: var(--type-display); font-size: 46px; font-style: italic; font-weight: 450; line-height: 1.14; }
+    .quote-block__attr { margin-top: var(--space-sm); color: var(--color-muted); font-family: var(--type-label); font-size: var(--text-caption); }
+
+    /* === PRIMITIVE: CONCISE DATA TABLE === */
+    .table-wrap { margin-top: var(--space-xs); }
+    .table-caption { display: block; margin-bottom: 10px; }
+    .data-table { width: 100%; border-collapse: collapse; color: var(--color-body); font-size: 19px; text-align: left; }
+    .data-table th { padding: 10px 16px; border-top: 1px solid var(--color-heading); border-bottom: 1px solid var(--color-border); color: var(--color-muted); font-family: var(--type-label); font-size: var(--text-caption); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+    .data-table td { padding: 11px 16px; border-bottom: 1px solid var(--color-border); }
+    .data-table td:first-child { color: var(--color-heading); font-family: var(--type-display); font-size: 24px; }
+    .data-table td:not(:first-child) { font-family: var(--type-label); font-size: var(--text-caption); font-variant-numeric: lining-nums tabular-nums; }
+    .data-table tbody tr:last-child { background: var(--color-raised-surface); }
+    .data-table tbody tr:last-child td { border-bottom-color: var(--color-heading); }
+
+    /* === DECK NAVIGATION BAR (control surface, outside slide token system) === */
+    .deck-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      width: 440px;
+      padding: 8px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: color-mix(in oklch, var(--color-surface) 92%, transparent);
+      box-shadow: 0 10px 30px color-mix(in oklch, var(--color-heading) 12%, transparent);
+    }
+    .deck-nav button {
+      display: grid;
+      width: 40px;
+      height: 36px;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--color-heading);
+      cursor: pointer;
+      font-family: var(--type-label);
+      font-size: 22px;
+      line-height: 1;
+    }
+    .deck-nav button:hover, .deck-nav button:focus-visible {
+      background: var(--color-raised-surface);
+      color: var(--color-accent);
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+    .deck-nav button:disabled { cursor: default; color: var(--color-border); background: transparent; outline: none; }
+    .nav-label { min-width: 248px; color: var(--color-body); text-align: center; font-variant-numeric: lining-nums tabular-nums; }
+
+    /* === MOTION === */
+    .slide.is-active .reveal { animation: rise 0.65s both cubic-bezier(0.22, 0.85, 0.3, 1); }
+    .slide.is-active .reveal:nth-child(2) { animation-delay: 0.08s; }
+    .slide.is-active .reveal:nth-child(3) { animation-delay: 0.16s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+  <div class="deck-viewport">
+    <main class="deck-stage" id="deckStage" aria-label="Presentation primitives visual reference">
+
+      <!-- === SLIDE 1: ASSERTION HEADLINE + SECTION MARKER + STAT COLUMNS === -->
+      <section class="slide is-active" data-slide="1" data-title="Assertion and metrics" aria-label="Slide 1: Assertion and metrics">
+        <header class="deck-header">
+          <span class="deck-title">Presentation primitives / visual reference</span>
+          <span class="eyebrow">Slide anatomy</span>
+        </header>
+
+        <div class="assertion-grid reveal">
+          <div class="assertion-copy">
+            <div class="section-marker">Signal / assertion headline</div>
+            <h1>Make the point before the proof.</h1>
+            <p>One declarative sentence creates a reading path. The evidence below earns the emphasis without repeating the headline.</p>
+          </div>
+        </div>
+
+        <div class="stat-columns reveal" aria-label="Example statistics">
+          <article class="data-card">
+            <div class="data-card__label">Review time</div>
+            <div><span class="data-card__value countup" data-target="42" data-suffix="">42</span><span class="data-card__unit"> min</span></div>
+            <div class="data-card__delta">from 58 min last cycle</div>
+          </article>
+          <article class="data-card">
+            <div class="data-card__label">Decision confidence</div>
+            <div><span class="data-card__value countup" data-target="94.3" data-decimals="1" data-suffix="">94.3</span><span class="data-card__unit"> %</span></div>
+            <div class="data-card__delta">+6.4 points on baseline</div>
+          </article>
+          <article class="data-card">
+            <div class="data-card__label">Teams aligned</div>
+            <div><span class="data-card__value countup" data-target="7" data-suffix="">7</span><span class="data-card__unit"> of 8</span></div>
+            <div class="data-card__delta">one open dependency</div>
+          </article>
+        </div>
+
+        <footer class="deck-footer">
+          <span class="eyebrow">Headline / section marker / statistic columns</span>
+          <span class="folio">01 / 03</span>
+        </footer>
+      </section>
+
+      <!-- === SLIDE 2: COMPARISON BLOCK + HORIZONTAL TIMELINE === -->
+      <section class="slide" data-slide="2" data-title="Comparison and timeline" aria-label="Slide 2: Comparison and timeline">
+        <header class="deck-header">
+          <span class="deck-title">Presentation primitives / visual reference</span>
+          <span class="eyebrow">Contrast and sequence</span>
+        </header>
+
+        <div class="slide-heading reveal">
+          <h2>Comparison frames a choice;<br>time gives it consequence.</h2>
+          <p>Use a shared question, then let labels and a single accent reveal the recommended path.</p>
+        </div>
+
+        <div class="comparison reveal" aria-label="Comparison of two framing approaches">
+          <article class="comparison__col">
+            <div class="comparison__label">Before / status report</div>
+            <div class="comparison__content">
+              <strong>More detail.<br>Less direction.</strong>
+              <p>Information arrives in parallel, leaving the audience to infer priority and next action.</p>
+            </div>
+            <ul class="comparison__list"><li>Findings lead</li><li>Sequence is implicit</li><li>Decision is deferred</li></ul>
+          </article>
+          <div class="comparison__divider" aria-hidden="true">vs</div>
+          <article class="comparison__col comparison__col--b">
+            <div class="comparison__label">After / decision brief</div>
+            <div class="comparison__content">
+              <strong>One decision.<br>Clear evidence.</strong>
+              <p>The assertion, comparison, and next steps move together at a deliberate pace.</p>
+            </div>
+            <ul class="comparison__list"><li>Choice leads</li><li>Evidence has order</li><li>Action is explicit</li></ul>
+          </article>
+        </div>
+
+        <div class="timeline reveal" aria-label="Example project timeline">
+          <div class="timeline__item"><div class="timeline__dot"></div><div class="timeline__label">Week 01</div><div class="timeline__text">Name the question</div></div>
+          <div class="timeline__item"><div class="timeline__dot"></div><div class="timeline__label">Week 02</div><div class="timeline__text">Test the framing</div></div>
+          <div class="timeline__item"><div class="timeline__dot"></div><div class="timeline__label">Week 03</div><div class="timeline__text">Align the decision</div></div>
+          <div class="timeline__item"><div class="timeline__dot"></div><div class="timeline__label">Week 04</div><div class="timeline__text">Commit the action</div></div>
+        </div>
+
+        <footer class="deck-footer">
+          <span class="eyebrow">Comparison block / horizontal timeline</span>
+          <span class="folio">02 / 03</span>
+        </footer>
+      </section>
+
+      <!-- === SLIDE 3: STEP FLOW + QUOTE + DATA TABLE + FOOTER FOLIO === -->
+      <section class="slide" data-slide="3" data-title="Flow, quote, and table" aria-label="Slide 3: Flow, quote, and table">
+        <header class="deck-header">
+          <span class="deck-title">Presentation primitives / visual reference</span>
+          <span class="eyebrow">Process and proof</span>
+        </header>
+
+        <div class="slide-heading reveal">
+          <h2>Close with an action path,<br>then leave the evidence legible.</h2>
+          <p>A short flow explains the route. A quote supplies conviction. A compact table preserves the record.</p>
+        </div>
+
+        <div class="step-flow reveal" aria-label="Three-step decision flow">
+          <div class="step-flow__item">
+            <div class="step-flow__num">01</div>
+            <div><div class="flow-kicker">Observe</div><div class="step-flow__title">Frame the signal</div><div class="step-flow__desc">Name what changed and why it matters.</div></div>
+          </div>
+          <div class="step-flow__item">
+            <div class="step-flow__num">02</div>
+            <div><div class="flow-kicker">Interpret</div><div class="step-flow__title">Choose the lens</div><div class="step-flow__desc">Compare only the options that answer the question.</div></div>
+          </div>
+          <div class="step-flow__item">
+            <div class="step-flow__num">03</div>
+            <div><div class="flow-kicker">Commit</div><div class="step-flow__title">Make the move</div><div class="step-flow__desc">State owner, timing, and the next proof point.</div></div>
+          </div>
+        </div>
+
+        <blockquote class="quote-block reveal">
+          <p class="quote-block__text">&ldquo;A presentation is a sequence of decisions about attention.&rdquo;</p>
+          <footer class="quote-block__attr">A useful rule for editing a deck</footer>
+        </blockquote>
+
+        <div class="table-wrap reveal">
+          <span class="table-caption">Decision log / concise data table</span>
+          <table class="data-table">
+            <thead><tr><th scope="col">Moment</th><th scope="col">Owner</th><th scope="col">Evidence</th><th scope="col">Status</th></tr></thead>
+            <tbody>
+              <tr><td>Framing review</td><td>Strategy</td><td>6 interviews</td><td>Complete</td></tr>
+              <tr><td>Option test</td><td>Product</td><td>3 prototypes</td><td>Complete</td></tr>
+              <tr><td>Decision brief</td><td>Leadership</td><td>1 recommendation</td><td>Next</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="deck-footer">
+          <span class="eyebrow">Step flow / quote / data table / footer folio</span>
+          <span class="folio">03 / 03</span>
+        </footer>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- === DECK NAVIGATION CONTROL SURFACE === -->
+  <nav class="deck-controls deck-nav" aria-label="Presentation navigation">
+    <button type="button" id="previous" aria-label="Previous slide" title="Previous slide">&larr;</button>
+    <span class="nav-label" id="navLabel" aria-live="polite">01 / 03 &middot; Assertion and metrics</span>
+    <button type="button" id="next" aria-label="Next slide" title="Next slide">&rarr;</button>
+  </nav>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

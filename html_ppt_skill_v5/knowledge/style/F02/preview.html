@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F02 — Aurora Dawn Light · Global Learning Institute 2024</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,700;1,400&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --color-bg:             oklch(0.96 0.020 30);
+  --color-surface:        oklch(0.98 0.010 28 / 0.82);
+  --color-border:         oklch(0.82 0.014 35);
+  --color-border-light:   oklch(0.88 0.012 38);
+  --color-border-dark:    oklch(0.68 0.016 32);
+  --color-heading:        oklch(0.14 0.010 30);
+  --color-body:           oklch(0.24 0.008 28);
+  --color-muted:          oklch(0.50 0.008 28);
+  --color-dim:            oklch(0.66 0.006 30);
+  --color-accent:         oklch(0.62 0.14 55);
+  --color-accent-mid:     oklch(0.72 0.12 52);
+  --color-accent-light:   oklch(0.80 0.10 50);
+  --color-accent-bg:      oklch(0.96 0.030 55);
+  --color-accent-on:      oklch(0.14 0.010 30);
+  --color-positive:       oklch(0.45 0.13 148);
+  --color-negative:       oklch(0.52 0.20 28);
+  --color-warn:           oklch(0.62 0.16 68);
+  --chart-c1: oklch(0.62 0.14 55);
+  --chart-c2: oklch(0.14 0.010 30);
+  --chart-c3: oklch(0.72 0.10 10);
+  --chart-c4: oklch(0.74 0.008 30);
+  --chart-c5: oklch(0.60 0.12 280);
+  --type-display: 'Lora', serif;
+  --type-body:    'Nunito', sans-serif;
+  --type-label:   'Nunito', sans-serif;
+}
+html, body { width: 100%; height: 100%; overflow: hidden; background: oklch(0.10 0.005 30); }
+
+/* ── Viewport wrapper ── */
+.deck-viewport {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.deck-stage {
+  position: relative;
+  width: 1920px; height: 1080px;
+  transform-origin: top left;
+  font-family: var(--type-body);
+  font-size: 18px; line-height: 1.70; letter-spacing: 0.006em;
+  overflow: hidden;
+}
+
+/* ── Slide system ── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease; position: absolute; inset: 0;  }
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+/* ── Dawn background ── */
+.bg-dawn {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 115%,
+      oklch(0.90 0.055 48 / 0.55), transparent 60%),
+    radial-gradient(ellipse 80% 70% at 10% 85%,
+      oklch(0.88 0.042 12 / 0.30), transparent 55%),
+    radial-gradient(ellipse 60% 50% at 88% 10%,
+      oklch(0.91 0.026 282 / 0.28), transparent 52%),
+    linear-gradient(180deg,
+      oklch(0.93 0.024 282) 0%,
+      oklch(0.95 0.020 20) 45%,
+      oklch(0.96 0.032 46) 100%);
+  animation: dawn-breathe 24s ease-in-out infinite alternate;
+}
+@keyframes dawn-breathe {
+  0%   { filter: brightness(0.96); }
+  50%  { filter: brightness(1.02); }
+  100% { filter: brightness(0.98); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-dawn { animation: none; filter: none; }
+}
+
+/* ── Content layer ── */
+.slide-content { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; padding: 80px 120px 0; }
+
+/* ── Section marker ── */
+.section-marker { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+.section-num  { font-family: var(--type-label); font-size: 11px; font-weight: 600; color: var(--color-accent); letter-spacing: 0.16em; text-transform: uppercase; }
+.section-label{ font-family: var(--type-label); font-size: 11px; font-weight: 600; color: var(--color-muted); letter-spacing: 0.16em; text-transform: uppercase; }
+.section-hairline { width: 100%; height: 1px; background: var(--color-accent); opacity: 0.55; margin-bottom: 28px; }
+.hairline { width: 100%; height: 1px; background: var(--color-border); }
+
+/* ── Headlines ── */
+.slide-headline {
+  font-family: var(--type-display); font-size: 86px; font-weight: 400;
+  color: var(--color-heading); line-height: 1.04; letter-spacing: -0.01em;
+  margin-bottom: 24px;
+}
+.slide-headline-sm {
+  font-family: var(--type-display); font-size: 50px; font-weight: 400;
+  color: var(--color-heading); line-height: 1.08; letter-spacing: -0.008em;
+  margin-bottom: 20px;
+}
+
+/* ── Abstract / body ── */
+.slide-abstract {
+  font-family: var(--type-body); font-size: 20px; font-weight: 400;
+  color: var(--color-muted); line-height: 1.62; max-width: 960px;
+  margin-bottom: 28px;
+}
+.slide-body {
+  font-family: var(--type-body); font-size: 18px; font-weight: 400;
+  color: var(--color-body); line-height: 1.70;
+}
+
+/* ── Detail row ── */
+.detail-row { display: flex; gap: 0; margin-top: 40px; }
+.detail-col {
+  display: flex; flex-direction: column; padding-right: 36px; margin-right: 36px;
+  border-right: 1px solid var(--color-border-light);
+}
+.detail-col:last-child { border-right: none; padding-right: 0; }
+.detail-col__label { font-family: var(--type-label); font-size: 10px; font-weight: 600; color: var(--color-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 4px; }
+.detail-col__value { font-family: var(--type-body); font-size: 14px; font-weight: 400; color: var(--color-body); line-height: 1.45; }
+
+/* ── Stat columns ── */
+.stat-row { display: flex; gap: 0; margin: 32px 0; }
+.stat-col { display: flex; flex-direction: column; padding-right: 52px; border-right: 1px solid var(--color-border); }
+.stat-col:first-child { padding-left: 0; }
+.stat-col:last-child  { border-right: none; padding-left: 52px; padding-right: 0; }
+.stat-col:nth-child(2){ padding-left: 52px; }
+.stat-col__accent-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); margin-bottom: 12px; }
+.stat-col__value {
+  font-family: var(--type-display); font-size: 80px; font-weight: 400;
+  color: var(--color-heading); line-height: 0.92;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.stat-col__unit { font-family: var(--type-label); font-size: 22px; font-weight: 400; color: var(--color-muted); }
+.stat-col__label {
+  font-family: var(--type-label); font-size: 11px; font-weight: 600;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.14em;
+  margin-top: 14px; line-height: 1.55;
+}
+
+/* ── Evidence layout (stats + aside) ── */
+.evidence-layout { display: flex; gap: 80px; flex: 1; margin-top: 12px; }
+.evidence-main { flex: 1; display: flex; flex-direction: column; }
+.evidence-aside {
+  width: 380px; flex-shrink: 0;
+  background: var(--color-accent-bg);
+  border-left: 2px solid var(--color-accent);
+  padding: 28px 28px 28px 24px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.aside-label { font-family: var(--type-label); font-size: 10px; font-weight: 600; color: var(--color-accent); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+.aside-stat  { font-family: var(--type-display); font-size: 48px; font-weight: 400; color: var(--color-heading); line-height: 0.92; margin-bottom: 10px; font-variant-numeric: lining-nums tabular-nums; }
+.aside-body  { font-family: var(--type-body); font-size: 15px; font-weight: 400; color: var(--color-body); line-height: 1.62; }
+
+/* ── Comparison table ── */
+.comparison-layout { flex: 1; display: flex; flex-direction: column; margin-top: 16px; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--type-label); font-size: 11px; font-weight: 600;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.12em;
+  text-align: left; padding: 9px 14px;
+  border-bottom: 1px solid var(--color-border-dark);
+}
+.data-table td {
+  font-family: var(--type-body); font-size: 16px; font-weight: 400;
+  color: var(--color-body); padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table tr.highlight td { background: var(--color-accent-bg); }
+.data-table tr.highlight td:first-child { color: var(--color-heading); font-weight: 700; }
+.win  { color: var(--color-accent); font-weight: 700; }
+.good { color: var(--color-positive); }
+.risk { color: var(--color-negative); }
+
+.table-footnote {
+  font-family: var(--type-label); font-size: 12px; font-weight: 400;
+  color: var(--color-dim); margin-top: 12px; line-height: 1.55;
+}
+
+/* ── Folio ── */
+.slide-folio {
+  position: absolute; bottom: 36px; right: 120px;
+  font-family: var(--type-label); font-size: 10px; font-weight: 400;
+  color: var(--color-accent-light); letter-spacing: 0.12em;
+}
+
+/* ── Nav bar ── */
+.nav-bar {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 8px; z-index: 999;
+  background: oklch(0.14 0.008 30 / 0.88);
+  border: 1px solid oklch(0.30 0.010 30 / 0.6);
+  border-radius: 40px; padding: 8px 16px;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.nav-btn {
+  width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer;
+  background: transparent; color: oklch(0.75 0.010 30); font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 140ms, color 140ms;
+}
+.nav-btn:hover { background: oklch(0.25 0.008 30); color: oklch(0.94 0.010 30); }
+.nav-dots { display: flex; gap: 6px; align-items: center; margin: 0 6px; }
+.nav-dot { width: 7px; height: 7px; border-radius: 50%; background: oklch(0.38 0.008 30); cursor: pointer; transition: background 140ms, transform 140ms; border: none; padding: 0; }
+.nav-dot.active { background: var(--color-accent); transform: scale(1.25); }
+
+/* ── Print ── */
+
+
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+<div class="deck-stage" id="deckStage">
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 1 — TITLE
+     Context: Global Learning Institute · Annual Impact Report 2024
+     Headline: Primary education completion in Sub-Saharan Africa rose
+               by 18 percentage points between 2010 and 2023, driven by
+               targeted teacher-training investments and community-led
+               school construction programs.
+═══════════════════════════════════════════════════ -->
+<div class="slide is-active" data-slide="1" id="slide-1">
+  <div class="bg-dawn"></div>
+  <div class="slide-content">
+    <div class="section-marker">
+      <span class="section-num">01</span>
+      <span class="section-label">Impact Overview</span>
+    </div>
+    <div class="section-hairline"></div>
+    <h1 class="slide-headline">Primary Education Completion in<br>Sub-Saharan Africa Rose by 18 Percentage<br>Points Between 2010 and 2023.</h1>
+    <div class="hairline" style="margin-bottom:24px;"></div>
+    <p class="slide-abstract">Targeted teacher-training investments and community-led school construction programs account for the majority of the gain — reversing two decades of stagnation and closing the gender completion gap by 11 points.</p>
+    <div class="detail-row">
+      <div class="detail-col">
+        <span class="detail-col__label">Institution</span>
+        <span class="detail-col__value">Global Learning Institute</span>
+      </div>
+      <div class="detail-col">
+        <span class="detail-col__label">Coverage</span>
+        <span class="detail-col__value">48 countries · 312 districts</span>
+      </div>
+      <div class="detail-col">
+        <span class="detail-col__label">Data period</span>
+        <span class="detail-col__value">2010 – 2023 · 14 cohorts</span>
+      </div>
+      <div class="detail-col">
+        <span class="detail-col__label">Primary source</span>
+        <span class="detail-col__value">UNESCO UIS · DHS Program</span>
+      </div>
+    </div>
+  </div>
+  <div class="slide-folio">GLI · ANNUAL IMPACT REPORT 2024 · 01</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 2 — EVIDENCE
+     Context: Teacher-training program outcomes
+     Headline: Each Cohort of Trained Teachers Improves Student
+               Completion Rates by 6.4 Percentage Points and Retains
+               Effects Across a Minimum of Three Subsequent School Years.
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-slide="2" id="slide-2">
+  <div class="bg-dawn"></div>
+  <div class="slide-content">
+    <div class="section-marker">
+      <span class="section-num">02</span>
+      <span class="section-label">Evidence</span>
+    </div>
+    <div class="section-hairline"></div>
+    <h2 class="slide-headline-sm">Each Cohort of Trained Teachers Improves Student Completion Rates by 6.4 Percentage Points and Retains Effects Across at Least Three Subsequent School Years.</h2>
+    <div class="hairline" style="margin-bottom:0;"></div>
+    <div class="evidence-layout">
+      <div class="evidence-main">
+        <div class="stat-row">
+          <div class="stat-col">
+            <div class="stat-col__accent-dot"></div>
+            <div class="stat-col__value">6.4<span class="stat-col__unit">pp</span></div>
+            <div class="stat-col__label">Completion rate gain<br>per trained-teacher cohort</div>
+          </div>
+          <div class="stat-col">
+            <div class="stat-col__accent-dot"></div>
+            <div class="stat-col__value">3<span class="stat-col__unit">+yr</span></div>
+            <div class="stat-col__label">Minimum effect<br>persistence</div>
+          </div>
+          <div class="stat-col">
+            <div class="stat-col__accent-dot"></div>
+            <div class="stat-col__value">0.78</div>
+            <div class="stat-col__label">Correlation: trained-teacher<br>density vs. completion gain</div>
+          </div>
+        </div>
+        <div class="hairline" style="margin-bottom:20px;"></div>
+        <p class="slide-body" style="max-width:860px;">Regression analysis across 312 districts shows that each 10-percentage-point increase in the share of teachers who completed the structured in-service training program is associated with a 6.4pp rise in Grade 6 completion rates in the following academic year. The effect persists across a minimum of three cohorts without additional intervention, suggesting durable pedagogical change rather than a short-term Hawthorne effect.</p>
+      </div>
+      <div class="evidence-aside">
+        <div class="aside-label">Gender Gap Closure</div>
+        <div class="aside-stat">−11pp</div>
+        <p class="aside-body">The gender completion gap narrowed from 19 points (2010) to 8 points (2023). Districts with the highest community school construction density show the steepest narrowing — median 14pp closure vs. 7pp in low-construction districts.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-folio">GLI · ANNUAL IMPACT REPORT 2024 · 02</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 3 — COMPARISON
+     Context: Four intervention models compared
+     Headline: Community-Led Construction Combined with Teacher Training
+               Delivers the Largest and Most Durable Completion Gains
+               Across All Evaluated Intervention Architectures.
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-slide="3" id="slide-3">
+  <div class="bg-dawn"></div>
+  <div class="slide-content">
+    <div class="section-marker">
+      <span class="section-num">03</span>
+      <span class="section-label">Comparison</span>
+    </div>
+    <div class="section-hairline"></div>
+    <h2 class="slide-headline-sm">Community-Led Construction Combined with Teacher Training Delivers the Largest and Most Durable Completion Gains Across All Evaluated Intervention Architectures.</h2>
+    <div class="hairline" style="margin-bottom:0;"></div>
+    <div class="comparison-layout">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Intervention model</th>
+            <th>Completion gain (pp)</th>
+            <th>Cost per pp gain (USD)</th>
+            <th>Effect at 5 yr</th>
+            <th>Gender gap closure</th>
+            <th>Scalability</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight">
+            <td>Community construction + teacher training</td>
+            <td><span class="win">+18.2</span></td>
+            <td><span class="win">$4,100</span></td>
+            <td><span class="win">Sustained</span></td>
+            <td><span class="win">−11pp</span></td>
+            <td><span class="win">High</span></td>
+          </tr>
+          <tr>
+            <td>Teacher training only</td>
+            <td>+9.8</td>
+            <td>$3,600</td>
+            <td>Sustained</td>
+            <td>−6pp</td>
+            <td>High</td>
+          </tr>
+          <tr>
+            <td>Infrastructure (govt-led) only</td>
+            <td>+7.1</td>
+            <td>$9,200</td>
+            <td>Partial</td>
+            <td>−4pp</td>
+            <td>Medium</td>
+          </tr>
+          <tr>
+            <td>Conditional cash transfer</td>
+            <td>+5.4</td>
+            <td>$6,800</td>
+            <td>Dependent</td>
+            <td>−3pp</td>
+            <td>Medium</td>
+          </tr>
+          <tr>
+            <td>Distance learning supplement</td>
+            <td>+2.9</td>
+            <td><span class="risk">$12,500</span></td>
+            <td>Fading</td>
+            <td>−1pp</td>
+            <td>Low</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="table-footnote">Cost per percentage-point gain calculated over 5-year program horizon, discounted at 3% annually. Effect persistence: Sustained = ≥80% of gain retained at year 5 without additional input; Partial = 40–79%; Dependent = maintained only with continued cash transfer; Fading = &lt;40%. Sources: GLI district-level panel data 2010–2023; UNESCO UIS; World Bank EdStats.</p>
+    </div>
+  </div>
+  <div class="slide-folio">GLI · ANNUAL IMPACT REPORT 2024 · 03</div>
+</div>
+
+</div><!-- /deck-stage -->
+</div><!-- /deck-viewport -->
+
+<!-- Nav bar -->
+<nav class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" onclick="window.__goToSlide(window.__currentSlide - 1)" aria-label="Previous">&#8592;</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn" id="nextBtn" onclick="window.__goToSlide(window.__currentSlide + 1)" aria-label="Next">&#8594;</button>
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>

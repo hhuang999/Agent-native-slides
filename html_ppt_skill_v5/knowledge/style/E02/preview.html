@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E02 Pale Birch Nordic — Nordic Centre for Educational Equity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --color-bg:             oklch(0.97 0.012 84);
+  --color-surface:        oklch(0.94 0.010 82);
+  --color-raised-surface: oklch(0.91 0.008 80);
+  --color-border:         oklch(0.82 0.008 78);
+  --color-border-light:   oklch(0.89 0.008 80);
+  --color-border-dark:    oklch(0.66 0.010 76);
+
+  --color-heading:        oklch(0.14 0.008 80);
+  --color-body:           oklch(0.22 0.006 78);
+  --color-muted:          oklch(0.48 0.006 78);
+  --color-dim:            oklch(0.64 0.005 76);
+
+  --color-accent:         oklch(0.38 0.12 150);
+  --color-accent-mid:     oklch(0.50 0.11 148);
+  --color-accent-light:   oklch(0.65 0.10 146);
+  --color-accent-bg:      oklch(0.95 0.028 148);
+  --color-accent-on:      oklch(0.97 0 0);
+
+  --color-positive:       oklch(0.40 0.13 148);
+  --color-negative:       oklch(0.54 0.20 28);
+  --color-warn:           oklch(0.64 0.16 72);
+
+  --type-display: 'DM Serif Display', serif;
+  --type-body:    'DM Sans', sans-serif;
+  --type-label:   'DM Sans', sans-serif;
+}
+
+body {
+  background: oklch(0.88 0.008 80);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: var(--type-body);
+}
+
+.deck-wrapper {
+  position: relative;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deck-stage {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  transform-origin: top center;
+  overflow: hidden;
+  background: var(--color-bg);
+  font-size: 18px;
+  line-height: 1.68;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--color-bg);
+}
+
+.slide-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 72px 120px;
+}
+
+/* ── Structural ─────────────────────────────── */
+.section-hairline {
+  width: 100%;
+  height: 1px;
+  background: var(--color-accent);
+  opacity: 0.50;
+  margin-bottom: 0;
+}
+.hairline {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* ── Section marker ─────────────────────────── */
+.section-marker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+.section-num {
+  font-family: var(--type-label);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-accent);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.section-label {
+  font-family: var(--type-label);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-muted);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ── Headlines ──────────────────────────────── */
+.headline-display {
+  font-family: var(--type-display);
+  font-size: 88px;
+  font-weight: 400;
+  color: var(--color-heading);
+  line-height: 1.0;
+  max-width: 1540px;
+}
+.headline-h1 {
+  font-family: var(--type-display);
+  font-size: 50px;
+  font-weight: 400;
+  color: var(--color-heading);
+  line-height: 1.08;
+  max-width: 1260px;
+}
+
+/* ── Body text ──────────────────────────────── */
+.abstract {
+  font-family: var(--type-body);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--color-muted);
+  line-height: 1.58;
+  max-width: 1040px;
+  margin-top: 22px;
+}
+.body-text {
+  font-family: var(--type-body);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--color-body);
+  line-height: 1.70;
+  max-width: 800px;
+}
+
+/* ── Detail row ─────────────────────────────── */
+.detail-row {
+  display: flex;
+  gap: 0;
+  margin-top: auto;
+  padding-top: 28px;
+  border-top: 1px solid var(--color-border);
+}
+.detail-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 44px;
+  border-right: 1px solid var(--color-border);
+  margin-right: 44px;
+}
+.detail-col:last-child { border-right: none; margin-right: 0; }
+.detail-label {
+  font-family: var(--type-label);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+.detail-value {
+  font-family: var(--type-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+/* ── Stat columns ───────────────────────────── */
+.stat-row {
+  display: flex;
+  gap: 0;
+  padding: 28px 0;
+}
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  padding-right: 56px;
+  border-right: 1px solid var(--color-border);
+  margin-right: 56px;
+}
+.stat-col:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+.stat-col__accent-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  margin-bottom: 12px;
+}
+.stat-col__value {
+  font-family: var(--type-display);
+  font-size: 80px;
+  font-weight: 400;
+  color: var(--color-heading);
+  line-height: 0.92;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.stat-col__label {
+  font-family: var(--type-label);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-top: 14px;
+  line-height: 1.55;
+}
+
+/* ── Evidence layout ────────────────────────── */
+.evidence-body {
+  display: flex;
+  gap: 56px;
+  flex: 1;
+  padding-top: 20px;
+}
+.evidence-main { flex: 1; }
+.evidence-aside {
+  width: 400px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--color-border);
+  padding-left: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.aside-block {
+  padding-bottom: 22px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+.aside-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.aside-block__label {
+  font-family: var(--type-label);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-bottom: 6px;
+}
+.aside-block__value {
+  font-family: var(--type-display);
+  font-size: 34px;
+  font-weight: 400;
+  color: var(--color-accent);
+  line-height: 1.0;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.aside-block__text {
+  font-family: var(--type-body);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-muted);
+  line-height: 1.62;
+  margin-top: 6px;
+}
+
+/* ── Data table ─────────────────────────────── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table th {
+  font-family: var(--type-label);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-align: left;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--color-border-dark);
+  white-space: nowrap;
+}
+.data-table th:first-child { padding-left: 0; }
+.data-table td {
+  font-family: var(--type-body);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-body);
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+.data-table td:first-child { padding-left: 0; }
+.data-table tr.highlight td { background: var(--color-accent-bg); }
+.data-table tr.highlight td:first-child { color: var(--color-heading); font-weight: 700; }
+.win  { color: var(--color-accent); font-weight: 700; }
+.good { color: var(--color-positive); }
+.warn { color: var(--color-warn); }
+.bad  { color: var(--color-negative); }
+
+.table-footnote {
+  font-family: var(--type-label);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-dim);
+  line-height: 1.55;
+  margin-top: 14px;
+}
+
+/* ── Folio ──────────────────────────────────── */
+.slide-folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  z-index: 2;
+  font-family: var(--type-label);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--color-dim);
+  letter-spacing: 0.12em;
+}
+
+/* ── Nav ────────────────────────────────────── */
+#deck-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  align-items: center;
+}
+#deck-nav button {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-dark);
+  color: var(--color-body);
+  font-family: var(--type-label);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.14s, border-color 0.14s, color 0.14s;
+}
+#deck-nav button:hover {
+  background: var(--color-raised-surface);
+  border-color: var(--color-accent);
+  color: var(--color-heading);
+}
+#deck-nav button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+#slide-counter {
+  font-family: var(--type-label);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-muted);
+  letter-spacing: 0.10em;
+  min-width: 52px;
+  text-align: center;
+}
+
+.preview-mode #deck-nav {
+  display: none;
+}
+
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { margin: 0; width: 1920px; height: auto !important; overflow: visible !important; background: var(--color-bg); }
+  .deck-wrapper, .deck-stage { position: static !important; transform: none !important; width: 1920px !important; height: auto !important; overflow: visible !important; }
+  .slide {
+    position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important;
+    visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+    break-after: page; page-break-after: always; overflow: hidden;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  #deck-nav { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="deck-wrapper" id="deck-wrapper">
+  <div class="deck-stage" id="deck-stage">
+
+    <!-- ═══════════════════════════════════════════
+         SLIDE 1 — TITLE
+         Nordic Centre for Educational Equity
+         Early Childhood Literacy Intervention Study 2018–2024
+    ══════════════════════════════════════════════ -->
+    <div class="slide is-active" id="slide-1" data-slide="1" role="region" aria-label="Slide 1 of 3: Title">
+      <div class="slide-bg" id="birch-bg"></div>
+      <div class="slide-content">
+
+        <div class="section-marker">
+          <span class="section-num">01</span>
+          <span class="section-label">Nordic Centre for Educational Equity · Early Childhood Literacy</span>
+        </div>
+        <div class="section-hairline"></div>
+        <div style="height:34px"></div>
+
+        <h1 class="headline-display">
+          Structured Literacy Instruction in the First Three<br>
+          Years of School Closes Two Thirds of the Reading<br>
+          Gap Between Socioeconomic Groups by Age Nine.
+        </h1>
+
+        <div style="height:26px"></div>
+        <div class="hairline"></div>
+
+        <p class="abstract">
+          A six-year longitudinal study of 14,800 children across 112 primary schools in Denmark, Finland, and Norway. Three structured literacy programmes compared against matched-curriculum standard instruction. Outcomes tracked through reading fluency, comprehension, and vocabulary assessments at ages six, seven, eight, and nine.
+        </p>
+
+        <div class="detail-row">
+          <div class="detail-col">
+            <span class="detail-label">Institution</span>
+            <span class="detail-value">Nordic Centre for Educational Equity</span>
+          </div>
+          <div class="detail-col">
+            <span class="detail-label">Cohort</span>
+            <span class="detail-value">14,800 children · 112 schools</span>
+          </div>
+          <div class="detail-col">
+            <span class="detail-label">Countries</span>
+            <span class="detail-value">Denmark · Finland · Norway</span>
+          </div>
+          <div class="detail-col">
+            <span class="detail-label">Study Period</span>
+            <span class="detail-value">2018 – 2024</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="slide-folio" aria-hidden="true">NCEE · LITERACY-2024 · 01</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SLIDE 2 — EVIDENCE
+         Gap closure statistics and mechanism
+    ══════════════════════════════════════════════ -->
+    <div class="slide" id="slide-2" data-slide="2" role="region" aria-label="Slide 2 of 3: Evidence">
+      <div class="slide-bg"></div>
+      <div class="slide-content">
+
+        <div class="section-marker">
+          <span class="section-num">02</span>
+          <span class="section-label">Outcomes · Gap Closure · Reading Development</span>
+        </div>
+        <div class="section-hairline"></div>
+        <div style="height:22px"></div>
+
+        <h2 class="headline-h1">
+          The Intervention Effect Is Largest at Age Seven<br>
+          and Persists Through the End of Primary School.
+        </h2>
+
+        <div style="height:18px"></div>
+        <div class="hairline"></div>
+
+        <div class="stat-row">
+          <div class="stat-col">
+            <div class="stat-col__accent-dot"></div>
+            <span class="stat-col__value">67%</span>
+            <span class="stat-col__label">Reading gap closed<br>by age nine</span>
+          </div>
+          <div class="stat-col">
+            <div class="stat-col__accent-dot"></div>
+            <span class="stat-col__value">1.8yr</span>
+            <span class="stat-col__label">Mean reading-age<br>gain vs. control</span>
+          </div>
+          <div class="stat-col">
+            <div class="stat-col__accent-dot"></div>
+            <span class="stat-col__value">82%</span>
+            <span class="stat-col__label">Children reaching<br>grade-level fluency</span>
+          </div>
+        </div>
+
+        <div class="hairline"></div>
+
+        <div class="evidence-body">
+          <div class="evidence-main">
+            <p class="body-text">
+              The structured literacy programmes shared three core components: explicit phonics instruction with systematic review, daily decodable text practice matched to current phonics knowledge, and teacher-directed vocabulary development within connected reading. The control group received the standard curriculum without these structured elements.
+            </p>
+            <div style="height:20px"></div>
+            <p class="body-text">
+              The gap-closure effect was not uniform across programmes. The two programmes with the highest lesson-structure fidelity scores — maintained through regular coaching visits — produced 78% gap closure by age nine. The third programme, implemented without ongoing teacher support after initial training, produced 44% closure. Fidelity to implementation matters as much as programme selection.
+            </p>
+          </div>
+          <div class="evidence-aside">
+            <div class="aside-block">
+              <div class="aside-block__label">High-fidelity programmes · gap closure</div>
+              <div class="aside-block__value">78%</div>
+              <div class="aside-block__text">Programmes receiving ongoing coaching visits throughout the study period, sustaining implementation fidelity above 85%.</div>
+            </div>
+            <div class="aside-block">
+              <div class="aside-block__label">Low-fidelity programme · gap closure</div>
+              <div class="aside-block__value" style="color: var(--color-warn)">44%</div>
+              <div class="aside-block__text">Programme without post-training coaching support; implementation fidelity declined to 61% by year two.</div>
+            </div>
+            <div class="aside-block">
+              <div class="aside-block__label">Control group · grade-level fluency rate</div>
+              <div class="aside-block__value" style="color: var(--color-muted)">54%</div>
+              <div class="aside-block__text">Children in matched schools with standard curriculum reaching grade-level fluency by age nine.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="slide-folio" aria-hidden="true">NCEE · LITERACY-2024 · 02</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SLIDE 3 — COMPARISON TABLE
+         Programme outcomes by intervention type
+    ══════════════════════════════════════════════ -->
+    <div class="slide" id="slide-3" data-slide="3" role="region" aria-label="Slide 3 of 3: Programme Comparison">
+      <div class="slide-bg"></div>
+      <div class="slide-content">
+
+        <div class="section-marker">
+          <span class="section-num">03</span>
+          <span class="section-label">Programme Comparison · Five Intervention Types · Age 9 Outcomes</span>
+        </div>
+        <div class="section-hairline"></div>
+        <div style="height:22px"></div>
+
+        <h2 class="headline-h1">
+          Structured Phonics With Ongoing Teacher Support<br>
+          Produces the Most Durable and Equitable Results.
+        </h2>
+
+        <div style="height:18px"></div>
+        <div class="hairline"></div>
+        <div style="height:18px"></div>
+
+        <table class="data-table" role="table" aria-label="Literacy intervention comparison">
+          <thead>
+            <tr>
+              <th>Intervention Type</th>
+              <th>Gap Closure (Age 9)</th>
+              <th>Grade-Level Fluency</th>
+              <th>Comprehension Gain</th>
+              <th>Vocabulary Gain</th>
+              <th>Effect Sustained (Age 12)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Standard curriculum (control)</td>
+              <td class="bad">0%</td>
+              <td class="bad">54%</td>
+              <td>Baseline</td>
+              <td>Baseline</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>Whole-language enrichment</td>
+              <td class="warn">18%</td>
+              <td class="warn">61%</td>
+              <td>+0.3 grade levels</td>
+              <td>+0.4 grade levels</td>
+              <td class="warn">Partial</td>
+            </tr>
+            <tr>
+              <td>Structured phonics, no coaching</td>
+              <td>44%</td>
+              <td>71%</td>
+              <td>+0.9 grade levels</td>
+              <td>+0.7 grade levels</td>
+              <td>Partial</td>
+            </tr>
+            <tr class="highlight">
+              <td>Structured phonics + ongoing coaching</td>
+              <td class="win">78%</td>
+              <td class="win">82%</td>
+              <td class="win">+1.6 grade levels</td>
+              <td class="win">+1.2 grade levels</td>
+              <td class="win">Full</td>
+            </tr>
+            <tr>
+              <td>Phonics + coaching + home literacy</td>
+              <td class="good">84%</td>
+              <td class="good">87%</td>
+              <td class="good">+1.9 grade levels</td>
+              <td class="good">+1.5 grade levels</td>
+              <td class="good">Full</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="table-footnote">
+          Gap closure: percentage reduction in reading-score gap between lowest and highest socioeconomic quintiles, age 9 vs. school entry. Grade-level fluency: percentage of study cohort reaching national grade-level benchmark at age 9. Effect sustained: whether gap-closure gains remained significant at age 12 follow-up assessment. Structured phonics + ongoing coaching represents the optimal cost-to-outcome ratio; home literacy component adds 6 percentage points of gap closure at approximately 40% additional programme cost.
+        </p>
+
+      </div>
+      <div class="slide-folio" aria-hidden="true">NCEE · LITERACY-2024 · 03</div>
+    </div>
+
+  </div><!-- /deck-stage -->
+</div><!-- /deck-wrapper -->
+
+<div id="deck-nav" role="navigation" aria-label="Slide navigation">
+  <button id="btn-prev" aria-label="Previous slide" onclick="navigate(-1)">← Prev</button>
+  <span id="slide-counter" aria-live="polite" aria-atomic="true">1 / 3</span>
+  <button id="btn-next" aria-label="Next slide" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var slideEls = Array.from(document.querySelectorAll('.slide'));
+  slideEls.forEach(function (s, i) { s.dataset.slide = i + 1; });
+
+  window.__deckPlan = {
+    title: 'Structured Literacy Instruction in the First Three Years of School Closes Two Thirds of the Reading Gap Between Socioeconomic Groups by Age Nine.',
+    total_slides: slideEls.length,
+    slides: [
+      { index: 1, type: 'title', assertion: 'Structured Literacy Instruction in the First Three Years of School Closes Two Thirds of the Reading Gap' },
+      { index: 2, type: 'evidence', assertion: 'The Intervention Effect Is Largest at Age Seven and Persists Through the End of Primary School' },
+      { index: 3, type: 'comparison', assertion: 'Structured Phonics With Ongoing Teacher Support Produces the Most Durable and Equitable Results' },
+    ],
+  };
+  window.__currentSlide = 1;
+
+  function goToSlide(n) {
+    var total = slideEls.length;
+    n = Math.min(Math.max(1, Math.round(+n) || 1), total);
+    slideEls.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1); });
+    window.__currentSlide = n;
+    var counter = document.getElementById('slide-counter');
+    if (counter) counter.textContent = n + ' / ' + total;
+    var prev = document.getElementById('btn-prev');
+    var next = document.getElementById('btn-next');
+    if (prev) prev.disabled = (n === 1);
+    if (next) next.disabled = (n === total);
+  }
+  window.__goToSlide = goToSlide;
+
+  function navigate(delta) { goToSlide(window.__currentSlide + delta); }
+  window.navigate = navigate;
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') { e.preventDefault(); goToSlide(window.__currentSlide + 1); }
+    else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); goToSlide(window.__currentSlide - 1); }
+    else if (k === 'Home') { e.preventDefault(); goToSlide(1); }
+    else if (k === 'End') { e.preventDefault(); goToSlide(slideEls.length); }
+  });
+
+  function scaleStage() {
+    var stage = document.getElementById('deck-stage');
+    var wrapper = document.getElementById('deck-wrapper');
+    var scale = Math.min(window.innerWidth / 1920, (window.innerHeight - 80) / 1080);
+    stage.style.transform = 'scale(' + scale + ')';
+    wrapper.style.height = Math.round(1080 * scale) + 'px';
+  }
+  window.addEventListener('resize', scaleStage);
+  scaleStage();
+
+  var q = new URLSearchParams(window.location.search);
+  if (q.has('print')) document.documentElement.classList.add('print-mode');
+  if (q.has('preview')) document.documentElement.classList.add('preview-mode');
+  goToSlide(q.has('preview') ? (parseInt(q.get('preview'), 10) || 1) : 1);
+})();
+</script>
+</body>
+</html>

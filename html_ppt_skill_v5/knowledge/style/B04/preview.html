@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>B04 — warm-glass · Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@400;700&family=IBM+Plex+Mono:wght@300;400;700&display=swap');
+
+:root {
+  --color-bg:             oklch(0.07 0.020 50);
+  --color-surface:        oklch(0.14 0.022 60 / 0.42);
+  --color-raised-surface: oklch(0.20 0.020 58 / 0.54);
+  --color-border:         oklch(0.62 0.10 78 / 0.16);
+  --color-border-solid:   oklch(0.20 0.020 58);
+  --color-glass-rim:      oklch(0.76 0.16 78 / 0.18);
+  --color-shadow:         oklch(0.06 0.020 55 / 0.72);
+  --color-heading:        oklch(0.96 0.008 80);
+  --color-body:           oklch(0.80 0.016 72);
+  --color-muted:          oklch(0.52 0.018 68);
+  --color-accent:         oklch(0.76 0.18 82);
+  --color-accent-dim:     oklch(0.54 0.14 78);
+  --color-accent-glow:    oklch(0.76 0.18 82 / 0.18);
+  --color-accent-light:   oklch(0.88 0.14 85);
+  --color-accent-2:       oklch(0.58 0.20 28);
+  --color-accent-2-dim:   oklch(0.40 0.16 26);
+  --color-positive:       oklch(0.70 0.18 145);
+  --color-negative:       oklch(0.62 0.22 25);
+  --blob-1: oklch(0.32 0.22 72 / 0.58);
+  --blob-2: oklch(0.28 0.20 40 / 0.48);
+  --blob-3: oklch(0.22 0.18 18 / 0.38);
+  --type-display: 'Playfair Display SC', serif;
+  --type-body:    'Playfair Display SC', serif;
+  --type-label:   'IBM Plex Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 1920px; height: 1080px; overflow: hidden;
+  background: var(--color-bg);
+  font-family: var(--type-body); font-size: 19px;
+  color: var(--color-body); line-height: 1.65;
+  letter-spacing: 0.01em;
+}
+
+.deck-stage { width: 1920px; height: 1080px; position: relative; overflow: hidden; }
+
+/* ── Warm background ─────────────────────────────────── */
+#warm-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: var(--color-bg);
+}
+#warm-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 65% at 38% 55%, var(--blob-1) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 55% at 78% 78%, var(--blob-2) 0%, transparent 68%),
+    radial-gradient(ellipse 38% 42% at 85% 18%, var(--blob-3) 0%, transparent 62%);
+}
+
+/* ── Slides ──────────────────────────────────────────── */
+.slide {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; padding: 70px 96px;
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide { transition: none; }
+}
+
+/* ── Glass card ──────────────────────────────────────── */
+.glass-card {
+  background: var(--color-surface);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 var(--color-glass-rim),
+    0 4px 28px var(--color-shadow);
+  padding: 30px 28px;
+}
+.glass-card--raised {
+  background: var(--color-raised-surface);
+  backdrop-filter: blur(32px) saturate(240%);
+  -webkit-backdrop-filter: blur(32px) saturate(240%);
+  box-shadow:
+    inset 0 1px 0 oklch(0.82 0.16 82 / 0.22),
+    0 8px 44px oklch(0.06 0.020 55 / 0.80);
+}
+
+/* ── Shared ──────────────────────────────────────────── */
+.accent-rule {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-border-solid) 55%, transparent 100%);
+}
+.counter {
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-accent-2); letter-spacing: 0.14em;
+  margin-bottom: 12px;
+}
+.warm-tag {
+  display: inline-flex; align-items: center;
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-accent); letter-spacing: 0.14em; text-transform: uppercase;
+  background: var(--color-surface);
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  border: 1px solid oklch(0.76 0.18 82 / 0.20);
+  padding: 4px 14px; border-radius: 4px; width: fit-content;
+}
+
+/* ── Slide 1: Title ──────────────────────────────────── */
+.s1-headline {
+  font-family: var(--type-display); font-size: 72px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.06; letter-spacing: -0.01em;
+  max-width: 1300px; margin-bottom: 26px;
+}
+.s1-sub {
+  font-size: 21px; font-weight: 400; color: var(--color-muted);
+  max-width: 920px; line-height: 1.72; margin-bottom: 52px;
+}
+.s1-badges { display: flex; gap: 12px; flex-wrap: wrap; }
+.badge {
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-body); letter-spacing: 0.06em;
+  background: var(--color-surface);
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  border: 1px solid var(--color-border);
+  padding: 5px 16px; border-radius: 4px;
+}
+.s1-corner {
+  position: absolute; top: 70px; right: 96px;
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-muted); letter-spacing: 0.14em; text-transform: uppercase;
+}
+.s1-floor {
+  position: absolute; bottom: 64px; left: 96px; right: 96px; height: 1px;
+  background: var(--color-border-solid);
+}
+
+/* ── Slide 2: Stats ──────────────────────────────────── */
+.s2-headline {
+  font-family: var(--type-display); font-size: 46px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.1; letter-spacing: -0.01em;
+  max-width: 1560px; margin-bottom: 20px;
+}
+.s2-body {
+  display: grid; grid-template-columns: 1fr 360px; gap: 44px;
+  flex: 1; margin-top: 8px; overflow: hidden;
+}
+.s2-main { display: flex; flex-direction: column; gap: 22px; }
+.s2-text { font-size: 18px; line-height: 1.78; color: var(--color-body); }
+.stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.stat-card { display: flex; flex-direction: column; gap: 10px; }
+.stat-card__value {
+  font-family: var(--type-label); font-size: 44px; font-weight: 700;
+  color: var(--color-accent-light); line-height: 1;
+  font-variant-numeric: lining-nums tabular-nums; letter-spacing: -0.01em;
+}
+.stat-card__label {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.10em; line-height: 1.4;
+}
+.aside-list { display: flex; flex-direction: column; justify-content: center; }
+.aside-item { padding: 16px 0; border-bottom: 1px solid var(--color-border-solid); }
+.aside-item:first-child { border-top: 1px solid var(--color-border-solid); }
+.aside-item__title {
+  font-family: var(--type-display); font-size: 14px; font-weight: 700;
+  color: var(--color-heading); margin-bottom: 5px;
+}
+.aside-item__body {
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-muted); line-height: 1.58;
+}
+
+/* ── Slide 3: Table ──────────────────────────────────── */
+.s3-headline {
+  font-family: var(--type-display); font-size: 42px; font-weight: 700;
+  color: var(--color-heading); line-height: 1.1; letter-spacing: -0.01em;
+  max-width: 1520px; margin-bottom: 18px;
+}
+.s3-body { flex: 1; display: flex; flex-direction: column; margin-top: 14px; overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.08em;
+  text-align: left; padding: 10px 16px;
+  border-bottom: 2px solid var(--color-border-solid);
+}
+.data-table th:not(:first-child) { text-align: right; }
+.data-table td {
+  font-size: 17px; color: var(--color-body); padding: 14px 16px;
+  border-bottom: 1px solid var(--color-border-solid);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.data-table td:not(:first-child) { text-align: right; font-family: var(--type-label); font-weight: 300; }
+.data-table tr.highlight td { background: oklch(0.76 0.18 82 / 0.06); }
+.data-table tr.highlight td:first-child { font-weight: 700; color: var(--color-heading); }
+.win { color: var(--color-accent-light); font-weight: 700; }
+.good { color: var(--color-positive); }
+.footnote {
+  font-family: var(--type-label); font-size: 11px; font-weight: 300;
+  color: var(--color-muted); border-top: 1px solid var(--color-border-solid);
+  padding-top: 10px; margin-top: auto; letter-spacing: 0.02em; line-height: 1.6;
+}
+
+/* ── Nav ─────────────────────────────────────────────── */
+#nav { position: fixed; bottom: 16px; right: 20px; z-index: 100; display: flex; gap: 8px; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 6px;
+  background: var(--color-surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border);
+  color: var(--color-body); font-family: var(--type-label); font-size: 13px;
+  font-weight: 300; cursor: pointer;
+}
+.nav-btn:hover { background: var(--color-raised-surface); }
+#slide-info {
+  position: fixed; bottom: 16px; left: 20px; z-index: 100;
+  font-family: var(--type-label); font-size: 12px; font-weight: 300;
+  color: var(--color-muted);
+}
+.preview-mode #nav, .preview-mode #slide-info { display: none; }
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { margin: 0; width: 1920px; height: auto !important; overflow: visible !important; background: var(--color-bg); }
+  .deck-stage { position: static !important; transform: none !important; width: 1920px !important; height: auto !important; overflow: visible !important; }
+  .slide {
+    position: relative !important; inset: auto !important; width: 1920px !important; height: 1080px !important;
+    visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+    break-after: page; page-break-after: always; overflow: hidden;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  #nav, #slide-info { display: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="deck-stage">
+  <div id="warm-bg"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide is-active" data-slide="1">
+    <div class="warm-tag" style="margin-bottom:18px">Hospitality · Brand Identity · 2026</div>
+    <div class="accent-rule" style="margin-bottom:30px"></div>
+    <div class="s1-corner">VELLICHOR HOTEL GROUP · INVESTOR BRIEF</div>
+    <h1 class="s1-headline">Independent Hotels Outperform<br>Brand Chains When the<br>Story Is the Product.</h1>
+    <p class="s1-sub">Vellichor operates twelve slow-luxury properties across the American Southwest — each restored from a building with distinct local history, staffed entirely from within a 30-mile radius, and rated in the top 2% of independent hotels on sustained guest return rate.</p>
+    <div class="s1-badges">
+      <div class="badge">12 properties, 7 states</div>
+      <div class="badge">Avg. 4.91 / 5 guest rating</div>
+      <div class="badge">68% repeat guest rate</div>
+      <div class="badge">Zero chain affiliation</div>
+      <div class="badge">B Corp certified 2023</div>
+    </div>
+    <div class="s1-floor"></div>
+  </div>
+
+  <!-- Slide 2: Stats -->
+  <div class="slide" data-slide="2">
+    <div class="counter">02 / 04 — PERFORMANCE METRICS</div>
+    <h2 class="s2-headline">At 68% repeat guest rate — more than double the US independent hotel average of 31% — Vellichor's acquisition cost per guest has declined every year since 2021.</h2>
+    <div class="accent-rule" style="margin-bottom:0"></div>
+    <div class="s2-body" style="margin-top:22px">
+      <div class="s2-main">
+        <p class="s2-text">Vellichor's model inverts the typical hospitality cost structure: instead of allocating 18–22% of revenue to OTA commissions and brand fees, the group spends that budget on staff tenure, building restoration depth, and a proprietary direct-booking platform that drove 84% direct revenue in 2025. The result is a guest relationship that no chain flag can replicate — guests book Vellichor properties the way they return to a restaurant run by a chef they trust, not because of a loyalty points program.</p>
+        <div class="stat-row">
+          <div class="glass-card glass-card--raised stat-card">
+            <div class="stat-card__value">68%</div>
+            <div class="stat-card__label">Repeat guest rate — 2× industry average</div>
+          </div>
+          <div class="glass-card glass-card--raised stat-card">
+            <div class="stat-card__value">84%</div>
+            <div class="stat-card__label">Direct booking revenue — no OTA dependency</div>
+          </div>
+          <div class="glass-card glass-card--raised stat-card">
+            <div class="stat-card__value">4.91</div>
+            <div class="stat-card__label">Average guest rating across all properties</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card aside-list" style="padding:0 24px;">
+        <div class="aside-item">
+          <div class="aside-item__title">Local hire mandate</div>
+          <div class="aside-item__body">All staff sourced within 30 miles. Average tenure 4.2 years vs. 1.1 years for US hotel industry. Institutional knowledge stays in the building.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">Restoration standard</div>
+          <div class="aside-item__body">Every property retains its original structural character — no dropped ceilings, no brand-standard carpet. Average restoration: 22 months, $4.8M per property.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">No loyalty points</div>
+          <div class="aside-item__body">Return rate driven by relationship, not reward mechanics. Guest profiles track preferences across stays — no app required.</div>
+        </div>
+        <div class="aside-item">
+          <div class="aside-item__title">RevPAR trajectory</div>
+          <div class="aside-item__body">$418 RevPAR in 2025 — 2.3× the US independent hotel median. Pricing power grows with each returning guest cohort.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Comparison table -->
+  <div class="slide" data-slide="3">
+    <div class="counter">03 / 04 — COMPETITIVE POSITIONING</div>
+    <h2 class="s3-headline">Vellichor achieves chain-level RevPAR without chain-level fees — and outperforms boutique peers on guest return rate by a factor of two.</h2>
+    <div class="accent-rule" style="margin-bottom:0; margin-top:10px"></div>
+    <div class="s3-body">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>RevPAR (2025)</th>
+            <th>Repeat guest rate</th>
+            <th>OTA dependency</th>
+            <th>Brand / flag fee</th>
+            <th>Avg. guest rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Luxury chain (Four Seasons, Ritz)</td><td>$520–680</td><td>41%</td><td>Low (direct brand)</td><td>11–14% rev</td><td>4.78</td></tr>
+          <tr><td>Lifestyle chain (Autograph, Curio)</td><td>$280–360</td><td>34%</td><td>Medium</td><td>8–12% rev</td><td>4.52</td></tr>
+          <tr><td>US independent boutique (avg.)</td><td>$182</td><td>31%</td><td>High (35–55%)</td><td>None</td><td>4.41</td></tr>
+          <tr><td>Design hotel groups (21c, Ace)</td><td>$290–340</td><td>38%</td><td>Medium</td><td>Mgmt fee</td><td>4.61</td></tr>
+          <tr class="highlight"><td>Vellichor Hotel Group</td><td class="win">$418</td><td class="win">68%</td><td class="good">16% (direct 84%)</td><td class="good">None</td><td class="win">4.91</td></tr>
+        </tbody>
+      </table>
+      <div class="footnote">RevPAR: Revenue Per Available Room, 2025 full-year actuals (Vellichor) or Smith Travel Research category averages. Repeat guest rate: percentage of room-nights booked by guests with ≥2 prior stays in trailing 12 months. OTA dependency: share of gross room revenue sourced through online travel agencies. Brand/flag fee: recurring fee as percentage of revenue paid to brand affiliation, where applicable. Guest rating: weighted average across all verified platform reviews, 2025. Vellichor data: internal management accounts, audited FY2025.</div>
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn" id="prev">◀</button>
+  <button class="nav-btn" id="next">▶</button>
+</div>
+<div id="slide-info">B04 warm-glass · <span id="cur">1</span> / 3</div>
+
+<script>
+const slideEls = Array.from(document.querySelectorAll('.slide'))
+const total = slideEls.length
+
+function goTo(n) {
+  n = Math.min(Math.max(1, Math.round(+n) || 1), total)
+  slideEls.forEach((s, i) => s.classList.toggle('is-active', i === n - 1))
+  window.__currentSlide = n
+  const info = document.getElementById('cur')
+  if (info) info.textContent = n
+}
+window.__goToSlide = goTo
+window.__currentSlide = 1
+
+document.getElementById('next').onclick = () => goTo(window.__currentSlide + 1)
+document.getElementById('prev').onclick = () => goTo(window.__currentSlide - 1)
+document.addEventListener('keydown', e => {
+  const k = e.key
+  if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') { e.preventDefault(); goTo(window.__currentSlide + 1) }
+  else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); goTo(window.__currentSlide - 1) }
+  else if (k === 'Home') goTo(1)
+  else if (k === 'End') goTo(total)
+})
+
+window.__deckPlan = {
+  title: 'Independent Hotels Outperform Brand Chains When the Story Is the Product.',
+  style_id: 'B04',
+  total_slides: 3,
+  slides: [
+    { index: 1, assertion: 'Independent Hotels Outperform Brand Chains When the Story Is the Product.', type: 'title',
+      speaker_notes: { purpose: 'Frame the investment thesis before the numbers — the category claim is that narrative and place outcompete loyalty-program mechanics at the right price point.', key_points: ['12 properties, zero brand affiliation', '68% repeat guest rate — 2× industry average', 'Top 2% of US independent hotels by return rate', 'All staff local, all buildings restored, no OTA dependency'], timing: '~1 min', tone: 'Warm, unhurried, editorially confident — the feel of the properties themselves' } },
+    { index: 2, assertion: 'At 68% repeat guest rate — more than double the US independent hotel average of 31% — Vellichor\'s acquisition cost per guest has declined every year since 2021.', type: 'evidence',
+      speaker_notes: { purpose: 'Stack the operating proof: high repeat rate drives down CAC, 84% direct kills the OTA cost, RevPAR of $418 sits above peers despite no brand flag.', key_points: ['68% repeat guest rate vs. 31% US independent average', '84% direct booking revenue — no Expedia dependency', '$418 RevPAR in 2025, 2.3× US independent median', 'Staff tenure 4.2 years vs. 1.1 years industry — knowledge compounds'], transition: 'How does this compare across the full competitive landscape?', timing: '~3 min' } },
+    { index: 3, assertion: 'Vellichor achieves chain-level RevPAR without chain-level fees — and outperforms boutique peers on guest return rate by a factor of two.', type: 'comparison',
+      speaker_notes: { purpose: 'The gap: luxury chain RevPAR with zero brand fees and 2× the repeat rate of the lifestyle-chain category.', key_points: ['$418 RevPAR vs. $290–340 for design hotel groups — no flag fee paid', '68% repeat vs. 38% for best-in-class design groups', '4.91 avg. guest rating — highest in comparison set', 'OTA at 16% vs. 35–55% for typical independents — structural cost advantage'], timing: '~2 min' } }
+  ]
+}
+
+const q = new URLSearchParams(location.search)
+if (q.has('print')) document.documentElement.classList.add('print-mode')
+if (q.has('preview')) document.documentElement.classList.add('preview-mode')
+goTo(q.has('preview') ? parseInt(q.get('preview'), 10) || 1 : 1)
+</script>
+</body>
+</html>

@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kyoto Craft Institute — Urushi Lacquerware Economic Revitalization</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ───────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Color tokens (OKLCH) ────────────────────── */
+:root {
+  --c-bg:           oklch(0.96 0.014 65);
+  --c-surface:      oklch(0.93 0.016 65);
+  --c-surface-alt:  oklch(0.91 0.018 65);
+  --c-text:         oklch(0.18 0.018 65);
+  --c-text-muted:   oklch(0.45 0.014 65);
+  --c-text-subtle:  oklch(0.62 0.012 65);
+  --c-border:       oklch(0.80 0.012 65);
+  --c-border-soft:  oklch(0.87 0.010 65);
+  --c-accent:       oklch(0.28 0.12 270);
+  --c-accent-mid:   oklch(0.40 0.10 270);
+  --c-accent-light: oklch(0.82 0.06 270);
+  --c-vermilion:    oklch(0.58 0.18 24);
+  --c-positive:     oklch(0.42 0.10 145);
+  --c-highlight-bg: oklch(0.90 0.04 270);
+
+  /* Typography */
+  --ff-display: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --ff-body:    'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+
+  /* Stage */
+  --stage-w: 1920px;
+  --stage-h: 1080px;
+}
+
+/* ── Stage & scaling ────────────────────────── */
+html, body {
+  width: 100%;
+  height: 100%;
+  background: oklch(0.15 0.005 65);
+  overflow: hidden;
+  font-family: var(--ff-body);
+}
+
+#stage-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stage {
+  width: var(--stage-w);
+  height: var(--stage-h);
+  position: relative;
+  overflow: hidden;
+  transform-origin: top left;
+}
+
+/* ── Slides ──────────────────────────────────── */
+.slide {
+  visibility: hidden; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+  position: absolute;
+  inset: 0;
+  width: var(--stage-w);
+  height: var(--stage-h);
+  background: var(--c-bg);
+  
+  flex-direction: column;
+  padding: 80px 120px;
+  z-index: 1;
+}
+.slide.is-active {
+  visibility: visible; opacity: 1; pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+/* Background layer */
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--c-bg);
+}
+.slide > * { position: relative; z-index: 1; }
+
+/* ── Section marker ──────────────────────────── */
+.section-marker {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+.section-rule-line {
+  display: block;
+  width: 48px;
+  height: 1px;
+  background: var(--c-accent);
+  flex-shrink: 0;
+}
+.section-label {
+  font-family: var(--ff-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-accent-mid);
+}
+
+/* ── Vermilion micro-rule ────────────────────── */
+.vermilion-rule {
+  display: block;
+  width: 100%;
+  height: 0.5px;
+  background: var(--c-vermilion);
+  margin: 36px 0;
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+/* ── Institution label ───────────────────────── */
+.institution-label {
+  font-family: var(--ff-body);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+  margin-bottom: 8px;
+}
+
+/* ── Headline types ──────────────────────────── */
+.headline-hero {
+  font-family: var(--ff-display);
+  font-size: 54px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--c-text);
+  max-width: 960px;
+  letter-spacing: -0.01em;
+  margin-bottom: 32px;
+}
+.headline-section {
+  font-family: var(--ff-display);
+  font-size: 42px;
+  font-weight: 500;
+  line-height: 1.28;
+  color: var(--c-text);
+  max-width: 860px;
+  letter-spacing: -0.01em;
+  margin-bottom: 44px;
+}
+.headline-comparison {
+  font-family: var(--ff-display);
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 1.30;
+  color: var(--c-text);
+  max-width: 1040px;
+  letter-spacing: -0.01em;
+  margin-bottom: 40px;
+}
+
+/* ── Abstract ────────────────────────────────── */
+.abstract {
+  font-family: var(--ff-body);
+  font-size: 19px;
+  font-weight: 300;
+  line-height: 1.70;
+  color: var(--c-text-muted);
+  max-width: 720px;
+  margin-bottom: 0;
+}
+
+/* ── 4-col detail row ────────────────────────── */
+.detail-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 0.5px solid var(--c-border);
+}
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px 32px 24px 0;
+  border-right: 0.5px solid var(--c-border);
+}
+.detail-item:first-child { padding-left: 0; }
+.detail-item:last-child { border-right: none; }
+.detail-label {
+  font-family: var(--ff-body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+}
+.detail-value {
+  font-family: var(--ff-body);
+  font-size: 17px;
+  font-weight: 400;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--c-text);
+  line-height: 1.3;
+}
+
+/* ── Stat grid ───────────────────────────────── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-bottom: 0;
+}
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 32px 48px 32px 0;
+  border-right: 0.5px solid var(--c-border);
+  margin-right: 48px;
+}
+.stat-col:first-child {
+  border-left: 2px solid var(--c-accent);
+  padding-left: 28px;
+  margin-left: 0;
+}
+.stat-col:last-child {
+  border-right: none;
+  margin-right: 0;
+}
+.stat-value {
+  font-family: var(--ff-body);
+  font-size: 56px;
+  font-weight: 300;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--c-text);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.stat-unit {
+  font-family: var(--ff-body);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--c-accent-mid);
+  letter-spacing: 0.04em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.stat-caption {
+  font-family: var(--ff-body);
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--c-text-muted);
+  line-height: 1.55;
+  max-width: 300px;
+}
+
+/* ── Evidence + aside layout ─────────────────── */
+.evidence-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 64px;
+  margin-top: auto;
+  align-items: start;
+}
+.evidence-body {
+  font-family: var(--ff-body);
+  font-size: 19px;
+  font-weight: 300;
+  line-height: 1.72;
+  color: var(--c-text-muted);
+}
+.aside-panel {
+  background: var(--c-surface-alt);
+  border-left: 2px solid var(--c-accent);
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.aside-stat {
+  font-family: var(--ff-body);
+  font-size: 44px;
+  font-weight: 300;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--c-accent-mid);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.aside-unit {
+  font-family: var(--ff-body);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--c-accent-mid);
+  margin-top: -8px;
+}
+.aside-text {
+  font-family: var(--ff-body);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.60;
+  color: var(--c-text-muted);
+  border-top: 0.5px solid var(--c-border);
+  padding-top: 16px;
+}
+
+/* ── Comparison table ────────────────────────── */
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--ff-body);
+  font-size: 17px;
+}
+.comparison-table th {
+  background: var(--c-accent);
+  color: oklch(0.97 0.005 270);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: 16px 22px;
+  text-align: left;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.comparison-table th:not(:first-child) { text-align: right; }
+.comparison-table td {
+  padding: 14px 22px;
+  border-bottom: 0.5px solid var(--c-border-soft);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--c-text);
+  vertical-align: middle;
+}
+.comparison-table td:not(:first-child) { text-align: right; }
+.comparison-table tr.highlighted td {
+  background: var(--c-highlight-bg);
+  color: var(--c-accent-mid);
+  font-weight: 500;
+}
+.comparison-table tr.highlighted td:first-child {
+  border-left: 2px solid var(--c-accent);
+}
+.comparison-table tbody tr:last-child td { border-bottom: none; }
+
+/* ── Positive delta ──────────────────────────── */
+.delta-pos {
+  color: var(--c-positive);
+  font-weight: 500;
+}
+
+/* ── Footnote ────────────────────────────────── */
+.footnote {
+  font-family: var(--ff-body);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--c-text-subtle);
+  line-height: 1.55;
+  padding-top: 12px;
+}
+
+/* ── Folio ───────────────────────────────────── */
+.folio {
+  position: absolute;
+  bottom: 36px;
+  right: 120px;
+  font-family: var(--ff-body);
+  font-size: 14px;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--c-text-subtle);
+  letter-spacing: 0.12em;
+  z-index: 2;
+}
+
+/* ── Nav bar ─────────────────────────────────── */
+#nav-bar {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: oklch(0.18 0.018 65 / 0.88);
+  border: 0.5px solid oklch(0.35 0.012 65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 10px 20px;
+  border-radius: 100px;
+  z-index: 9999;
+}
+.nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: oklch(0.75 0.010 65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: color 0.15s, background 0.15s;
+  font-size: 16px;
+  line-height: 1;
+}
+.nav-btn:hover { color: oklch(0.96 0.014 65); background: oklch(0.30 0.012 65); }
+.nav-btn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+.nav-dots { display: flex; gap: 8px; align-items: center; }
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: oklch(0.45 0.008 65);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  padding: 0;
+}
+.nav-dot.active {
+  background: var(--c-accent-mid);
+  transform: scale(1.35);
+}
+.nav-dot:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+
+/* ── Reduced motion ──────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .nav-btn, .nav-dot { transition: none; }
+}
+
+/* ── Print ───────────────────────────────────── */
+
+
+  html, body { background: white; }
+
+
+</style>
+
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
+</head>
+<body>
+
+<div id="stage-wrapper">
+  <div id="stage">
+
+    <!-- ═══ SLIDE 1 — TITLE ═══════════════════ -->
+    <section class="slide is-active" data-slide="1" id="slide-1" role="region" aria-label="Slide 1 of 3">
+
+      <div class="section-marker">
+        <span class="section-rule-line" aria-hidden="true"></span>
+        <span class="section-label">Kyoto Craft Institute · Research Report 2024</span>
+      </div>
+
+      <p class="institution-label">Ishikawa Prefecture Lacquerware Study · Series IV</p>
+
+      <h1 class="headline-hero">
+        Traditional Urushi Lacquerware Producers in Ishikawa Who Adopted Direct-to-Consumer Digital Channels Between 2018 and 2023 Grew Revenue by 64 Percent While Preserving Apprenticeship Lineages Intact.
+      </h1>
+
+      <p class="abstract">
+        A five-year longitudinal study of 112 urushi producers in Wajima and Yamanaka finds that digital channel adoption correlated strongly with revenue growth and apprentice retention. Producers who maintained wholesale-only models saw median revenue decline by 18 percent over the same period.
+      </p>
+
+      <span class="vermilion-rule" aria-hidden="true"></span>
+
+      <div class="detail-row" role="list" aria-label="Study parameters">
+        <div class="detail-item" role="listitem">
+          <span class="detail-label">Study Period</span>
+          <span class="detail-value">2018 – 2023</span>
+        </div>
+        <div class="detail-item" role="listitem">
+          <span class="detail-label">Producers Surveyed</span>
+          <span class="detail-value">112 Artisans</span>
+        </div>
+        <div class="detail-item" role="listitem">
+          <span class="detail-label">Prefecture</span>
+          <span class="detail-value">Ishikawa (Wajima &amp; Yamanaka)</span>
+        </div>
+        <div class="detail-item" role="listitem">
+          <span class="detail-label">Lead Researcher</span>
+          <span class="detail-value">Kyoto Craft Institute</span>
+        </div>
+      </div>
+
+      <span class="folio" aria-label="Slide 1">01</span>
+    </section>
+
+    <!-- ═══ SLIDE 2 — EVIDENCE ════════════════ -->
+    <section class="slide" data-slide="2" id="slide-2" role="region" aria-label="Slide 2 of 3">
+
+      <div class="section-marker">
+        <span class="section-rule-line" aria-hidden="true"></span>
+        <span class="section-label">Evidence · Apprenticeship &amp; Revenue Analysis</span>
+      </div>
+
+      <h2 class="headline-section">
+        Artisans Who Maintained Three or More Apprentices Through the Direct-Channel Transition Period Generated 2.3 Times the Revenue of Equivalent Craft Producers Who Continued Relying Exclusively on Wholesale Distribution.
+      </h2>
+
+      <div class="stat-grid" role="list" aria-label="Key statistics">
+        <div class="stat-col" role="listitem">
+          <span class="stat-value">2.3×</span>
+          <span class="stat-unit">Revenue Multiplier</span>
+          <span class="stat-caption">DTC adopters with 3+ apprentices vs. wholesale-only peers of matched scale</span>
+        </div>
+        <div class="stat-col" role="listitem">
+          <span class="stat-value">91%</span>
+          <span class="stat-unit">Apprentice Retention</span>
+          <span class="stat-caption">Rate among DTC adopters vs. 54% in wholesale-only cohort over study period</span>
+        </div>
+        <div class="stat-col" role="listitem">
+          <span class="stat-value">+¥2.4M</span>
+          <span class="stat-unit">Annual Revenue Gain</span>
+          <span class="stat-caption">Median incremental annual revenue per DTC artisan in years 3–5 of adoption</span>
+        </div>
+      </div>
+
+      <span class="vermilion-rule" aria-hidden="true"></span>
+
+      <div class="evidence-layout">
+        <p class="evidence-body">
+          The revenue differential was most pronounced among producers who invested in both digital channel infrastructure and in-studio apprentice training simultaneously. Artisans who sequenced these investments — building the digital presence first, then expanding apprenticeships — showed a lag of approximately 14 months before revenue gains materialized. The cohort maintaining three or more apprentices throughout demonstrated the highest craft continuity scores and lowest production interruption rates, suggesting that apprentice depth functions as both an operational buffer and a brand signal to high-value direct customers.
+        </p>
+        <aside class="aside-panel" aria-label="Supplementary finding">
+          <span class="aside-stat">78%</span>
+          <span class="aside-unit">of high-revenue DTC adopters</span>
+          <p class="aside-text">
+            reported that direct customer relationships — established through digital channels — created recurring commissions that accounted for over 40% of annual revenue within two years of platform launch, displacing the need for trade fair dependence.
+          </p>
+        </aside>
+      </div>
+
+      <span class="folio" aria-label="Slide 2">02</span>
+    </section>
+
+    <!-- ═══ SLIDE 3 — COMPARISON ══════════════ -->
+    <section class="slide" data-slide="3" id="slide-3" role="region" aria-label="Slide 3 of 3">
+
+      <div class="section-marker">
+        <span class="section-rule-line" aria-hidden="true"></span>
+        <span class="section-label">Comparison · Channel Configuration Performance</span>
+      </div>
+
+      <h2 class="headline-comparison">
+        The Integration of Online Storytelling About Lacquerware Process, Combined with Limited Direct Commissions, Outperformed Every Other Sales Channel Configuration Across Revenue Per Artisan-Hour, Apprentice Retention, and Craft Continuity.
+      </h2>
+
+      <div role="region" aria-label="Channel comparison table">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th scope="col">Sales Channel Configuration</th>
+              <th scope="col">Rev / Artisan-Hour (¥)</th>
+              <th scope="col">Apprentice Retention</th>
+              <th scope="col">Craft Continuity Score</th>
+              <th scope="col">5-Yr Revenue Change</th>
+              <th scope="col">Commission Share</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlighted">
+              <td>Online storytelling + direct commissions</td>
+              <td>¥8,400</td>
+              <td>91%</td>
+              <td>94 / 100</td>
+              <td class="delta-pos">+64%</td>
+              <td>41%</td>
+            </tr>
+            <tr>
+              <td>Online shop only (no storytelling)</td>
+              <td>¥5,100</td>
+              <td>72%</td>
+              <td>78 / 100</td>
+              <td class="delta-pos">+31%</td>
+              <td>18%</td>
+            </tr>
+            <tr>
+              <td>Wholesale + trade fair hybrid</td>
+              <td>¥3,800</td>
+              <td>58%</td>
+              <td>66 / 100</td>
+              <td>−4%</td>
+              <td>7%</td>
+            </tr>
+            <tr>
+              <td>Wholesale only (no digital presence)</td>
+              <td>¥2,900</td>
+              <td>54%</td>
+              <td>59 / 100</td>
+              <td>−18%</td>
+              <td>2%</td>
+            </tr>
+            <tr>
+              <td>Gallery consignment only</td>
+              <td>¥2,200</td>
+              <td>49%</td>
+              <td>55 / 100</td>
+              <td>−23%</td>
+              <td>1%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <span class="vermilion-rule" aria-hidden="true"></span>
+
+      <p class="footnote">
+        Craft Continuity Score is a composite index measuring apprentice lineage depth, technique documentation rate, and material sourcing stability. Revenue per artisan-hour calculated across all billable production and customer communication time. n=112 producers, 2018–2023. Highlighted row = study's primary recommended configuration.
+      </p>
+
+      <span class="folio" aria-label="Slide 3">03</span>
+    </section>
+
+  </div><!-- #stage -->
+</div><!-- #stage-wrapper -->
+
+<!-- ── Nav bar ────────────────────────────────── -->
+<nav id="nav-bar" aria-label="Slide navigation">
+  <button class="nav-btn" id="btn-prev" aria-label="Previous slide" onclick="window.__goToSlide(window.__currentSlide - 1)">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <div class="nav-dots" role="list" aria-label="Slide indicators">
+    <button class="nav-dot active" role="listitem" aria-label="Slide 1" aria-current="true" onclick="window.__goToSlide(1)"></button>
+    <button class="nav-dot" role="listitem" aria-label="Slide 2" onclick="window.__goToSlide(2)"></button>
+    <button class="nav-dot" role="listitem" aria-label="Slide 3" onclick="window.__goToSlide(3)"></button>
+  </div>
+  <button class="nav-btn" id="btn-next" aria-label="Next slide" onclick="window.__goToSlide(window.__currentSlide + 1)">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+(function () {
+  var _slides = Array.from(document.querySelectorAll('.slide'))
+  var _total  = _slides.length
+
+  function _goTo(n) {
+    n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), _total)
+    _slides.forEach(function (s, i) { s.classList.toggle('is-active', i === n - 1) })
+    window.__currentSlide = n
+    var cur = document.getElementById('cur')
+    if (cur) cur.textContent = n
+  }
+
+  window.__goToSlide   = _goTo
+  window.__currentSlide = 1
+
+  // Wire existing prev/next buttons if present
+  var nb = document.getElementById('next') || document.getElementById('nextBtn')
+  var pb = document.getElementById('prev') || document.getElementById('prevBtn')
+  if (nb) nb.onclick = function () { _goTo(window.__currentSlide + 1) }
+  if (pb) pb.onclick = function () { _goTo(window.__currentSlide - 1) }
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key
+    if (k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown') {
+      e.preventDefault(); _goTo(window.__currentSlide + 1)
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') {
+      e.preventDefault(); _goTo(window.__currentSlide - 1)
+    } else if (k === 'Home') { _goTo(1) }
+    else if (k === 'End')  { _goTo(_total) }
+  })
+
+  // Normalise __deckPlan: total_slides + per-slide index (1-based)
+  if (!window.__deckPlan) {
+    window.__deckPlan = {
+      title: '', total_slides: _total,
+      slides: Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  } else {
+    // totalSlides alias
+    if (window.__deckPlan.totalSlides && !window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = window.__deckPlan.totalSlides
+    if (!window.__deckPlan.total_slides)
+      window.__deckPlan.total_slides = _total
+    // ensure slides array with 1-based index
+    if (Array.isArray(window.__deckPlan.slides)) {
+      window.__deckPlan.slides.forEach(function (s, i) {
+        if (!s.index) s.index = i + 1
+      })
+    } else {
+      window.__deckPlan.slides = Array.from({length: _total}, function (_, i) {
+        return { index: i + 1, type: 'content', assertion: '' }
+      })
+    }
+  }
+
+  // Preview / print URL params
+  var _q = new URLSearchParams(location.search)
+  if (_q.has('print'))   document.documentElement.classList.add('print-mode')
+  if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
+  _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+</body>
+</html>
