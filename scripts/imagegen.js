@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * imagegen.js — HTML PPT Skill v5
+ * imagegen.js — Agent-Native Slides
  *
  * Generates a decorative image (cover art, section background) via AIHubMix
  * and saves it to disk. Charts/data visuals use ECharts — never this script.

@@ -333,7 +333,6 @@ html, body {
      never `display:none`, or the PDF keeps only the current page. */
   .slide {
     position: relative !important; inset: auto !important;
-    display: flex !important;
     visibility: visible !important; opacity: 1 !important;
     pointer-events: auto !important;
     width: 1920px !important; height: 1080px !important;
@@ -636,6 +635,36 @@ html, body {
   if (_q.has('print'))   document.documentElement.classList.add('print-mode')
   if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
   _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+<style id="deck-fit-css">
+/* RUNTIME.md §1 — scale the fixed 1920x1080 stage to fit the window (screen only;
+   print and ?print=1 keep their own document-flow layout). */
+@media screen {
+  :root:not(.print-mode) [data-fit-stage] {
+    position: fixed !important; inset: auto !important;
+    left: var(--fit-x, 0px) !important; top: var(--fit-y, 0px) !important;
+    width: 1920px !important; height: 1080px !important;
+    max-width: none !important; max-height: none !important; margin: 0 !important;
+    transform: scale(var(--fit-s, 1)) !important; transform-origin: 0 0 !important;
+  }
+}
+</style>
+<script id="deck-fit">
+(function () {
+  var first = document.querySelector('.slide[data-slide]')
+  if (!first) return
+  var stage = first.parentElement
+  stage.setAttribute('data-fit-stage', '')
+  function fit() {
+    var s = Math.min(innerWidth / 1920, innerHeight / 1080)
+    var st = document.documentElement.style
+    st.setProperty('--fit-s', s)
+    st.setProperty('--fit-x', (innerWidth - 1920 * s) / 2 + 'px')
+    st.setProperty('--fit-y', (innerHeight - 1080 * s) / 2 + 'px')
+  }
+  addEventListener('resize', fit)
+  fit()
 })()
 </script>
 </body>

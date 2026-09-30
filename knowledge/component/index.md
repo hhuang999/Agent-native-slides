@@ -1,6 +1,6 @@
 # Component Library Index
 
-HTML PPT Skill v5 — 组件层索引
+Agent-Native Slides — 组件层索引
 
 组件是可复用的视觉构件。每个组件通过 CSS custom properties 继承当前风格 token，不硬编码颜色或字体。
 

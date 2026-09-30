@@ -1,9 +1,9 @@
 ---
-name: html-ppt
-description: Design and generate animated, 1920x1080 HTML presentation decks from .docx/.md/.txt input — deck planning, style selection from 53 live-preview aesthetics, AI decorative images (AIHubMix), in-browser editing/presenting, and PDF/PPTX export. Use when the user asks for slides, a presentation, a deck, or PPT.
+name: agent-native-slides
+description: Design and generate animated, 1920x1080 HTML presentation decks from .docx/.md/.txt input — deck planning, style selection from 53 live-preview aesthetics, AI decorative images (AIHubMix), a browser presenter view, and single-file HTML / PDF / PPTX export. Use when the user asks for slides, a presentation, a deck, or PPT.
 ---
 
-# HTML PPT Skill v5
+# Agent-Native Slides
 
 **Core philosophy:** Teach AI how to design — not a template library.
 

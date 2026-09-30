@@ -109,7 +109,7 @@ body {
 
 /* ── Slide 2: Stats ─────────────────────────────────────────── */
 .s2-headline {
-  font-family: var(--type-display); font-size: 52px;
+  font-family: var(--type-display); font-size: 44px;
   color: var(--color-heading); line-height: 1.06; letter-spacing: -0.01em;
   max-width: 1600px; margin: 12px 0 14px;
 }
@@ -135,7 +135,7 @@ body {
   margin-top: 14px; line-height: 1.55;
 }
 .s2-body { display: grid; grid-template-columns: 1fr 420px; gap: 56px; flex: 1; overflow: hidden; margin-top: 6px; }
-.s2-text { font-size: 17px; line-height: 1.80; color: var(--color-body); }
+.s2-text { font-size: 17px; line-height: 1.7; color: var(--color-body); }
 .s2-aside { display: flex; flex-direction: column; }
 .aside-item { padding: 13px 0; border-bottom: 1px solid var(--color-border-light); }
 .aside-item:first-child { border-top: 1px solid var(--color-border-light); }
@@ -237,7 +237,6 @@ html.preview-mode #nav, html.preview-mode #slide-info { display: none; }
      never `display:none`, or the PDF keeps only the current page. */
   .slide {
     position: relative !important; inset: auto !important;
-    display: flex !important;
     visibility: visible !important; opacity: 1 !important;
     pointer-events: auto !important;
     width: 1920px !important; height: 1080px !important;
@@ -462,6 +461,36 @@ html.preview-mode #nav, html.preview-mode #slide-info { display: none; }
   if (_q.has('print'))   document.documentElement.classList.add('print-mode')
   if (_q.has('preview')) document.documentElement.classList.add('preview-mode')
   _goTo(_q.has('preview') ? (parseInt(_q.get('preview'), 10) || 1) : 1)
+})()
+</script>
+<style id="deck-fit-css">
+/* RUNTIME.md §1 — scale the fixed 1920x1080 stage to fit the window (screen only;
+   print and ?print=1 keep their own document-flow layout). */
+@media screen {
+  :root:not(.print-mode) [data-fit-stage] {
+    position: fixed !important; inset: auto !important;
+    left: var(--fit-x, 0px) !important; top: var(--fit-y, 0px) !important;
+    width: 1920px !important; height: 1080px !important;
+    max-width: none !important; max-height: none !important; margin: 0 !important;
+    transform: scale(var(--fit-s, 1)) !important; transform-origin: 0 0 !important;
+  }
+}
+</style>
+<script id="deck-fit">
+(function () {
+  var first = document.querySelector('.slide[data-slide]')
+  if (!first) return
+  var stage = first.parentElement
+  stage.setAttribute('data-fit-stage', '')
+  function fit() {
+    var s = Math.min(innerWidth / 1920, innerHeight / 1080)
+    var st = document.documentElement.style
+    st.setProperty('--fit-s', s)
+    st.setProperty('--fit-x', (innerWidth - 1920 * s) / 2 + 'px')
+    st.setProperty('--fit-y', (innerHeight - 1080 * s) / 2 + 'px')
+  }
+  addEventListener('resize', fit)
+  fit()
 })()
 </script>
 </body>

@@ -1,6 +1,6 @@
 # External Resources & Licenses
 
-HTML PPT Skill v5 — 外部资源登记表
+Agent-Native Slides — 外部资源登记表
 
 所有外部资源在此登记：URL、license、使用方式（vendor=直接引用CDN / adapt=修改后使用 / reference=仅参考）。
 

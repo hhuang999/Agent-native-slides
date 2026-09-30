@@ -1,6 +1,6 @@
 # Element Design Language
 
-HTML PPT Skill v5 — 元素层设计语言
+Agent-Native Slides — 元素层设计语言
 
 元素层定义最小粒度的设计决策：标题格式、正文密度、间距节奏。
 这些规则跨所有风格通用；各风格通过 CSS token 覆盖具体数值，但结构不变。

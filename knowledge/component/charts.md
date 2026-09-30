@@ -1,6 +1,6 @@
 # Charts — ECharts 学术配色方案
 
-HTML PPT Skill v5 — 图表层
+Agent-Native Slides — 图表层
 
 默认图表引擎：ECharts 5.4.3（Apache-2.0）。  
 所有配色从当前风格 CSS token 读取，不硬编码颜色。
