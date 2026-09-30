@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "id": "agent-native-workflow-demo",
+  "title": "A presentation that stays yours",
+  "language": "en",
+  "styleId": "A01",
+  "theme": {
+    "css": "@font-face{font-family:SlidesSans;src:url('../assets/fonts/sans.woff2') format('woff2')}@font-face{font-family:SlidesMono;src:url('../assets/fonts/mono.woff2') format('woff2')}:root{--color-bg:#09151d;--color-body:#e9f4f5;--color-accent:#56d5d0;--chart-c1:#56d5d0;--chart-c2:#e8b964}.slide{font-family:SlidesSans,Arial,sans-serif;background:radial-gradient(circle at 81% 18%,#173d48 0%,#102832 27%,#09151d 72%)}.ans-text{line-height:1.14}.ans-chart{border-left:1px solid #31515b;border-bottom:1px solid #31515b}.ans-table{font-size:26px}.ans-node{background:#15343e;border-color:#5da2a8}"
+  },
+  "resources": {},
+  "pages": [
+    {
+      "id": "opening",
+      "title": "A presentation that stays yours",
+      "layout": "absolute",
+      "notes": "Open with the full loop: an agent plans and designs, then the human keeps ownership of the editable file.",
+      "objects": [
+        { "id": "opening-rule", "type": "shape", "shape": "rect", "fill": "#56d5d0", "box": { "x": 124, "y": 118, "w": 96, "h": 8 } },
+        { "id": "opening-kicker", "type": "text", "text": "AGENT-NATIVE SLIDES  /  A LIVING DECK", "box": { "x": 124, "y": 160, "w": 1200, "h": 50 }, "style": { "fontSize": 27, "fontFamily": "SlidesMono", "pptxFontFamily": "Consolas", "color": "#56d5d0" } },
+        { "id": "opening-title", "type": "text", "text": "A presentation\nthat stays yours.", "box": { "x": 124, "y": 273, "w": 1570, "h": 285 }, "style": { "fontSize": 121, "fontWeight": "700", "color": "#f2f8f7" } },
+        { "id": "opening-subtitle", "type": "text", "text": "From first idea to the next revision — in one editable HTML file.", "box": { "x": 130, "y": 614, "w": 1370, "h": 100 }, "style": { "fontSize": 39, "color": "#a8c6cc" } },
+        { "id": "opening-divider", "type": "shape", "shape": "rect", "fill": "#31515b", "box": { "x": 124, "y": 802, "w": 1668, "h": 2 } },
+        { "id": "opening-path", "type": "text", "text": "PLAN    →    DESIGN    →    BUILD    →    EDIT    →    SAVE    →    PRESENT    →    EXPORT", "box": { "x": 124, "y": 846, "w": 1650, "h": 70 }, "style": { "fontSize": 27, "fontFamily": "SlidesMono", "pptxFontFamily": "Consolas", "color": "#56d5d0" } },
+        { "id": "opening-footer", "type": "text", "text": "1920 × 1080  ·  53 design languages  ·  human + agent", "box": { "x": 124, "y": 962, "w": 1400, "h": 45 }, "style": { "fontSize": 22, "fontFamily": "SlidesMono", "pptxFontFamily": "Consolas", "color": "#70939a" } }
+      ]
+    },
+    {
+      "id": "evidence",
+      "title": "Evidence remains editable",
+      "layout": "absolute",
+      "notes": "The chart is sourced from structured values, and exports as a native PowerPoint chart with an embedded workbook.",
+      "objects": [
+        { "id": "evidence-kicker", "type": "text", "text": "01 / EVIDENCE", "box": { "x": 124, "y": 98, "w": 600, "h": 45 }, "style": { "fontSize": 26, "fontFamily": "SlidesMono", "pptxFontFamily": "Consolas", "color": "#56d5d0" } },
+        { "id": "evidence-title", "type": "text", "text": "The numbers can change.\nThe story can too.", "box": { "x": 124, "y": 190, "w": 1600, "h": 205 }, "style": { "fontSize": 82, "fontWeight": "700", "color": "#f2f8f7" } },
+        { "id": "evidence-description", "type": "text", "text": "Edit the source values in the workbench; keep the chart editable in PowerPoint.", "box": { "x": 127, "y": 438, "w": 1500, "h": 75 }, "style": { "fontSize": 33, "color": "#a8c6cc" } },
+        { "id": "evidence-chart", "type": "chart", "chartType": "bar", "categories": ["Planning", "Design", "Revision", "Delivery"], "series": [{ "name": "Workflow", "values": [4, 6, 8, 10] }], "box": { "x": 150, "y": 560, "w": 1170, "h": 370 } },
+        { "id": "evidence-card", "type": "shape", "shape": "rect", "fill": "#15343e", "box": { "x": 1400, "y": 587, "w": 375, "h": 294 }, "style": { "borderRadius": 20 } },
+        { "id": "evidence-card-number", "type": "text", "text": "1 file", "box": { "x": 1434, "y": 635, "w": 310, "h": 90 }, "style": { "fontSize": 62, "fontWeight": "700", "color": "#56d5d0" } },
+        { "id": "evidence-card-label", "type": "text", "text": "The deck, editor and saved state travel together.", "box": { "x": 1434, "y": 746, "w": 308, "h": 98 }, "style": { "fontSize": 28, "color": "#d9e8e9" } }
+      ]
+    },
+    {
+      "id": "collaborate",
+      "title": "The saved file is the next starting point",
+      "layout": "absolute",
+      "notes": "Continue AI work from the saved HTML. Extract its current document model rather than returning to the first generated plan.",
+      "objects": [
+        { "id": "collaborate-kicker", "type": "text", "text": "02 / COLLABORATE", "box": { "x": 124, "y": 98, "w": 800, "h": 45 }, "style": { "fontSize": 26, "fontFamily": "SlidesMono", "pptxFontFamily": "Consolas", "color": "#56d5d0" } },
+        { "id": "collaborate-title", "type": "text", "text": "Your saved edits become\nthe next starting point.", "box": { "x": 124, "y": 190, "w": 1650, "h": 206 }, "style": { "fontSize": 80, "fontWeight": "700", "color": "#f2f8f7" } },
+        { "id": "collaborate-description", "type": "text", "text": "Stable objects, page order, notes and resources stay in the document model.", "box": { "x": 127, "y": 429, "w": 1550, "h": 70 }, "style": { "fontSize": 32, "color": "#a8c6cc" } },
+        { "id": "collaborate-diagram", "type": "diagram", "nodes": [
+          { "id": "agent", "label": "Agent\nplans + designs", "x": 2, "y": 26, "w": 25, "h": 41 },
+          { "id": "file", "label": "Single HTML\nmodel + workbench", "x": 37, "y": 26, "w": 26, "h": 41 },
+          { "id": "human", "label": "Human\nedits + saves", "x": 73, "y": 26, "w": 25, "h": 41 }
+        ], "edges": [{ "from": "agent", "to": "file" }, { "from": "file", "to": "human" }], "box": { "x": 125, "y": 590, "w": 1640, "h": 300 } },
+        { "id": "collaborate-footer", "type": "text", "text": "Continue:  extract-document.js saved.html current.json", "box": { "x": 125, "y": 945, "w": 1550, "h": 54 }, "style": { "fontSize": 26, "fontFamily": "SlidesMono", "pptxFontFamily": "Consolas", "color": "#56d5d0" } }
+      ]
+    }
+  ]
+}

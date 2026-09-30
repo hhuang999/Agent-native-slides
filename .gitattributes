@@ -1,0 +1,3 @@
+# The exported HTML hash is recorded in the checked-in PPTX manifests.
+# Keep its bytes identical on Windows, macOS, and Linux checkouts.
+examples/workflow.html -text

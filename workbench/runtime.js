@@ -39,6 +39,7 @@
       "text/html",
     );
     copy.documentElement.classList.remove("ans-editing", "ans-presenting");
+    copy.querySelector("#ans-theme-style").textContent = "";
     copy.querySelector("#ans-shell").hidden = true;
     for (const n of copy.querySelectorAll(
       "#ans-overview-panel,#ans-speaker-panel,#ans-blackout",
@@ -211,21 +212,37 @@
       n.innerHTML = `<line x1="${Number(o.from.x)}" y1="${Number(o.from.y)}" x2="${Number(o.to.x)}" y2="${Number(o.to.y)}" stroke="${o.color || "#68bed0"}" stroke-width="2"/>`;
     } else if (o.type === "diagram") {
       n = el("div", "ans-diagram");
+      const edges = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "svg",
+      );
+      edges.setAttribute("viewBox", "0 0 100 100");
+      edges.setAttribute("preserveAspectRatio", "none");
+      Object.assign(edges.style, {
+        position: "absolute",
+        inset: "0",
+        width: "100%",
+        height: "100%",
+        pointerEvents: "none",
+      });
       for (const e of o.edges) {
-        let line = el("div", "ans-edge");
         let a = o.nodes.find((x) => x.id === e.from),
           b = o.nodes.find((x) => x.id === e.to);
         if (!a || !b) continue;
-        let dx = b.x - a.x,
-          dy = b.y - a.y;
-        Object.assign(line.style, {
-          left: a.x + 5 + "%",
-          top: a.y + 5 + "%",
-          width: Math.hypot(dx, dy) + "%",
-          transform: `rotate(${Math.atan2(dy, dx)}rad)`,
-        });
-        n.append(line);
+        const line = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "line",
+        );
+        line.setAttribute("x1", a.x + (a.w || 18) / 2);
+        line.setAttribute("y1", a.y + (a.h || 14) / 2);
+        line.setAttribute("x2", b.x + (b.w || 18) / 2);
+        line.setAttribute("y2", b.y + (b.h || 14) / 2);
+        line.style.stroke = "var(--color-accent, #d9b879)";
+        line.style.strokeWidth = "3px";
+        line.style.vectorEffect = "non-scaling-stroke";
+        edges.append(line);
       }
+      n.append(edges);
       for (const a of o.nodes) {
         let box = el("div", "ans-node", a.label);
         Object.assign(box.style, {
@@ -831,10 +848,8 @@
   function applyTheme() {
     const tag = $("#ans-theme-style");
     if (!tag) return;
-    tag.textContent =
-      doc.theme?.variants?.find((v) => v.id === doc.theme.active)?.css ||
-      doc.theme?.css ||
-      "";
+    const variant = doc.theme?.variants?.find((v) => v.id === doc.theme.active);
+    tag.textContent = (doc.theme?.css || "") + "\n" + (variant?.css || "");
     const sel = $("#ans-theme");
     if (sel && sel.options.length === 1) {
       for (const v of doc.theme?.variants || []) {

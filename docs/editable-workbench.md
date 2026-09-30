@@ -4,7 +4,7 @@ New decks use `scripts/build-deck.js document.json deck.html`. The embedded `#an
 
 ## Document model
 
-`version: 1`, stable document/page/object/resource IDs, `title`, `language`, `styleId`, `theme.css`, optional `theme.variants`, `resources`, and ordered `pages`. Each page has `id`, `title`, `notes`, `layout` (`absolute`, `flex`, `grid`), optional background and ordered `objects`. A content object needs `id`, `type` and, for absolute placement, a 1920×1080 pixel `box: {x,y,w,h}`. Flex/grid objects use their container layout and `order`; rendered geometry is measured for PPTX export. The authored theme CSS and object geometry preserve the selected style. Build validation rejects unknown content types and missing image resources.
+`version: 1`, stable document/page/object/resource IDs, `title`, `language`, `styleId`, `theme.css`, optional `theme.variants`, `resources`, and ordered `pages`. Each page has `id`, `title`, `notes`, `layout` (`absolute`, `flex`, `grid`), optional background and ordered `objects`. A content object needs `id`, `type` and, for absolute placement, a 1920×1080 pixel `box: {x,y,w,h}`. Flex/grid objects use their container layout and `order`; rendered geometry is measured for PPTX export. Build embeds local CSS assets into the authoritative model. A selected theme variant is appended to the base CSS, so fonts and shared rules stay available after saving and reopening. Build validation rejects unknown content types and missing image resources.
 
 Minimal build input:
 
@@ -31,7 +31,7 @@ For a full two-style, all-object generator and browser verification, see `script
 
 | Object | HTML editor and saved data | Editable PPTX mapping | Conversion limit |
 |---|---|---|---|
-| Text | Content and typography | Text box | Browser font metrics can differ |
+| Text | Content and typography | Text box; optional `style.pptxFontFamily` names an Office-installed fallback for a bundled webfont | Browser font metrics can differ |
 | Code | Source and typography | Monospace text box | Syntax colors are not mapped |
 | Formula | LaTeX source | Editable source text | Native PowerPoint equation semantics unavailable; logged per object |
 | Image | Replace, alt text, crop offsets; embedded data URI | Independent picture | Crop offset may differ; logged |
@@ -44,6 +44,8 @@ For a full two-style, all-object generator and browser verification, see `script
 | Page order | Duplicate, delete, move | PPTX slide order | None |
 | Animation / reveal | Per-object `none`, `fade`, `rise` and integer `step` | Static final object | HTML motion and reveal sequence omitted and logged |
 | Decorative background | Theme CSS/background motion | Independent static picture behind native objects | Browser-only effects become static; logged |
+
+For a chart whose values are labeled elsewhere on the slide, `style.pptxChartMinimal: true` hides the PowerPoint value axis and grid lines. Leave it unset when the chart itself must show its numeric scale.
 
 All conversions are written to `<output>.pptx.manifest.json`, with source HTML SHA-256, model SHA-256 and ordered page/object IDs. The image PPTX is a separate `--image` mode and contains one picture per slide. PDF prints the current saved HTML or helper snapshot.
 

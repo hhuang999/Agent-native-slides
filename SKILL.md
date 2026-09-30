@@ -70,6 +70,7 @@ Edit or present in that HTML → save → export PDF / editable PPTX / image PPT
 - Read `knowledge/element/elements.md` before the selected style's `design.md`. Its readability and content-fit rules take precedence over small example type sizes in style previews.
 - Read the selected entry in `knowledge/style/font-policy.json`. Use its display, body, and auxiliary faces with the listed Latin offline backups and local CJK fallback. Set the HTML language (`zh-CN`, `en`, or `ja`); I02 uses Simplified Chinese glyph forms when `lang=zh`.
 - Put the relevant `@font-face` rules and selected style rules into `theme.css` in the versioned JSON model. Point local font URLs at files relative to the model JSON; `build-deck.js` embeds them. Remote `@import` and remote CSS assets fail packaging.
+- When a text object uses a bundled webfont, set `style.pptxFontFamily` to a suitable font installed in PowerPoint; inspect the exported deck in Office because webfont names alone do not travel with editable PPTX text.
 - Follow design language from `knowledge/style/[id]/design.md`
 - Pull components from `knowledge/component/`
 - Pull motion snippets from `knowledge/motion/motion.md`

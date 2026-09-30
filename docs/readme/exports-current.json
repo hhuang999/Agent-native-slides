@@ -1,0 +1,20 @@
+{
+  "native": {
+    "slides": 3,
+    "shapes": 23,
+    "pictures": 3,
+    "charts": 1,
+    "workbooks": 1,
+    "notes": 3,
+    "connectors": 2
+  },
+  "image": {
+    "slides": 3,
+    "shapes": 0,
+    "pictures": 3,
+    "charts": 0,
+    "workbooks": 0,
+    "notes": 3,
+    "connectors": 0
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "mode": "image",
+  "source": "examples/workflow.html",
+  "inputSha256": "4d869656a49877b1feabac993a7b7360f701fcdb865b6ae4ab7e50c20ff86b65",
+  "conversions": [
+    {
+      "reason": "Every slide captured as one full-slide image; content is not editable"
+    }
+  ]
+}

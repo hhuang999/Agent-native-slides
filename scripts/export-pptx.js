@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /** Native editable export for workbench decks. --image calls the explicit legacy fidelity path. */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { resolve, relative, isAbsolute } from "node:path";
 import { spawnSync } from "node:child_process";
 import pptxgen from "pptxgenjs";
 import JSZip from "jszip";
@@ -15,6 +15,12 @@ const args = process.argv.slice(2),
     args.find((a, i) => i > 0 && !a.startsWith("--")) ||
       deckPath.replace(/\.html?$/i, image ? ".image.pptx" : ".pptx"),
   );
+const sourceLabel = (() => {
+  const fromCwd = relative(process.cwd(), deckPath);
+  return fromCwd && !fromCwd.startsWith("..") && !isAbsolute(fromCwd)
+    ? fromCwd.replaceAll("\\", "/")
+    : deckPath;
+})();
 if (!args[0] || !existsSync(deckPath)) {
   console.error(
     "Usage: node scripts/export-pptx.js deck.html [output.pptx] [--image]",
@@ -39,8 +45,8 @@ if (image) {
       JSON.stringify(
         {
           mode: "image",
-          source: deckPath,
-          inputSha256: digest(readFileSync(deckPath)),
+          source: sourceLabel,
+          inputSha256: digest(readFileSync(deckPath, "utf8")),
           conversions: [
             {
               reason:
@@ -75,11 +81,11 @@ const SW = 13.333333,
   sy = (y) => (y / 1080) * SH;
 const color = (value) => {
   const v = String(value || "").trim();
-  return /^#[0-9a-f]{6}$/i.test(v) ? v.slice(1) : "FFFFFF";
+  return /^#?[0-9a-f]{6}$/i.test(v) ? v.replace(/^#/, "") : "FFFFFF";
 };
 const manifest = {
   mode: "editable",
-  source: deckPath,
+  source: sourceLabel,
   inputSha256: inputHash,
   documentSha256: modelHash,
   pages: [],
@@ -94,7 +100,7 @@ function addText(slide, text, box, style = {}) {
     y: sy(box.y),
     w: sx(box.w),
     h: sy(box.h),
-    fontFace: style.fontFamily || "Arial",
+    fontFace: style.pptxFontFamily || style.fontFamily || "Arial",
     fontSize: Math.max(6, Number.parseFloat(style.fontSize) || 30) / 2,
     color: color(style.color),
     bold: style.fontWeight === "bold" || Number(style.fontWeight) >= 600,
@@ -293,6 +299,16 @@ function addObject(slide, page, o, b) {
         showSerName: false,
         chartColors: b.palette || ["49D6D0", "E8B964", "8587E9", "F28291"],
         showMarker: o.chartType === "line",
+        ...(st.pptxChartMinimal
+          ? {
+              catAxisLabelColor: color(st.color),
+              catAxisLabelFontFace: "Arial",
+              catAxisLabelFontSize: 15,
+              catAxisLineShow: false,
+              valAxisHidden: true,
+              valGridLine: { style: "none" },
+            }
+          : {}),
       },
     );
     return;

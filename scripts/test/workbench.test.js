@@ -534,6 +534,13 @@ test("overview, theme, presenter, visual reopen, draft recovery, and explicit im
     const slide = await zip.file("ppt/slides/slide1.xml").async("string");
     assert.match(slide, /<p:pic>/);
     assert.doesNotMatch(slide, /<c:chart/);
+    const imageManifest = JSON.parse(
+      readFileSync(imagePptx + ".manifest.json", "utf8"),
+    );
+    assert.equal(
+      imageManifest.inputSha256,
+      createHash("sha256").update(readFileSync(html)).digest("hex"),
+    );
   } finally {
     await browser.close();
   }
@@ -614,7 +621,9 @@ test("flex/grid objects, grouping, and unsupported adapter gate", async () => {
         .evaluate((n) => getComputedStyle(n).display),
       "grid",
     );
-    writeFileSync(html, await page.evaluate(() => ANSWorkbench.serialize()));
+    const serialized = await page.evaluate(() => ANSWorkbench.serialize());
+    assert.match(serialized, /<style id="ans-theme-style"><\/style>/);
+    writeFileSync(html, serialized);
     await page.close();
   } finally {
     await browser.close();
@@ -813,6 +822,69 @@ test("reveal steps advance before pages and exports see the final state", async 
       "1",
     );
     await page.close();
+  } finally {
+    await browser.close();
+  }
+});
+
+test("diagram edges use stage geometry and local theme assets survive reopen", async () => {
+  const source = join(dir, "geometry.json"),
+    html = join(dir, "geometry.html");
+  writeFileSync(
+    join(dir, "decor.png"),
+    Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9K+woAAAAASUVORK5CYII=",
+      "base64",
+    ),
+  );
+  const d = model("A01", "en");
+  d.theme.css =
+    ':root{--color-bg:#0d1e29}.slide{background-image:url("decor.png")}';
+  d.theme.active = "alt";
+  d.theme.variants = [
+    { id: "alt", label: "Alt", css: ":root{--color-accent:#ffffff}" },
+  ];
+  const graph = d.pages[0].objects.find((o) => o.id === "diagram");
+  graph.box = { x: 100, y: 400, w: 500, h: 200 };
+  graph.nodes = [
+    { id: "a", label: "A", x: 20, y: 10, w: 20, h: 20 },
+    { id: "b", label: "B", x: 20, y: 70, w: 20, h: 20 },
+  ];
+  graph.edges = [{ from: "a", to: "b" }];
+  writeFileSync(source, JSON.stringify(d));
+  run("build-deck.js", [source, html]);
+  const browser = await launchChromium();
+  try {
+    const page = await browser.newPage({
+      viewport: { width: 1920, height: 1080 },
+    });
+    await page.goto("file:///" + html.replaceAll("\\", "/"));
+    const height = await page
+      .locator('[data-object-id="diagram"] svg line')
+      .evaluate((n) => n.getBoundingClientRect().height);
+    assert.ok(
+      Math.abs(height - 120) < 4,
+      `vertical edge height ${height} should follow the 200px diagram height`,
+    );
+    assert.match(
+      await page.evaluate(() => ANSWorkbench.document.theme.css),
+      /data:image\/png;base64,/,
+    );
+    assert.match(
+      await page.locator("#ans-theme-style").textContent(),
+      /data:image\/png;base64,/,
+    );
+    writeFileSync(html, await page.evaluate(() => ANSWorkbench.serialize()));
+    await page.close();
+    const reopened = await browser.newPage({
+      viewport: { width: 1920, height: 1080 },
+    });
+    await reopened.goto("file:///" + html.replaceAll("\\", "/"));
+    assert.match(
+      await reopened.locator("#ans-theme-style").textContent(),
+      /data:image\/png;base64,/,
+    );
+    await reopened.close();
   } finally {
     await browser.close();
   }
