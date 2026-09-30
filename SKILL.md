@@ -24,7 +24,7 @@ User picks style
 ↓
 AI generates: complete HTML deck
 ↓
-Edit in Studio → Present → Export PPTX/PDF
+Review in Studio → Present → Export single-file HTML / PDF / PPTX
 ```
 
 ---
@@ -32,7 +32,8 @@ Edit in Studio → Present → Export PPTX/PDF
 ## 8-Step Workflow
 
 ### Step 1 — Read input
-- Accept `.docx` (parse with mammoth.js), `.md`, or `.txt`
+- Accept `.docx`, `.md`, or `.txt`
+- `.docx` → Markdown: `npx --yes mammoth@1.8.0 input.docx --output-format=markdown > input.md`
 - Extract title, author, venue, approximate length
 
 ### Step 2 — Build Deck Plan
@@ -51,7 +52,14 @@ Edit in Studio → Present → Export PPTX/PDF
 ### Step 4 — AI image generation (optional)
 - Only for decorative/atmospheric images (cover background, section divider)
 - If running in Codex: call built-in image tool
-- Otherwise: run `node scripts/imagegen.js "<prompt>" out.png` (AIHubMix, default `gpt-image-2`, falls back to `dall-e-3`); key from `AIHUBMIX_API_KEY` env var only
+- Otherwise: `node scripts/imagegen.js "<prompt>" <deck-dir>/assets/<name>.jpg [--model id] [--size WxH]`
+  - Key from `AIHUBMIX_API_KEY` env var only — never write it into a deck or file
+  - Default `gpt-image-2.5-sunburst`, auto-fallback `gpt-image-2`; also good: `flux-2-pro` (fastest), `gemini-3.1-flash-image`
+  - Ask for a 16:9-ish size (`2048x1152`, `1920x1088`); prompt for empty space where the title sits and say "no text"
+  - Save as `.jpg` — several times smaller than PNG once inlined
+- Embed by relative path, then dim it so text stays readable:
+  `<img class="gen-bg" src="assets/cover.jpg" alt="">` (`position:absolute; inset:0; object-fit:cover; z-index:-1; opacity:.5`)
+  or `background-image: linear-gradient(…), url(assets/cover.jpg)`
 - Data charts always use ECharts — never image API
 
 ### Step 5 — Generate HTML deck
@@ -61,20 +69,21 @@ Edit in Studio → Present → Export PPTX/PDF
 - Fixed 1920×1080 stage, visibility/opacity switching, `?preview=N` support
 - All CDN deps must pin version numbers
 
-### Step 6 — Edit in Studio (optional)
-- Open `studio/editor.html?deck=<path-to-deck.html>` (serve over HTTP, e.g. `npx serve .`)
-- Edit text, images, shapes, speaker notes, animations
-- All elements have `data-oid` auto-assigned by runtime
+### Step 6 — Review in Studio (optional)
+- Serve the skill root over HTTP (`npx serve .`), open `studio/editor.html?deck=<url-path-to-deck.html>`
+- Studio is a viewer: slide thumbnails, Deck Plan notes panel, fullscreen (F), presenter (P), reload (R)
+- It does not edit the deck — make changes in the HTML, then press R
 
 ### Step 7 — Present
-- Keyboard: ← → navigate; F fullscreen; N notes
-- `data-step` attribute for per-element reveal within a slide
-- Speaker mode: separate window with current slide, next slide preview, notes, timer
+- Deck: ← → / Space / PageUp / PageDown navigate; Home / End jump
+- `data-step` attribute for per-element reveal within a slide (see RUNTIME.md §5)
+- Presenter (`studio/presenter.html`, or P in Studio): current + next slide, notes, timer; B blacks out the screen
 
 ### Step 8 — Export
-- **PPTX**: `node scripts/export-pptx.js <deck.html> [deck-plan.json]` → slide layout + speaker notes (not pixel-perfect)
-- **PDF 16:9**: `node scripts/export-pdf.js <deck.html>` (Playwright headless print, `@page { size: 1920px 1080px }`)
-- **HTML**: single file, all resources inline or CDN
+- **Single-file HTML**: `node scripts/inline-assets.js <deck.html> [out.html]` — inlines local images/fonts as data URIs so the deck works when moved or emailed (CDN libraries stay as CDN links)
+- **PDF 16:9**: `node scripts/export-pdf.js <deck.html>` (Playwright headless print, one 1920×1080 page per slide)
+- **PPTX**: `node scripts/export-pptx.js <deck.html> [deck-plan.json]` → one full-slide image per slide + speaker notes (text is not editable)
+- Validate first: `node scripts/check-deck.js <deck.html>` must pass
 
 ---
 

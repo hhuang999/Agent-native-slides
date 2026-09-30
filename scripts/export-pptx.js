@@ -72,6 +72,14 @@ async function exportToPptx() {
   // Wait for fonts
   await page.evaluate(() => document.fonts.ready)
 
+  // Hide on-screen deck chrome (prev/next buttons, dots, counters) so it is not
+  // baked into the slide images — same selectors as the decks' @media print.
+  const HIDE_NAV = `.deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+    #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot, .nav-btn, .nav-arrows,
+    [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+    #slide-info, #prev, #next, #prevBtn, #nextBtn { display: none !important; }`
+  await page.addStyleTag({ content: HIDE_NAV })
+
   // Discover slide count: prefer __deckPlan, fall back to [data-slide] count
   const totalSlides = await page.evaluate(() => {
     if (window.__deckPlan) return window.__deckPlan.total_slides
@@ -108,6 +116,7 @@ async function exportToPptx() {
       // Reload with ?preview=N if __goToSlide not available
       await page.goto(`${fileUrl}?preview=${i}`, { waitUntil: 'networkidle', timeout: 20_000 })
       await page.evaluate(() => document.fonts.ready)
+      await page.addStyleTag({ content: HIDE_NAV })
     }
 
     // Let entrance animations settle (300 ms is enough for CSS transitions)

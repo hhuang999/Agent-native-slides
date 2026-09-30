@@ -577,10 +577,10 @@ document.getElementById('btn-fullscreen').addEventListener('click', () => {
 
 // ── Export buttons (placeholder — invoke scripts/export-*.js) ──
 document.getElementById('btn-export-pptx').addEventListener('click', () => {
-  alert('PPTX export: run scripts/export-pptx.js via Node.js CLI.\nSee _dev/MIGRATION.md for the script skeleton.')
+  alert('PPTX export runs from the command line (skill root):\n\n  node scripts/export-pptx.js <deck.html>')
 })
 document.getElementById('btn-export-pdf').addEventListener('click', () => {
-  alert('PDF export: run scripts/export-pdf.js via Node.js CLI.\nSee _dev/MIGRATION.md for the script skeleton.')
+  alert('PDF export runs from the command line (skill root):\n\n  node scripts/export-pdf.js <deck.html>')
 })
 
 // ── Keyboard shortcuts ────────────────────────────────────

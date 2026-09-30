@@ -7,7 +7,8 @@
     "check": "node check-deck.js",
     "pdf": "node export-pdf.js",
     "pptx": "node export-pptx.js",
-    "imagegen": "node imagegen.js"
+    "imagegen": "node imagegen.js",
+    "inline": "node inline-assets.js"
   },
   "dependencies": {
     "playwright": "^1.49.0",
