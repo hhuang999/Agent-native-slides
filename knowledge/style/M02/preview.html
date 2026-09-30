@@ -174,11 +174,11 @@
 
 .s1-display {
   font-family: var(--f-serif);
-  font-size: var(--t-display);
+  font-size: 3.6rem;  /* 37-word assertion: --t-display would overflow the slide */
   font-weight: 300;
   line-height: var(--lh-display);
   color: var(--c-ink);
-  max-width: 1080px;
+  max-width: 1400px;
   letter-spacing: -0.01em;
 }
 
@@ -472,6 +472,65 @@
   .nav-btn, .nav-dot { transition: none; }
 }
 </style>
+<style id="deck-print-css">
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  *, *::before, *::after {
+    animation: none !important; transition: none !important;
+  }
+  html, body {
+    width: 1920px !important; height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    align-items: unset !important; justify-content: unset !important;
+  }
+
+  /* Reset EVERY element that contains a .slide — by structure, not by name.
+     Deck wrappers are called #stage, .stage, #stage-wrapper, #deck-stage, ...
+     and any one of them keeping `overflow:hidden` + a fixed height clamps the
+     printed document to a single page. `:not(.slide)` keeps this off the
+     slides themselves (each .slide is :has()-matched by its own descendants). */
+  body *:has(.slide):not(.slide) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important; max-height: none !important;
+    width: auto !important; max-width: none !important;
+    transform: none !important;
+    display: block !important;
+    align-items: unset !important; justify-content: unset !important;
+    flex: none !important;
+  }
+
+  /* The slide's own display is preserved (flex/grid/block) — RUNTIME.md §7:
+     never `display:none`, or the PDF keeps only the current page. */
+  .slide {
+    position: relative !important; inset: auto !important;
+    display: flex !important;
+    visibility: visible !important; opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 1920px !important; height: 1080px !important;
+    min-height: 1080px !important; max-height: 1080px !important;
+    overflow: hidden !important;
+    break-after: page; page-break-after: always;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+
+  .slide .reveal, .slide [data-step] {
+    opacity: 1 !important; transform: none !important;
+    visibility: visible !important;
+  }
+
+  .deck-nav, .deck-controls, .wh-ui, .hwp-ui,
+  #nav, #nav-bar, #navBar, .nav-bar, .nav-dots, .nav-dot,
+  [id*="nav-"], [id*="-nav"], [id*="navBar"], [id*="nav_"],
+  #slide-info { display: none !important; }
+  /* __PRINT_CSS_V4__ */
+}
+</style>
 </head>
 <body>
 <div id="deck-wrapper">
@@ -480,7 +539,7 @@
     <!-- ══════════════════════════════════════════════════════════════
          SLIDE 1 — TITLE
     ══════════════════════════════════════════════════════════════════ -->
-    <div class="slide active" id="slide-1" role="region" aria-label="Slide 1 of 3">
+    <div class="slide is-active" data-slide="1" id="slide-1" role="region" aria-label="Slide 1 of 3">
       <div class="slide-bg" aria-hidden="true"></div>
       <div class="slide-content">
         <div class="s1-upper">
@@ -522,7 +581,7 @@
     <!-- ══════════════════════════════════════════════════════════════
          SLIDE 2 — EVIDENCE
     ══════════════════════════════════════════════════════════════════ -->
-    <div class="slide" id="slide-2" role="region" aria-label="Slide 2 of 3">
+    <div class="slide" data-slide="2" id="slide-2" role="region" aria-label="Slide 2 of 3">
       <div class="slide-bg" aria-hidden="true"></div>
       <div class="slide-content">
         <div class="section-marker s2-marker">
@@ -573,7 +632,7 @@
     <!-- ══════════════════════════════════════════════════════════════
          SLIDE 3 — COMPARISON
     ══════════════════════════════════════════════════════════════════ -->
-    <div class="slide" id="slide-3" role="region" aria-label="Slide 3 of 3">
+    <div class="slide" data-slide="3" id="slide-3" role="region" aria-label="Slide 3 of 3">
       <div class="slide-bg" aria-hidden="true"></div>
       <div class="slide-content">
         <div class="section-marker s3-marker">
@@ -652,9 +711,9 @@
 <nav id="nav-bar" role="navigation" aria-label="Slide navigation">
   <button class="nav-btn" id="btn-prev" aria-label="Previous slide">Prev</button>
   <div class="nav-dots" role="tablist" aria-label="Slides">
-    <button class="nav-dot active" role="tab" aria-selected="true"  aria-label="Slide 1" data-slide="1"></button>
-    <button class="nav-dot"        role="tab" aria-selected="false" aria-label="Slide 2" data-slide="2"></button>
-    <button class="nav-dot"        role="tab" aria-selected="false" aria-label="Slide 3" data-slide="3"></button>
+    <button class="nav-dot active" role="tab" aria-selected="true"  aria-label="Slide 1" data-dot="1"></button>
+    <button class="nav-dot"        role="tab" aria-selected="false" aria-label="Slide 2" data-dot="2"></button>
+    <button class="nav-dot"        role="tab" aria-selected="false" aria-label="Slide 3" data-dot="3"></button>
   </div>
   <button class="nav-btn" id="btn-next" aria-label="Next slide">Next</button>
 </nav>
@@ -665,12 +724,13 @@ window.__currentSlide = 1;
 
 window.__deckPlan = {
   totalSlides: 3,
+  total_slides: 3,
   style: 'M02',
   styleName: 'ink-illustration',
   slides: [
-    { n: 1, type: 'title',      headline: 'Independent Literary Publishers With Annual Print Runs Below 5,000 Copies Generated 34 Percent Higher Per-Title Review Coverage…' },
-    { n: 2, type: 'evidence',   headline: 'Literary Titles From Independent Presses Received Awards Recognition at 2.7 Times the Rate…' },
-    { n: 3, type: 'comparison', headline: 'Independent Presses That Combined Direct-to-Reader Subscription Models With Bookstore Partnerships Achieved the Highest Revenue Stability…' }
+    { index: 1, n: 1, type: 'title',      headline: 'Independent Literary Publishers With Annual Print Runs Below 5,000 Copies Generated 34 Percent Higher Per-Title Review Coverage…' },
+    { index: 2, n: 2, type: 'evidence',   headline: 'Literary Titles From Independent Presses Received Awards Recognition at 2.7 Times the Rate…' },
+    { index: 3, n: 3, type: 'comparison', headline: 'Independent Presses That Combined Direct-to-Reader Subscription Models With Bookstore Partnerships Achieved the Highest Revenue Stability…' }
   ]
 };
 
@@ -689,28 +749,15 @@ scaleStage();
 
 /* ── goToSlide ───────────────────────────────────────────────────── */
 window.__goToSlide = function(n) {
-  var total = window.__deckPlan.totalSlides;
-  if (n < 1 || n > total) return;
-  var slides = document.querySelectorAll('.slide');
-  var dots   = document.querySelectorAll('.nav-dot');
-
-  slides.forEach(function(s) { s.classList.remove('active'); s.style.display = 'none'; });
-  dots.forEach(function(d, i) {
-    d.classList.remove('active');
-    d.setAttribute('aria-selected', 'false');
+  var total = window.__deckPlan.total_slides;
+  n = isNaN(+n) ? 1 : Math.min(Math.max(1, Math.round(+n)), total);
+  document.querySelectorAll('.slide').forEach(function(s, i) {
+    s.classList.toggle('is-active', i + 1 === n);
   });
-
-  var target = document.getElementById('slide-' + n);
-  if (target) {
-    target.style.display = 'flex';
-    target.classList.add('active');
-  }
-  var dot = document.querySelector('[data-slide="' + n + '"]');
-  if (dot) {
-    dot.classList.add('active');
-    dot.setAttribute('aria-selected', 'true');
-  }
-
+  document.querySelectorAll('.nav-dot').forEach(function(d, i) {
+    d.classList.toggle('active', i + 1 === n);
+    d.setAttribute('aria-selected', i + 1 === n ? 'true' : 'false');
+  });
   window.__currentSlide = n;
 };
 
@@ -725,7 +772,7 @@ document.getElementById('btn-next').addEventListener('click', function() {
 /* ── DOT BUTTONS ─────────────────────────────────────────────────── */
 document.querySelectorAll('.nav-dot').forEach(function(dot) {
   dot.addEventListener('click', function() {
-    window.__goToSlide(parseInt(dot.getAttribute('data-slide'), 10));
+    window.__goToSlide(parseInt(dot.getAttribute('data-dot'), 10));
   });
 });
 
@@ -749,6 +796,17 @@ document.addEventListener('keydown', function(e) {
     var n = parseInt(preview, 10);
     if (!isNaN(n)) window.__goToSlide(n);
   }
+})();
+
+/* ── Runtime contract (RUNTIME.md §3.1): Home/End, preview/print modes ── */
+(function () {
+  var q = new URLSearchParams(location.search);
+  if (q.has('preview')) document.documentElement.classList.add('preview-mode');
+  if (q.has('print'))   document.documentElement.classList.add('print-mode');
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Home') window.__goToSlide(1);
+    else if (e.key === 'End') window.__goToSlide(window.__deckPlan.total_slides);
+  });
 })();
 </script>
 </body>
