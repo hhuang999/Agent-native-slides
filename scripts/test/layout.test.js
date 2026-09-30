@@ -121,7 +121,7 @@ test('check-deck reports all three layout failures; both exporters reject them',
     assert.ok(!readFileSync(report, 'utf8').includes('这段中文文字故意超出'))
     const [pdf, pptx] = await Promise.all([
       runScript('export-pdf.js', [bad]),
-      runScript('export-pptx.js', [bad]),
+      runScript('export-pptx.js', [bad, '--image']),
     ])
     assert.equal(pdf.code, 1)
     assert.match(pdf.output, /PDF export stopped: print slide 1/)

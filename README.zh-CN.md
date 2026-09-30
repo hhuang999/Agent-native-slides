@@ -5,12 +5,12 @@
 **一个让 AI 编程助手学会"设计"演示文稿的 Agent Skill，不是模板包。**
 
 输入 `.docx` / `.md` / `.txt`，产出 1920×1080 的动态 HTML 幻灯片：**53 种可实时预览的风格**、演讲者备注、演讲者视图，
-并可导出单文件 HTML / PDF / PPTX。
+并可在交付的单文件 HTML 内编辑、保存，导出 PDF、元素级可编辑 PPTX 或明确标注的整页图片版 PPTX。
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 ![Styles](https://img.shields.io/badge/风格-53-7c3aed)
 ![Families](https://img.shields.io/badge/风格家族-15-0ea5e9)
-![Build](https://img.shields.io/badge/构建步骤-无-lightgrey)
+![Build](https://img.shields.io/badge/构建步骤-必需-0ea5e9)
 ![Agents](https://img.shields.io/badge/适用-Claude_Code_·_Codex_·_Cursor_·_任意_Agent-orange)
 
 [English](README.md) · **中文**
@@ -36,7 +36,7 @@
 | 📊 **科研级组件** | ECharts 图表、KaTeX 公式、代码高亮、手绘 SVG 的 ML 示意图（模型架构、注意力、检索流程），全部由 CSS token 统一着色。 |
 | 🖼️ **AI 配图（可选）** | 配置 AIHubMix 或兼容 OpenAI Images API 的服务，生成封面和章节配图，再内联成单个可移动的文件。数据图表永远不走生图模型。 |
 | ✅ **统一的运行时合同** | 每个 deck 都提供 `__goToSlide(n)`、`?preview=N`、`?print=1`、自适应窗口缩放和统一的打印样式（`knowledge/RUNTIME.md`）。`check-deck.js` 负责校验，导出和演讲工具因此开箱即用。仓库自带的 57 个 deck 全部通过。 |
-| 📤 **真正可用的导出** | 单文件 HTML（图片、字体内联）、16:9 PDF（每页一张幻灯片）、带演讲者备注的 PPTX。 |
+| 📤 **真正可用的导出** | 内嵌工作台的单文件 HTML、16:9 PDF、带备注的元素级可编辑 PPTX，以及独立的整页图片版 PPTX。 |
 | 🔓 **只用免费开源资源** | 所有依赖开源并锁定版本；内置中文和等宽字体（OFL）。付费平台仅作视觉参考。 |
 
 ## 安装
@@ -58,7 +58,7 @@ git clone https://github.com/hhuang999/agent-native-slides ~/.codex/skills/agent
 
 **其他 Agent**（Cursor、Gemini CLI、OpenCode……）：把本仓库或 `SKILL.md` 发给 Agent 即可。`SKILL.md` 是入口，其余文件按需加载。
 
-校验和导出脚本需要 Node.js 18+：
+生成、校验和导出脚本需要 Node.js 18+：
 
 ```bash
 cd <skill 目录>/scripts && npm install
@@ -80,7 +80,7 @@ flowchart LR
   A[".docx / .md / .txt"] --> B["Deck Plan JSON<br/>论点 · 证据 · 备注"]
   B --> C["2–3 个动态风格预览"]
   C -->|你来挑| D["生成 HTML deck<br/>design.md + 组件 + 动效"]
-  D --> E["check-deck.js 校验"]
+  D --> E["build-deck.js 打包 + check-deck.js 校验"]
   E --> F["演示<br/>演讲者视图"]
   E --> G["导出<br/>HTML · PDF · PPTX"]
   B -. 可选 .-> H["AI 封面配图<br/>已配置的生图服务"] -.-> D
@@ -90,10 +90,26 @@ flowchart LR
 2. **规划**：Deck Plan JSON（`prompts/deck-plan-schema.md`）把简短的上屏 `visible_text` 与详细演讲备注分开。100–200 词是输入材料的规划块，不是每页可见文字额度。
 3. **选风格**：按情绪 × 场合检索 `knowledge/style/index.json`，展示 2–3 个动态预览，这一步从不跳过。
 4. **配图（可选）**：`imagegen.js` 生成装饰性配图；图表始终用 ECharts。
-5. **生成**：按所选风格的 `design.md` 和 `knowledge/element/elements.md` 的通用可读性规则写出 HTML；先精简、重排或拆页，再考虑字号微调。
-6. **审阅**：Studio 查看器显示缩略图和备注。
-7. **演示**：键盘翻页、`data-step` 逐项揭示、演讲者视图。
-8. **导出**：字体加载后，`check-deck` 逐页检查屏幕与打印版面的文字越界、裁切和重叠；PDF/PPTX 导出也会检查实际捕获的版面。
+5. **生成**：按所选风格的 `design.md` 创作版本化对象文档和主题 CSS，运行 `node scripts/build-deck.js document.json deck.html` 打包成单文件 HTML。未知内容对象会明确报错。
+6. **审阅和编辑**：打开交付的 HTML，点击“Edit deck”。页面、对象、图层、备注、总览、撤销重做、保存和草稿恢复都在文件内。
+7. **演示**：键盘翻页，`O` 页面总览，`P` 演讲者视图，`B` 黑屏。
+8. **导出**：运行 `check-deck.js`，再从已保存 HTML 导出 PDF 或默认可编辑 PPTX。未保存编辑可交给本地助手直接导出；整页图片 PPTX 使用独立的 `--image` 模式。
+
+### 可编辑工作台与导出
+
+```bash
+node scripts/build-deck.js document.json deck.html
+node scripts/check-deck.js deck.html --font-fallback
+node scripts/export-pptx.js deck.html                 # 元素级可编辑
+node scripts/export-pptx.js deck.html --image         # 整页图片版
+node scripts/export-pdf.js deck.html
+node scripts/export-helper.js                        # 工作台未保存快照导出
+node scripts/extract-document.js saved.html current.json  # 以用户保存版本继续 AI 修改
+```
+
+`build-deck.js` 会将运行时、工作台和本地资源打进单文件 HTML。内嵌 `#ans-document` 是唯一保存权威；DOM 和 `__deckPlan` 由它派生。直接写回磁盘需要浏览器提供 File System Access API 并由用户授权；其他浏览器可下载仍可编辑的 HTML 副本。工作台会保存浏览器草稿、覆盖前备份并检查关联文件的磁盘变化。本地助手从工作台接收未保存快照，记录用于 PDF/PPTX 导出的 SHA-256。默认 PPTX 保留文字、形状、连线、图片、表格、关系图与支持的图表为独立对象，逐对象转换限制见[能力矩阵](docs/editable-workbench.md)。
+
+原有 53 种风格仍决定页面设计。HHB-HTML-PPT 对应编辑、文件保存与原生导出体验；lewislulu/html-ppt-skill 对应主题、页面总览、动效和演讲者体验。独立的 `studio/editor.html` 仍可查看旧 HTML；旧文稿不自动转换，可用 `--image` 导出 PPTX。
 
 ### 文字容量与可读性
 
@@ -402,8 +418,7 @@ IMAGE_MODEL=your-image-model
 
 ```bash
 node scripts/imagegen.js "soft aurora over dark sea, empty left third, no text" deck/assets/cover.jpg --size 2048x1152
-# 在 deck 里以 assets/cover.jpg 引用，然后打包成单个可移动的文件：
-node scripts/inline-assets.js deck/deck.html
+# 在对象模型的资源 path 中引用图片，然后运行 build-deck.js 打包
 ```
 
 运行 `node --test scripts/test/imagegen.test.js`，可用本地模拟服务验证 AIHubMix 默认设置、原生接口和自定义 URL 的调用流程，不会产生真实生图费用；测试还会检查服务端错误信息不会泄漏密钥。`imagegen.js` 不会把密钥写入幻灯片或输出到日志。
@@ -440,10 +455,11 @@ node scripts/inline-assets.js deck/deck.html
 </tr>
 </table>
 
-两者都用 `?preview=N` 加载 deck 本身，所以和观众看到的 CSS、字体、主题完全一致。Studio 只是查看器；要改内容就改 HTML，然后按 `R` 刷新。
+独立 Studio 用 `?preview=N` 加载文稿。Studio 仍是查看器；新文稿在交付 HTML 内的工作台直接编辑。
 
 ```
 Deck        ← → Space PgUp PgDn   翻页            Home / End   首页 / 末页
+            O 页面总览   P 内嵌演讲者视图   B 黑屏
             ?preview=N            只显示第 N 页，无控件
             ?print=1              打印版式
 Studio      F 全屏   P 演讲者视图   R 刷新   ? 帮助
@@ -457,9 +473,13 @@ Studio 需要用 HTTP 打开 skill 根目录（`npx serve .`），然后访问 `
 | 命令 | 结果 |
 |---|---|
 | `node scripts/check-deck.js deck.html [--json report.json] [--font-fallback]` | 校验运行时及屏幕/打印文字版面；`--font-fallback` 还会在阻断外部字体后复查两种版面 |
-| `node scripts/inline-assets.js deck.html [out.html]` | **单文件 HTML**：本地图片和字体转为 data URI，移动或发邮件都不会丢图 |
+| `node scripts/build-deck.js document.json deck.html` | 校验可编辑对象模型，将运行时、工作台、字体和图片打包成单文件 HTML |
+| `node scripts/extract-document.js saved.html current.json` | 从用户保存的 HTML 提取最新模型供 AI 继续修改 |
+| `node scripts/inline-assets.js old.html [out.html]` | 仅供旧文稿内联资源 |
 | `node scripts/export-pdf.js deck.html [out.pdf]` | **PDF**，16:9，每页一张 1920×1080；写出前检查打印版面文字 |
-| `node scripts/export-pptx.js deck.html [plan.json] [out.pptx]` | **PPTX**：每页一张整页图片 + 演讲者备注（页面文字不可编辑）；逐页截图前检查文字 |
+| `node scripts/export-pptx.js deck.html [out.pptx]` | **默认可编辑 PPTX**：原生对象、备注、输入哈希与逐对象转换清单 |
+| `node scripts/export-pptx.js deck.html [out.pptx] --image` | **图片版 PPTX**：每页一张整图 |
+| `node scripts/export-helper.js` | 为工作台当前未保存快照提供本地导出助手 |
 | `node scripts/imagegen.js "<prompt>" out.jpg` | 通过已配置的服务生成装饰性配图 |
 
 ## 目录结构
@@ -473,7 +493,8 @@ knowledge/
   style/              53 × { design.md, preview.html } + index.json
   motion/             背景氛围、入场 / 强调 / 数据动效
 prompts/              Deck Plan JSON schema
-scripts/              check-deck · inline-assets · export-pdf · export-pptx · imagegen
+scripts/              build-deck · extract-document · check-deck · export-pdf · export-pptx · export-helper · imagegen
+workbench/            内嵌编辑器运行时与独立界面样式
 studio/               editor.html（查看器）· presenter.html
 assets/fonts/         内置中文和等宽字体（SIL OFL 1.1）
 docs/readme/          仅用于 README 的图片，运行时不需要
@@ -486,7 +507,7 @@ SOURCES.md            所有外部资源的版本与许可证
 - **论点先行。** 每页标题都是一个完整句子的论点，正文是它的证据。
 - **让人做反应。** 真实的动态预览胜过一堆形容词。
 - **合同胜过约定。** 一个很小的运行时 API，让每个 deck 都可校验、可演示、可导出。
-- **单文件更长寿。** 无构建步骤、CDN 版本锁定，还能内联成完全可移动的单文件。
+- **单文件更长寿。** 必经打包命令把工作台和本地资源写入一份可移动的 HTML。
 
 ## 许可证
 

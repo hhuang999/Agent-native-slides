@@ -5,12 +5,12 @@
 **An agent skill that teaches your coding agent to *design* presentations — not fill templates.**
 
 Give it a `.docx` / `.md` / `.txt`. Get back an animated 1920×1080 HTML deck in one of **53 live styles**,
-with speaker notes, a presenter view, and single-file HTML / PDF / PPTX export.
+with speaker notes, an embedded editing workbench, and single-file HTML / PDF / editable PPTX export.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 ![Styles](https://img.shields.io/badge/styles-53-7c3aed)
 ![Families](https://img.shields.io/badge/style_families-15-0ea5e9)
-![Build](https://img.shields.io/badge/build_step-none-lightgrey)
+![Build](https://img.shields.io/badge/build_step-required-0ea5e9)
 ![Agents](https://img.shields.io/badge/works_with-Claude_Code_·_Codex_·_Cursor_·_any_agent-orange)
 
 **English** · [中文](README.zh-CN.md)
@@ -36,7 +36,7 @@ Most slide skills hand the agent a pile of templates. This one hands it a **desi
 | 📊 **Research-grade components** | ECharts charts, KaTeX formulas, highlighted code, and hand-drawn SVG diagrams for ML (architectures, attention, retrieval pipelines) — all themed by CSS tokens. |
 | 🖼️ **AI imagery, optional** | Configure AIHubMix or an OpenAI Images API compatible service for cover and section art, then inline it into a single portable file. Data charts never go through an image model. |
 | ✅ **One runtime contract** | Every deck exposes `__goToSlide(n)`, `?preview=N`, `?print=1`, fit-to-window scaling and a shared print stylesheet (`knowledge/RUNTIME.md`). `check-deck.js` validates it, so export and presenter tools just work. All 57 bundled decks pass. |
-| 📤 **Real exports** | Single-file HTML (images and fonts inlined), 16:9 PDF (one slide per page), PPTX with speaker notes. |
+| 📤 **Real exports** | Single-file editable HTML, 16:9 PDF, native editable PPTX with notes, and an explicit full-slide-image PPTX option. |
 | 🔓 **Free and open only** | Every dependency is open source with pinned versions; CJK and mono fonts (OFL) are bundled. Paid platforms are cited as visual reference only. |
 
 ## Install
@@ -58,7 +58,7 @@ git clone https://github.com/hhuang999/agent-native-slides ~/.codex/skills/agent
 
 **Other agents** (Cursor, Gemini CLI, OpenCode, …): point the agent at this repo or at `SKILL.md`. It is the entry point and loads the rest on demand.
 
-The check / export scripts need Node.js 18+:
+The build / check / export scripts need Node.js 18+:
 
 ```bash
 cd <skill-dir>/scripts && npm install
@@ -80,7 +80,7 @@ flowchart LR
   A[".docx / .md / .txt"] --> B["Deck Plan JSON<br/>claims · evidence · notes"]
   B --> C["2–3 live style previews"]
   C -->|you pick| D["Generate HTML deck<br/>design.md + components + motion"]
-  D --> E["check-deck.js"]
+  D --> E["build-deck.js + check-deck.js"]
   E --> F["Present<br/>presenter view"]
   E --> G["Export<br/>HTML · PDF · PPTX"]
   B -. optional .-> H["AI cover art<br/>configured image service"] -.-> D
@@ -90,10 +90,26 @@ flowchart LR
 2. **Plan**: the Deck Plan JSON (`prompts/deck-plan-schema.md`) separates short on-slide `visible_text` from fuller speaker notes. The 100–200-word planning chunks are source material, not slide copy.
 3. **Pick a style**: the agent queries `knowledge/style/index.json` by mood × occasion and shows you 2–3 live previews. It never skips this step.
 4. **Images (optional)**: `imagegen.js` makes decorative art; charts stay in ECharts.
-5. **Generate**: a single HTML deck following the chosen `design.md` and shared readability rules in `knowledge/element/elements.md`. Shorten copy, change layout, or split a slide before reducing type size.
-6. **Review**: a Studio viewer shows thumbnails and notes.
-7. **Present**: keyboard navigation, `data-step` reveals, presenter view.
-8. **Export**: after fonts load, `check-deck` checks each slide for text overflow, clipping, and overlap in screen and print layouts. Then inline / PDF / PPTX; PDF and PPTX exports check their capture layouts too.
+5. **Generate**: author a versioned object document and style CSS from the chosen `design.md`, then run `node scripts/build-deck.js document.json deck.html`. Unknown content objects fail validation.
+6. **Review and edit**: open that HTML and choose **Edit deck**. Pages, objects, layers, notes, theme variants, overview, undo/redo, save and draft recovery are built in.
+7. **Present**: keyboard navigation, overview (`O`), presenter view (`P`) and blackout (`B`).
+8. **Export**: run `check-deck.js`, then export saved HTML to PDF or editable PPTX. The workbench can submit unsaved snapshots to a local helper. The image PPTX is a separate `--image` mode.
+
+### Editable workbench and exports
+
+```bash
+node scripts/build-deck.js document.json deck.html
+node scripts/check-deck.js deck.html --font-fallback
+node scripts/export-pptx.js deck.html                 # editable PowerPoint objects
+node scripts/export-pptx.js deck.html --image         # full-slide images
+node scripts/export-pdf.js deck.html
+node scripts/export-helper.js                        # current unsaved snapshot from workbench
+node scripts/extract-document.js saved.html current.json  # continue AI editing from saved state
+```
+
+`build-deck.js` embeds its runtime, workbench and local resources into one HTML file. The saved `#ans-document` model is authoritative; the DOM and `__deckPlan` are derived. Direct disk writes require a browser that offers the File System Access API and user permission. Other browsers can download an editable HTML copy. The workbench keeps a browser draft and checks disk changes before overwriting an associated file. The local helper accepts the current unsaved HTML snapshot and reports the SHA-256 used for PDF/PPTX export. Native export keeps text, shapes, connectors, pictures, tables, diagrams and supported charts as separate PowerPoint objects, with a JSON manifest listing conversions and limitations. See [the object capability matrix](docs/editable-workbench.md).
+
+The existing 53 style references still determine page composition. HHB-HTML-PPT informed editor, file and export behavior; lewislulu/html-ppt-skill informed themes, overview, animation and presenter experience. The separate `studio/editor.html` remains a read-only viewer for existing HTML. Existing decks are not auto-converted; use `--image` for their PPTX export.
 
 ### Text fit and readability
 
@@ -402,8 +418,7 @@ This adapter sends a Bearer token and JSON `{model,prompt,n:1,size}` (plus `qual
 
 ```bash
 node scripts/imagegen.js "soft aurora over dark sea, empty left third, no text" deck/assets/cover.jpg --size 2048x1152
-# reference it as assets/cover.jpg in the deck, then make one portable file:
-node scripts/inline-assets.js deck/deck.html
+# reference deck/assets/cover.jpg from a model resource path, then run build-deck.js
 ```
 
 Run `node --test scripts/test/imagegen.test.js` to verify the default AIHubMix settings and the native and custom URL request flows against local mock servers. The tests make no billable image API calls and check that server error text cannot leak the key. Secrets are never inserted into deck files or printed by `imagegen.js`.
@@ -440,10 +455,11 @@ Async-only models (`flux-2-*`) need async tasks enabled in the AIHubMix console.
 </tr>
 </table>
 
-Both previews load the deck itself with `?preview=N`, so they use the same CSS, fonts and theme as the audience view. The Studio is a viewer; to change a deck, edit the HTML and press `R`.
+Both separate Studio previews load the deck with `?preview=N`. Studio remains a viewer; new decks use the workbench inside their delivered HTML for editing.
 
 ```
 Deck        ← → Space PgUp PgDn   navigate        Home / End   first / last slide
+            O overview   P embedded presenter   B blackout
             ?preview=N            one slide, no chrome
             ?print=1              print layout
 Studio      F fullscreen   P presenter   R reload   ? help
@@ -457,9 +473,13 @@ Serve the skill root over HTTP for the Studio (`npx serve .`), then open `studio
 | Command | Output |
 |---|---|
 | `node scripts/check-deck.js deck.html [--json report.json] [--font-fallback]` | Validates runtime and text geometry in screen/print; `--font-fallback` also checks both layouts with remote fonts blocked |
-| `node scripts/inline-assets.js deck.html [out.html]` | **Single-file HTML**: local images and fonts become data URIs, so the deck survives being moved or emailed |
+| `node scripts/build-deck.js document.json deck.html` | Validates the editable model and packages runtime, workbench, fonts and pictures into one HTML |
+| `node scripts/extract-document.js saved.html current.json` | Extracts the latest user-saved model for subsequent AI revisions |
+| `node scripts/inline-assets.js old.html [out.html]` | Legacy deck asset inlining |
 | `node scripts/export-pdf.js deck.html [out.pdf]` | **PDF**, 16:9, one 1920×1080 page per slide; checks print text layout before writing |
-| `node scripts/export-pptx.js deck.html [plan.json] [out.pptx]` | **PPTX**: one full-bleed image per slide plus speaker notes (slide text is not editable); checks each capture before writing |
+| `node scripts/export-pptx.js deck.html [out.pptx]` | **Default editable PPTX**: native objects, notes, source hash and conversion manifest |
+| `node scripts/export-pptx.js deck.html [out.pptx] --image` | **Image PPTX**: one full-slide image per page |
+| `node scripts/export-helper.js` | Loopback export helper for current unsaved workbench snapshots |
 | `node scripts/imagegen.js "<prompt>" out.jpg` | AI decorative image via the configured service |
 
 ## Repository layout
@@ -473,7 +493,8 @@ knowledge/
   style/              53 × { design.md, preview.html } + index.json
   motion/             background atmospheres, entrance / emphasis / data motion
 prompts/              Deck Plan JSON schema
-scripts/              check-deck · inline-assets · export-pdf · export-pptx · imagegen
+scripts/              build-deck · extract-document · check-deck · export-pdf · export-pptx · export-helper · imagegen
+workbench/            embedded editor runtime and isolated UI styling
 studio/               editor.html (viewer) · presenter.html
 assets/fonts/         bundled CJK + mono fonts (SIL OFL 1.1)
 docs/readme/          README artwork only — not needed at runtime
@@ -486,7 +507,7 @@ SOURCES.md            every external resource with version and license
 - **Claim first.** Every slide title is a full-sentence assertion; the body is its evidence.
 - **Let people react.** Real, animated previews beat adjectives.
 - **Contracts over conventions.** One small runtime API makes every deck checkable, presentable and exportable.
-- **Single files age well.** No build step, pinned CDN versions, and an inliner for fully portable decks.
+- **Single files age well.** The build step packages the editor and local assets, producing one portable HTML deck.
 
 ## License
 

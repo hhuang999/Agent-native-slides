@@ -2,6 +2,8 @@
 
 演讲稿转换的核心合同：在生成任何 HTML 之前确认内容结构。
 
+Deck Plan 仅用于内容规划。新幻灯片必须把它转成 `docs/editable-workbench.md` 的版本化页面/对象模型，运行 `scripts/build-deck.js` 交付。以后修改以用户保存的 HTML 中 `#ans-document` 为准；`__deckPlan` 是兼容查看器的派生数据。每个标题、数据图、关系节点、代码、公式和图片都应成为有稳定 ID 的对象；没有编辑和 PPTX 导出适配器的内容类型应在生成时明确失败。
+
 ---
 
 ## Schema 定义

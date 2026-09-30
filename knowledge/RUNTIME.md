@@ -79,7 +79,7 @@ if (q.has('preview')) {
 
 ## 3.1 Runtime API 合同（所有 deck / preview.html / demo 必须实现）
 
-消费方：`scripts/export-pptx.js`（循环 `__goToSlide(1..total_slides)` 截图）、`scripts/export-pdf.js`（`?print=1`）、`studio/editor.html` 与 `studio/presenter.html`（`?preview=N`、`__deckPlan.total_slides`、`__deckPlan.slides[n-1].speaker_notes`）、`scripts/check-deck.js`（合同校验）。
+消费方：`scripts/export-pptx.js`（新文稿读取内嵌对象模型并测量实际布局；`--image` 才循环截图）、`scripts/export-pdf.js`（`?print=1`）、`studio/editor.html` 与 `studio/presenter.html`（`?preview=N`、`__deckPlan.total_slides`、`__deckPlan.slides[n-1].speaker_notes`）、`scripts/check-deck.js`（合同校验）。新文稿的 `__deckPlan` 由 `#ans-document` 派生，不能作为保存权威。
 
 | 项 | 要求 |
 |----|------|
@@ -257,9 +257,12 @@ function advanceStep() {
 |------|------|------|
 | HTML | 直接交付单文件 | 主产物，所有资源内联或 CDN（版本号 pin） |
 | PDF 16:9 | `scripts/export-pdf.js` → Playwright headless print（`?print=1`） | `@page { size: 1920px 1080px; margin: 0 }` |
-| PPTX | `scripts/export-pptx.js` → Playwright 截图 + pptxgenjs | 每页整图 + 演讲者注释；非可编辑，标注"仅供演示" |
+| PPTX 默认 | `scripts/export-pptx.js` → 对象模型 + 布局测量 + pptxgenjs | 元素级可编辑；逐对象转换清单与输入 SHA-256 |
+| PPTX 保真 | `scripts/export-pptx.js --image` → Playwright 截图 + pptxgenjs | 每页整图，明确标注图片版 |
 
-PDF 导出前会检查打印版面，PPTX 导出前会检查逐页截图版面；发现文字越界、裁切或重叠时停止导出。交付前仍应打开导出的 PDF/PPTX 核对页数和视觉效果。
+PDF 与图片版 PPTX 在导出前检查其捕获版面；默认可编辑 PPTX 验证对象模型并测量每个对象的屏幕布局。交付前运行 `check-deck.js`，并核对导出的视觉效果与原生对象。
+
+新文稿对象协议、工作台保存与导出路径、逐对象限制见 `docs/editable-workbench.md`。新文稿的打包命令会拒绝无适配器的内容对象；导出必须读取已保存 HTML 或本地助手收到的当前快照。旧文稿继续使用原有截图导出路径。
 
 PDF 导出 CSS（`page.pdf()` 会自动启用 print media；舞台和页面改为文档流，每页一张 1920×1080）：
 
@@ -304,7 +307,7 @@ lottie-web:    https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.m
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
 ```
 
-53 种风格的标题、正文、辅助字体及离线英文字体备选见 `knowledge/style/font-policy.json`。每个 `preview.html` 加载 `knowledge/style/font-fallback.css`，其中的本地简体中文字体使用 `font-display: swap` 与 CJK `unicode-range`，避免覆盖风格原有的拉丁字形。生成的独立 deck 应把对应 `@font-face` 规则写入自己的 `<style>`，调整 `assets/fonts/` 路径后用 `inline-assets.js` 内联；不能依赖 skill 目录里的相对 CSS 链接。日文风格 I02 在 `<html lang="zh-CN">` 时把本地简体中文字形放在日文字体之前。
+53 种风格的标题、正文、辅助字体及离线英文字体备选见 `knowledge/style/font-policy.json`。每个 `preview.html` 加载 `knowledge/style/font-fallback.css`，其中的本地简体中文字体使用 `font-display: swap` 与 CJK `unicode-range`，避免覆盖风格原有的拉丁字形。新文稿将对应 `@font-face` 规则放进模型的 `theme.css`，把相对路径指向本地字体，交给 `build-deck.js` 内联；旧文稿仍可使用 `inline-assets.js`。日文风格 I02 在 `<html lang="zh-CN">` 时把本地简体中文字形放在日文字体之前。
 
 `document.fonts.ready` 表示已使用字体的加载及排版完成，并不证明某个字形由指定字体绘制。交付前运行 `node scripts/check-deck.js deck.html --font-fallback`，阻断外部字体请求，复查屏幕与打印版面的换行、越界和裁切；正常加载和回退状态都应通过。字体排版参考 [MDN CSS Font Loading API](https://developer.mozilla.org/en-US/docs/Web/API/Document/fonts)、[MDN font-display](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40font-face/font-display) 与 [W3C 文字间距说明](https://www.w3.org/WAI/WCAG22/Understanding/text-spacing)。
 

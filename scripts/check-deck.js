@@ -12,10 +12,11 @@
  * Exit code 0 = every file passed, 1 = at least one failure.
  */
 
-import { mkdirSync, writeFileSync } from 'fs'
+import { mkdirSync, writeFileSync, readFileSync } from 'fs'
 import { resolve, basename, dirname, join } from 'path'
 import { launchChromium, toFileUrl } from './lib/browser.js'
 import { auditSlideLayout, layoutIssueDetail, settleSlideMotion, waitForFonts } from './lib/layout-audit.js'
+import { validateDocument } from './lib/document-model.js'
 
 const args = process.argv.slice(2)
 const files = []
@@ -90,6 +91,11 @@ async function checkFile(browser, file) {
   const fails = []
   const layout = []
   const fail = (check, detail) => fails.push({ check, detail })
+  const embedded = readFileSync(file, 'utf8').match(/<script id="ans-document" type="application\/json">([\s\S]*?)<\/script>/)
+  if (embedded) {
+    try { for (const issue of validateDocument(JSON.parse(embedded[1]))) fail('document-model', issue) }
+    catch (err) { fail('document-model', `Invalid embedded JSON: ${err.message}`) }
+  }
   const checkLayout = async (page, index, mode) => {
     const issues = await auditSlideLayout(page, index)
     layout.push(...issues.map(issue => ({ mode, ...issue })))

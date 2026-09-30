@@ -48,6 +48,13 @@ Agent-Native Slides — 外部资源登记表
 | mammoth.js | 1.8.0 | BSD-2-Clause | npm/mammoth | vendor |
 | pptxgenjs | 3.12.0 | MIT | npm/pptxgenjs | vendor |
 
+## 工作台体验参考（仅参考功能，无复制代码）
+
+| 项目 | 地址 | Usage |
+|---|---|---|
+| HHB-HTML-PPT | 用户本机 `D:\HHB\Github_my_project\HHB-HTML-PPT` | reference：编辑交互、文件保存、当前快照和元素级导出 |
+| lewislulu/html-ppt-skill | https://github.com/lewislulu/html-ppt-skill | reference：主题、页面总览、动效和演讲者体验 |
+
 ---
 
 ## Google Fonts（预览与生成页使用；具体字重见各风格的 CSS 请求）

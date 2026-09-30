@@ -1,6 +1,6 @@
 ---
 name: agent-native-slides
-description: Design and generate animated, 1920x1080 HTML presentation decks from .docx/.md/.txt input — deck planning, style selection from 53 live-preview aesthetics, optional AI decorative images, a browser presenter view, and single-file HTML / PDF / PPTX export. Use when the user asks for slides, a presentation, a deck, or PPT.
+description: Design and generate animated, editable 1920x1080 HTML presentations from .docx/.md/.txt input, with 53 styles, an embedded workbench, single-file saving, PDF and native editable PPTX export. Use for new slides, presentations, decks, or PPT.
 ---
 
 # Agent-Native Slides
@@ -22,9 +22,11 @@ AI renders: 2–3 style preview.html candidates (real dynamic effects)
 ↓
 User picks style
 ↓
-AI generates: complete HTML deck
+AI generates: versioned object document + authored theme CSS
 ↓
-Review in Studio → Present → Export single-file HTML / PDF / PPTX
+build-deck.js validates and packages the standalone HTML with workbench
+↓
+Edit or present in that HTML → save → export PDF / editable PPTX / image PPTX
 ```
 
 ---
@@ -62,33 +64,38 @@ Review in Studio → Present → Export single-file HTML / PDF / PPTX
 - Embed by relative path, then dim it so text stays readable:
   `<img class="gen-bg" src="assets/cover.jpg" alt="">` (`position:absolute; inset:0; object-fit:cover; z-index:-1; opacity:.5`)
   or `background-image: linear-gradient(…), url(assets/cover.jpg)`
-- Data charts always use ECharts — never image API
+- Data charts use chart objects with editable categories and series; decorative images may use the image API.
 
-### Step 5 — Generate HTML deck
+### Step 5 — Author the editable document
 - Read `knowledge/element/elements.md` before the selected style's `design.md`. Its readability and content-fit rules take precedence over small example type sizes in style previews.
 - Read the selected entry in `knowledge/style/font-policy.json`. Use its display, body, and auxiliary faces with the listed Latin offline backups and local CJK fallback. Set the HTML language (`zh-CN`, `en`, or `ja`); I02 uses Simplified Chinese glyph forms when `lang=zh`.
-- Inline the relevant `@font-face` rules from `knowledge/style/font-fallback.css` into a standalone deck and point them at its `assets/fonts/` files. Preserve `unicode-range` and `font-display: swap`; `inline-assets.js` will embed the local font files in a portable deck. Do not leave a relative link to the skill's shared CSS in a delivered single-file HTML.
+- Put the relevant `@font-face` rules and selected style rules into `theme.css` in the versioned JSON model. Point local font URLs at files relative to the model JSON; `build-deck.js` embeds them. Remote `@import` and remote CSS assets fail packaging.
 - Follow design language from `knowledge/style/[id]/design.md`
 - Pull components from `knowledge/component/`
 - Pull motion snippets from `knowledge/motion/motion.md`
-- Fixed 1920×1080 stage, visibility/opacity switching, `?preview=N` support
+- Read `docs/editable-workbench.md` and author **every meaningful item** as one of its supported objects. Use stable IDs, page notes, ordered pages, embedded resources and absolute/flex/grid placement. Never hide content in a decorative bitmap. Unknown content types and unsupported shapes/charts fail validation.
+- Keep the chosen style's composition in `theme.css`, page background and object geometry. The fixed workbench UI does not determine the slide layout.
+- Run `node scripts/build-deck.js document.json deck.html` as a mandatory delivery step. It validates the model, embeds resources, runtime and workbench, and produces the standalone HTML. Repeating the build from the same JSON produces one workbench.
 - After `document.fonts.ready`, inspect every rendered slide at 1920×1080, including Chinese, English, and mixed-script lines where present. Fix text overflow, clipping, and overlap by shortening copy, changing layout, or splitting slides; retain readable type sizes. Repeat with remote web fonts blocked.
 - All CDN deps must pin version numbers
 
-### Step 6 — Review in Studio (optional)
-- Serve the skill root over HTTP (`npx serve .`), open `studio/editor.html?deck=<url-path-to-deck.html>`
-- Studio is a viewer: slide thumbnails, Deck Plan notes panel, fullscreen (F), presenter (P), reload (R)
-- It does not edit the deck — make changes in the HTML, then press R
+### Step 6 — Review and edit in the delivered HTML
+- Open `deck.html` and choose **Edit deck** or use `?edit=1`. Use the page rail, overview, layers, properties, notes, zoom and export controls.
+- Save with `Ctrl+S` after authorizing a file target, **Save as**, or **Download HTML**. Restore a browser draft when offered. A reopened deck can be linked to its file to regain direct writes.
+- For later AI revisions, first run `node scripts/extract-document.js saved.html current.json`. Treat the user's saved HTML as authoritative; continue from its extracted model and rebuild. Do not use the original Deck Plan as an editing source.
+- `studio/editor.html` remains a separate read-only viewer for legacy decks and generated decks.
 
 ### Step 7 — Present
 - Deck: ← → / Space / PageUp / PageDown navigate; Home / End jump
 - `data-step` attribute for per-element reveal within a slide (see RUNTIME.md §5)
-- Presenter (`studio/presenter.html`, or P in Studio): current + next slide, notes, timer; B blacks out the screen
+- `O` opens page overview; `P` opens embedded presenter view with notes, timer and next page; `B` blacks out the screen. Object `step` values reveal items before advancing to the next page. The separate `studio/presenter.html` remains available.
 
 ### Step 8 — Export
-- **Single-file HTML**: `node scripts/inline-assets.js <deck.html> [out.html]` — inlines local images/fonts as data URIs so the deck works when moved or emailed (CDN libraries stay as CDN links)
-- **PDF 16:9**: `node scripts/export-pdf.js <deck.html>` (Playwright headless print, one 1920×1080 page per slide)
-- **PPTX**: `node scripts/export-pptx.js <deck.html> [deck-plan.json]` → one full-slide image per slide + speaker notes (text is not editable)
+- **Single-file HTML**: `build-deck.js` output, or the workbench's Save/Download HTML. `inline-assets.js` remains for old decks.
+- **PDF 16:9**: `node scripts/export-pdf.js <saved.html>`.
+- **Editable PPTX by default**: `node scripts/export-pptx.js <saved.html> [output.pptx]`. It emits a conversion manifest and source SHA-256. Verify native objects and chart workbook in the package.
+- **Image PPTX**: `node scripts/export-pptx.js <saved.html> [output.pptx] --image`, labeled as full-slide fidelity mode.
+- **Current unsaved snapshot**: start `node scripts/export-helper.js`, paste its token into the workbench, choose PDF/editable PPTX/image PPTX and export. The helper verifies the submitted HTML hash and offers progress, failure and download.
 - Validate first: `node scripts/check-deck.js <deck.html>` must pass
 - Run `node scripts/check-deck.js <deck.html> --font-fallback` before delivery to verify offline Latin and local CJK reflow in both screen and print layouts.
 - `check-deck.js` audits text geometry in screen and print layouts after fonts load; PDF/PPTX export also stops if its capture layout has text overflow, clipping, or overlap.
