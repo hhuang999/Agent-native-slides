@@ -88,7 +88,7 @@ All tokens in OKLCH. Copy these as CSS custom properties.
 
 ```css
 :root {
-  --font-sans: 'Nunito', system-ui, sans-serif;
+  --font-sans: 'Nunito', Arial, 'Slides CJK Sans', system-ui, sans-serif;
 
   /* Type scale — ratio ~1.25 */
   --text-xs:   0.75rem;   /* 12px — folio, fine print */
@@ -105,7 +105,7 @@ All tokens in OKLCH. Copy these as CSS custom properties.
   --leading-normal: 1.55;
   --leading-loose:  1.70;
 
-  --font-numeric: 'Nunito', system-ui, sans-serif;
+  --font-numeric: 'Nunito', Arial, 'Slides CJK Sans', system-ui, sans-serif;
   --numeric-feat: lining-nums tabular-nums;  /* applied to all stat values */
 }
 ```
@@ -383,3 +383,15 @@ For generated slides, use `--text-content` for essential text. The preview's 12�
 | Texture | Subtle dot-grid on stage bg | Noise, grain, or watercolor washes |
 | Font | Nunito (rounded, friendly) | Variable; often serif or display |
 | Occasion | Product/SaaS/edtech | Varies by sub-style |
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Nunito | Arial | Slides CJK Sans |
+| Body | Nunito | Arial | Slides CJK Sans |
+| Auxiliary / data | Nunito | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

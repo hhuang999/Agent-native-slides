@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../font-fallback.css">
 <style>
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,9 +30,9 @@
   --c-warning:      oklch(0.62 0.14 75);
   --c-danger:       oklch(0.52 0.16 25);
 
-  --font-head: 'IBM Plex Serif', Georgia, serif;
-  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-head: 'IBM Plex Serif', Georgia, 'Slides CJK Serif', serif;
+  --font-body: 'IBM Plex Sans', Arial, 'Slides CJK Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', Consolas, 'Slides CJK Sans', 'Courier New', monospace;
 
   font-variant-numeric: lining-nums tabular-nums;
 }

@@ -78,8 +78,8 @@ Multi-layer CSS radial gradient watercolor simulation achieves a hand-painted fe
 
 ```css
 :root {
-  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-body:    'Lato', system-ui, sans-serif;
+  --font-display: 'Playfair Display', Georgia, 'Slides CJK Serif', 'Times New Roman', serif;
+  --font-body:    'Lato', Arial, 'Slides CJK Sans', system-ui, sans-serif;
 
   /* Type scale (1920×1080 stage) */
   --text-xs:   13px;   /* footnotes, folios */
@@ -432,3 +432,15 @@ All interactive elements (nav dots, prev/next buttons) have `:focus-visible` rin
 Watercolor pool pseudo-element is `pointer-events: none` and carries no semantic content.
 
 `prefers-reduced-motion` fallback: no transitions or animations are applied by default (the style is static). If animation is added (e.g., slide fade-in), wrap in `@media (prefers-reduced-motion: no-preference)`.
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Playfair Display | Georgia | Slides CJK Serif |
+| Body | Lato | Arial | Slides CJK Sans |
+| Auxiliary / data | Lato | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

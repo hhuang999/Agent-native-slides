@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../font-fallback.css">
 <style>
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,8 +27,8 @@
   --c-border-subtle:  oklch(0.18 0.015 42);
 
   /* Type scale */
-  --font-display: 'Instrument Serif', 'Georgia', serif;
-  --font-body:    'Space Grotesk', system-ui, sans-serif;
+  --font-display: 'Instrument Serif', Georgia, 'Slides CJK Serif', serif;
+  --font-body:    'Space Grotesk', Arial, 'Slides CJK Sans', system-ui, sans-serif;
   --ts-xs:   14px;
   --ts-sm:   16px;
   --ts-base: 18px;
@@ -509,33 +510,33 @@ body {
       <span class="accent-rule" aria-hidden="true"></span>
 
       <h1 class="hed-display" style="max-width: 1180px;">
-        Independent Documentary Films Funded Through Regional Arts Councils Between 2019 and 2023 Reached 4.2 Times Larger Cumulative Audiences Than Comparably-Budgeted Streaming-First Productions When Theatrical Release Preceded Digital Distribution.
+        Theatrical-first documentaries reached 4.2× larger audiences.
       </h1>
 
       <p class="abstract">
-        This study examines five-year distribution data across 312 independently funded documentaries. Theatrical-first strategies consistently unlocked larger platform discovery windows, greater critical engagement, and stronger long-term licensing revenues compared to streaming-first counterparts of equivalent production budgets.
+        Across 312 comparable films, theatrical release improved discovery and later digital reach in the 2019–23 cohort.
       </p>
 
       <div class="detail-row" role="list">
         <div class="detail-col" role="listitem">
           <div class="detail-col__value">312</div>
           <div class="detail-col__label">Films Studied</div>
-          <div class="detail-col__desc">Independently funded documentaries, 2019–2023 cohort</div>
+          <div class="detail-col__desc">Independent documentaries · 2019–23</div>
         </div>
         <div class="detail-col" role="listitem">
           <div class="detail-col__value">4.2×</div>
           <div class="detail-col__label">Audience Multiplier</div>
-          <div class="detail-col__desc">Theatrical-first vs. streaming-first cumulative reach</div>
+          <div class="detail-col__desc">Theatrical vs. streaming reach</div>
         </div>
         <div class="detail-col" role="listitem">
           <div class="detail-col__value">18 mo</div>
           <div class="detail-col__label">Distribution Window</div>
-          <div class="detail-col__desc">Full measurement cycle per title across all platforms</div>
+          <div class="detail-col__desc">Cross-platform cycle per title</div>
         </div>
         <div class="detail-col" role="listitem">
           <div class="detail-col__value">$2.1M</div>
           <div class="detail-col__label">Avg. Production Budget</div>
-          <div class="detail-col__desc">Comparable budget band, both cohorts</div>
+          <div class="detail-col__desc">Matched budget cohorts</div>
         </div>
       </div>
     </div>
@@ -747,6 +748,15 @@ body {
         return { index: i + 1, type: 'content', assertion: '' }
       })
     }
+  }
+
+  window.__deckPlan.slides[0].assertion = 'Theatrical-first documentaries reached 4.2× larger audiences.'
+  window.__deckPlan.slides[0].speaker_notes = {
+    key_points: [
+      'Regional arts council films from 2019–2023 were compared with streaming-first productions in a similar budget band.',
+      'Theatrical release preceded digital distribution; the analysis measured cumulative reach across the full release window.',
+      'The larger reach was accompanied by longer discovery windows, critical engagement, and licensing opportunities.'
+    ]
   }
 
   // Preview / print URL params

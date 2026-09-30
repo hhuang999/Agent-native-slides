@@ -80,8 +80,8 @@ All colors expressed in OKLCH. Reference white point: D65.
 ```css
 :root {
   /* ── Font stacks ────────────────────────── */
-  --ff-display: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
-  --ff-body:    'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  --ff-display: 'Shippori Mincho', Georgia, 'Slides CJK Serif', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --ff-body:    'Noto Sans JP', Arial, 'Slides CJK Sans', 'Hiragino Sans', 'Yu Gothic', sans-serif;
 
   /* ── Type scale (1920×1080 stage) ──────── */
   --fs-hero:     clamp(52px, 3.5vw, 64px);  /* slide 1 main headline */
@@ -101,6 +101,12 @@ All colors expressed in OKLCH. Reference white point: D65.
 
   /* ── Numerics ───────────────────────────── */
   --fvn-tabular: "tnum" 1, "lnum" 1; /* font-variant-numeric shorthand */
+}
+
+/* Simplified Chinese deck: use SC glyph forms; keep Japanese faces for Latin/Kana. */
+:root:lang(zh) {
+  --ff-display: 'Slides CJK Serif', 'Shippori Mincho', Georgia, serif;
+  --ff-body: 'Slides CJK Sans', 'Noto Sans JP', Arial, sans-serif;
 }
 
 /* Apply globally */
@@ -440,3 +446,15 @@ Color is never the sole carrier of meaning: highlighted table row also receives 
 ## Fixed-stage content fit
 
 The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Shippori Mincho | Georgia | Slides CJK Serif |
+| Body | Noto Sans JP | Arial | Slides CJK Sans |
+| Auxiliary / data | Noto Sans JP | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

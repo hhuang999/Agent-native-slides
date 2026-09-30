@@ -101,6 +101,12 @@ flowchart LR
 
 运行 `node --test scripts/test/layout.test.js` 可验证中文、英文和中英混排样例，以及故意制造的越界、裁切、重叠和 PDF/PPTX 导出拦截。
 
+### 全风格字体适配
+
+53 种风格的[标题、正文、辅助文字及回退字体配置](knowledge/style/font-policy.json)已逐一记录。每个预览页用 `knowledge/style/font-fallback.css` 加载项目自带的简体中文字体，同时保留原定拉丁字体，并指定离线英文字体备选。生成独立 deck 时应把所需的本地 `@font-face` 规则写入页面、设置正确的 `<html lang>`，再内联字体资源。I02 在日文页面保留日文字体，在 `lang="zh-CN"` 时优先使用简体中文字形。
+
+运行 `node scripts/check-deck.js deck.html --font-fallback` 会阻断外部字体请求，再次检查屏幕和打印版面的文字几何。[字体审查记录](docs/font-audit.md)列出每种风格及 HTML/PDF/PPTX 实测结果。加载与回退依据 [CSS Font Loading API](https://developer.mozilla.org/en-US/docs/Web/API/Document/fonts)、[Google Fonts CSS API](https://developers.google.com/fonts/docs/css2) 和 [W3C 文字间距说明](https://www.w3.org/WAI/WCAG22/Understanding/text-spacing)。
+
 ## 风格一览
 
 <img src="docs/readme/styles-overview.jpg" width="100%" alt="53 种风格总览">
@@ -114,7 +120,7 @@ flowchart LR
 
 <img src="docs/readme/styles/A01.jpg" width="100%" alt="A01 circuit-engineered">
 
-**A02 · ultraviolet-immersive** — dark — immersive · creative · energetic — for keynote / product-launch — type Syne + Satoshi — motion `mesh-drift` — [design.md](knowledge/style/A02/design.md) · [preview.html](knowledge/style/A02/preview.html)
+**A02 · ultraviolet-immersive** — dark — immersive · creative · energetic — for keynote / product-launch — type Syne + DM Sans — motion `mesh-drift` — [design.md](knowledge/style/A02/design.md) · [preview.html](knowledge/style/A02/preview.html)
 
 <img src="docs/readme/styles/A02.jpg" width="100%" alt="A02 ultraviolet-immersive">
 
@@ -126,15 +132,15 @@ flowchart LR
 
 <img src="docs/readme/styles/A04.jpg" width="100%" alt="A04 cosmic-void">
 
-**A05 · neon-cyberpunk** — dark — edgy · gaming · hacker — for keynote / product-launch — type Rajdhani + Source Code Pro — motion `hologram-scan` — [design.md](knowledge/style/A05/design.md) · [preview.html](knowledge/style/A05/preview.html)
+**A05 · neon-cyberpunk** — dark — edgy · gaming · hacker — for keynote / product-launch — type Rajdhani + Instrument Sans — motion `hologram-scan` — [design.md](knowledge/style/A05/design.md) · [preview.html](knowledge/style/A05/preview.html)
 
 <img src="docs/readme/styles/A05.jpg" width="100%" alt="A05 neon-cyberpunk">
 
-**A06 · deep-ocean** — dark — serene · organic · science — for conference-talk / keynote — type Fraunces + DM Mono — motion `wave-sine` — [design.md](knowledge/style/A06/design.md) · [preview.html](knowledge/style/A06/preview.html)
+**A06 · deep-ocean** — dark — serene · organic · science — for conference-talk / keynote — type Fraunces + DM Sans — motion `wave-sine` — [design.md](knowledge/style/A06/design.md) · [preview.html](knowledge/style/A06/preview.html)
 
 <img src="docs/readme/styles/A06.jpg" width="100%" alt="A06 deep-ocean">
 
-**A07 · holographic-iridescent** — dark — futuristic · creative · fashion — for keynote / product-launch — type Lexend Mega + JetBrains Mono — motion `hologram-scan` — [design.md](knowledge/style/A07/design.md) · [preview.html](knowledge/style/A07/preview.html)
+**A07 · holographic-iridescent** — dark — futuristic · creative · fashion — for keynote / product-launch — type Lexend Mega + Lexend — motion `hologram-scan` — [design.md](knowledge/style/A07/design.md) · [preview.html](knowledge/style/A07/preview.html)
 
 <img src="docs/readme/styles/A07.jpg" width="100%" alt="A07 holographic-iridescent">
 
@@ -144,69 +150,69 @@ flowchart LR
 
 ### B · Glassmorphism (4)
 
-**B01 · dark-glassmorphism** — dark — modern · sleek · tech — for product-launch / investor-pitch — type Plus Jakarta Sans + JetBrains Mono — motion `particle-float` — [design.md](knowledge/style/B01/design.md) · [preview.html](knowledge/style/B01/preview.html)
+**B01 · dark-glassmorphism** — dark — modern · sleek · tech — for product-launch / investor-pitch — type Plus Jakarta Sans + Space Mono — motion `particle-float` — [design.md](knowledge/style/B01/design.md) · [preview.html](knowledge/style/B01/preview.html)
 
 <img src="docs/readme/styles/B01.jpg" width="100%" alt="B01 dark-glassmorphism">
 
-**B02 · light-glassmorphism** — light — airy · modern · clean — for product-launch / team-update — type Manrope + Geist Mono — motion `particle-float` — [design.md](knowledge/style/B02/design.md) · [preview.html](knowledge/style/B02/preview.html)
+**B02 · light-glassmorphism** — light — airy · modern · clean — for product-launch / team-update — type Instrument Serif + DM Sans — motion `particle-float` — [design.md](knowledge/style/B02/design.md) · [preview.html](knowledge/style/B02/preview.html)
 
 <img src="docs/readme/styles/B02.jpg" width="100%" alt="B02 light-glassmorphism">
 
-**B03 · aurora-glass** — dark — immersive · colorful · creative — for keynote / product-launch — type Bricolage Grotesque + Geist Mono — motion `aurora-band` — [design.md](knowledge/style/B03/design.md) · [preview.html](knowledge/style/B03/preview.html)
+**B03 · aurora-glass** — dark — immersive · colorful · creative — for keynote / product-launch — type Syne + Instrument Sans — motion `aurora-band` — [design.md](knowledge/style/B03/design.md) · [preview.html](knowledge/style/B03/preview.html)
 
 <img src="docs/readme/styles/B03.jpg" width="100%" alt="B03 aurora-glass">
 
-**B04 · warm-glass** — light — warm · elegant · premium — for investor-pitch / keynote — type Instrument Serif + DM Sans — motion `gradient-breathe` — [design.md](knowledge/style/B04/design.md) · [preview.html](knowledge/style/B04/preview.html)
+**B04 · warm-glass** — light — warm · elegant · premium — for investor-pitch / keynote — type Playfair Display SC + IBM Plex Sans — motion `gradient-breathe` — [design.md](knowledge/style/B04/design.md) · [preview.html](knowledge/style/B04/preview.html)
 
 <img src="docs/readme/styles/B04.jpg" width="100%" alt="B04 warm-glass">
 
 ### C · Cinematic (4)
 
-**C01 · film-noir** — dark — cinematic · dramatic · editorial — for keynote / product-launch — type IM Fell English + Courier Prime — motion `film-grain` — [design.md](knowledge/style/C01/design.md) · [preview.html](knowledge/style/C01/preview.html)
+**C01 · film-noir** — dark — cinematic · dramatic · editorial — for keynote / product-launch — type Bebas Neue + IBM Plex Mono — motion `film-grain` — [design.md](knowledge/style/C01/design.md) · [preview.html](knowledge/style/C01/preview.html)
 
 <img src="docs/readme/styles/C01.jpg" width="100%" alt="C01 film-noir">
 
-**C02 · dark-editorial-cinema** — dark — editorial · cinematic · creative — for keynote / product-launch — type Cormorant Garamond + Karla — motion `film-grain` — [design.md](knowledge/style/C02/design.md) · [preview.html](knowledge/style/C02/preview.html)
+**C02 · dark-editorial-cinema** — dark — editorial · cinematic · creative — for keynote / product-launch — type Cormorant Garamond + Space Grotesk — motion `film-grain` — [design.md](knowledge/style/C02/design.md) · [preview.html](knowledge/style/C02/preview.html)
 
 <img src="docs/readme/styles/C02.jpg" width="100%" alt="C02 dark-editorial-cinema">
 
-**C03 · light-editorial-magazine** — light — editorial · refined · literary — for seminar / conference-talk — type Libre Baskerville + Mulish — motion `light-sweep` — [design.md](knowledge/style/C03/design.md) · [preview.html](knowledge/style/C03/preview.html)
+**C03 · light-editorial-magazine** — light — editorial · refined · literary — for seminar / conference-talk — type DM Serif Display + DM Sans — motion `light-sweep` — [design.md](knowledge/style/C03/design.md) · [preview.html](knowledge/style/C03/preview.html)
 
 <img src="docs/readme/styles/C03.jpg" width="100%" alt="C03 light-editorial-magazine">
 
-**C04 · cinematic-amber** — dark — warm · nostalgic · cinematic — for keynote / seminar — type Fraunces + DM Sans — motion `film-grain` — [design.md](knowledge/style/C04/design.md) · [preview.html](knowledge/style/C04/preview.html)
+**C04 · cinematic-amber** — dark — warm · nostalgic · cinematic — for keynote / seminar — type Fraunces + Plus Jakarta Sans — motion `film-grain` — [design.md](knowledge/style/C04/design.md) · [preview.html](knowledge/style/C04/preview.html)
 
 <img src="docs/readme/styles/C04.jpg" width="100%" alt="C04 cinematic-amber">
 
 ### D · Swiss / International (4)
 
-**D01 · swiss-international** — light — minimal · rational · precise — for conference-talk / thesis-defense — type DM Sans + DM Mono — motion `grain-breathe` — [design.md](knowledge/style/D01/design.md) · [preview.html](knowledge/style/D01/preview.html)
+**D01 · swiss-international** — light — minimal · rational · precise — for conference-talk / thesis-defense — type IBM Plex Sans Condensed + IBM Plex Sans — motion `grain-breathe` — [design.md](knowledge/style/D01/design.md) · [preview.html](knowledge/style/D01/preview.html)
 
 <img src="docs/readme/styles/D01.jpg" width="100%" alt="D01 swiss-international">
 
-**D02 · bauhaus-geometric** — light — geometric · artistic · bold — for seminar / keynote — type Josefin Sans + EB Garamond — motion `dot-pulse` — [design.md](knowledge/style/D02/design.md) · [preview.html](knowledge/style/D02/preview.html)
+**D02 · bauhaus-geometric** — light — geometric · artistic · bold — for seminar / keynote — type Archivo Black + Space Grotesk — motion `dot-pulse` — [design.md](knowledge/style/D02/design.md) · [preview.html](knowledge/style/D02/preview.html)
 
 <img src="docs/readme/styles/D02.jpg" width="100%" alt="D02 bauhaus-geometric">
 
-**D03 · brutalist-editorial** — light — bold · editorial · raw — for keynote / conference-talk — type League Gothic + Source Code Pro — motion `grain-breathe` — [design.md](knowledge/style/D03/design.md) · [preview.html](knowledge/style/D03/preview.html)
+**D03 · brutalist-editorial** — light — bold · editorial · raw — for keynote / conference-talk — type Barlow Condensed + Barlow — motion `grain-breathe` — [design.md](knowledge/style/D03/design.md) · [preview.html](knowledge/style/D03/preview.html)
 
 <img src="docs/readme/styles/D03.jpg" width="100%" alt="D03 brutalist-editorial">
 
-**D04 · dark-swiss** — dark — minimal · serious · technical — for conference-talk / thesis-defense — type Hanken Grotesk + JetBrains Mono — motion `grain-breathe` — [design.md](knowledge/style/D04/design.md) · [preview.html](knowledge/style/D04/preview.html)
+**D04 · dark-swiss** — dark — minimal · serious · technical — for conference-talk / thesis-defense — type IBM Plex Sans Condensed + IBM Plex Sans — motion `grain-breathe` — [design.md](knowledge/style/D04/design.md) · [preview.html](knowledge/style/D04/preview.html)
 
 <img src="docs/readme/styles/D04.jpg" width="100%" alt="D04 dark-swiss">
 
 ### E · Nordic Minimal (3)
 
-**E01 · fog-grey-nordic** — light — minimal · calm · scholarly — for thesis-defense / seminar — type Hanken Grotesk + LXGW WenKai — motion `gradient-breathe` — [design.md](knowledge/style/E01/design.md) · [preview.html](knowledge/style/E01/preview.html)
+**E01 · fog-grey-nordic** — light — minimal · calm · scholarly — for thesis-defense / seminar — type Hanken Grotesk + Hanken Grotesk — motion `gradient-breathe` — [design.md](knowledge/style/E01/design.md) · [preview.html](knowledge/style/E01/preview.html)
 
 <img src="docs/readme/styles/E01.jpg" width="66%" alt="E01 fog-grey-nordic">
 
-**E02 · pale-birch-nordic** — light — warm · natural · calm — for seminar / thesis-defense — type Instrument Serif + DM Sans — motion `light-sweep` — [design.md](knowledge/style/E02/design.md) · [preview.html](knowledge/style/E02/preview.html)
+**E02 · pale-birch-nordic** — light — warm · natural · calm — for seminar / thesis-defense — type DM Serif Display + DM Sans — motion `light-sweep` — [design.md](knowledge/style/E02/design.md) · [preview.html](knowledge/style/E02/preview.html)
 
 <img src="docs/readme/styles/E02.jpg" width="100%" alt="E02 pale-birch-nordic">
 
-**E03 · glacier-blue-nordic** — light — cool · minimal · science — for thesis-defense / conference-talk — type Bricolage Grotesque + Geist Mono — motion `gradient-breathe` — [design.md](knowledge/style/E03/design.md) · [preview.html](knowledge/style/E03/preview.html)
+**E03 · glacier-blue-nordic** — light — cool · minimal · science — for thesis-defense / conference-talk — type Fraunces + Plus Jakarta Sans — motion `gradient-breathe` — [design.md](knowledge/style/E03/design.md) · [preview.html](knowledge/style/E03/preview.html)
 
 <img src="docs/readme/styles/E03.jpg" width="100%" alt="E03 glacier-blue-nordic">
 
@@ -216,11 +222,11 @@ flowchart LR
 
 <img src="docs/readme/styles/F01.jpg" width="66%" alt="F01 aurora-borealis-dark">
 
-**F02 · aurora-dawn-light** — light — optimistic · creative · fresh — for product-launch / keynote — type Syne + Satoshi — motion `mesh-drift` — [design.md](knowledge/style/F02/design.md) · [preview.html](knowledge/style/F02/preview.html)
+**F02 · aurora-dawn-light** — light — optimistic · creative · fresh — for product-launch / keynote — type Lora + Nunito — motion `mesh-drift` — [design.md](knowledge/style/F02/design.md) · [preview.html](knowledge/style/F02/preview.html)
 
 <img src="docs/readme/styles/F02.jpg" width="100%" alt="F02 aurora-dawn-light">
 
-**F03 · mesh-gradient-vivid** — light — vibrant · brand · creative — for product-launch / keynote — type Outfit + DM Mono — motion `mesh-drift` — [design.md](knowledge/style/F03/design.md) · [preview.html](knowledge/style/F03/preview.html)
+**F03 · mesh-gradient-vivid** — light — vibrant · brand · creative — for product-launch / keynote — type Syne + Space Grotesk — motion `mesh-drift` — [design.md](knowledge/style/F03/design.md) · [preview.html](knowledge/style/F03/preview.html)
 
 <img src="docs/readme/styles/F03.jpg" width="100%" alt="F03 mesh-gradient-vivid">
 
@@ -230,75 +236,75 @@ flowchart LR
 
 <img src="docs/readme/styles/G01.jpg" width="66%" alt="G01 light-journal-academic">
 
-**G02 · dark-journal-academic** — dark — academic · focused · nocturnal — for conference-talk / thesis-defense — type Playfair Display + Source Code Pro — motion `grain-breathe` — [design.md](knowledge/style/G02/design.md) · [preview.html](knowledge/style/G02/preview.html)
+**G02 · dark-journal-academic** — dark — academic · focused · nocturnal — for conference-talk / thesis-defense — type Playfair Display + EB Garamond — motion `grain-breathe` — [design.md](knowledge/style/G02/design.md) · [preview.html](knowledge/style/G02/preview.html)
 
 <img src="docs/readme/styles/G02.jpg" width="100%" alt="G02 dark-journal-academic">
 
-**G03 · neutral-academic-beige** — light — academic · bilingual · neutral — for thesis-defense / seminar — type Lato + Noto Serif CJK — motion `light-sweep` — [design.md](knowledge/style/G03/design.md) · [preview.html](knowledge/style/G03/preview.html)
+**G03 · neutral-academic-beige** — light — academic · bilingual · neutral — for thesis-defense / seminar — type Source Serif 4 + Source Sans 3 — motion `light-sweep` — [design.md](knowledge/style/G03/design.md) · [preview.html](knowledge/style/G03/preview.html)
 
 <img src="docs/readme/styles/G03.jpg" width="100%" alt="G03 neutral-academic-beige">
 
-**G04 · clean-academic-sans** — light — academic · engineering · technical — for thesis-defense / conference-talk — type Noto Sans + Noto Sans CJK — motion `gradient-breathe` — [design.md](knowledge/style/G04/design.md) · [preview.html](knowledge/style/G04/preview.html)
+**G04 · clean-academic-sans** — light — academic · engineering · technical — for thesis-defense / conference-talk — type DM Sans + DM Sans — motion `gradient-breathe` — [design.md](knowledge/style/G04/design.md) · [preview.html](knowledge/style/G04/preview.html)
 
 <img src="docs/readme/styles/G04.jpg" width="100%" alt="G04 clean-academic-sans">
 
 ### H · Corporate / Business (3)
 
-**H01 · primer-clean** — light — corporate · professional · clear — for team-update / investor-pitch — type Plus Jakarta Sans + IBM Plex Mono — motion `gradient-breathe` — [design.md](knowledge/style/H01/design.md) · [preview.html](knowledge/style/H01/preview.html)
+**H01 · primer-clean** — light — corporate · professional · clear — for team-update / investor-pitch — type Inter + Inter — motion `gradient-breathe` — [design.md](knowledge/style/H01/design.md) · [preview.html](knowledge/style/H01/preview.html)
 
 <img src="docs/readme/styles/H01.jpg" width="100%" alt="H01 primer-clean">
 
-**H02 · trust-blue** — light — authoritative · financial · corporate — for investor-pitch / team-update — type Source Sans 3 + Source Serif 4 — motion `light-sweep` — [design.md](knowledge/style/H02/design.md) · [preview.html](knowledge/style/H02/preview.html)
+**H02 · trust-blue** — light — authoritative · financial · corporate — for investor-pitch / team-update — type Libre Baskerville + Libre Franklin — motion `light-sweep` — [design.md](knowledge/style/H02/design.md) · [preview.html](knowledge/style/H02/preview.html)
 
 <img src="docs/readme/styles/H02.jpg" width="100%" alt="H02 trust-blue">
 
-**H03 · executive-dark-bold** — dark — premium · executive · bold — for investor-pitch / keynote — type Playfair Display + DM Sans — motion `grain-breathe` — [design.md](knowledge/style/H03/design.md) · [preview.html](knowledge/style/H03/preview.html)
+**H03 · executive-dark-bold** — dark — premium · executive · bold — for investor-pitch / keynote — type Syne + Space Grotesk — motion `grain-breathe` — [design.md](knowledge/style/H03/design.md) · [preview.html](knowledge/style/H03/preview.html)
 
 <img src="docs/readme/styles/H03.jpg" width="100%" alt="H03 executive-dark-bold">
 
 ### I · Texture / Organic (4)
 
-**I01 · cream-paper-warm** — light — warm · scholarly · tactile — for seminar / thesis-defense — type EB Garamond + Source Code Pro — motion `grain-breathe` — [design.md](knowledge/style/I01/design.md) · [preview.html](knowledge/style/I01/preview.html)
+**I01 · cream-paper-warm** — light — warm · scholarly · tactile — for seminar / thesis-defense — type Cormorant Garamond + Jost — motion `grain-breathe` — [design.md](knowledge/style/I01/design.md) · [preview.html](knowledge/style/I01/preview.html)
 
 <img src="docs/readme/styles/I01.jpg" width="100%" alt="I01 cream-paper-warm">
 
-**I02 · wabi-sabi-japanese** — light — zen · minimalist · japanese — for seminar / keynote — type Noto Serif JP + Noto Sans JP — motion `grain-breathe` — [design.md](knowledge/style/I02/design.md) · [preview.html](knowledge/style/I02/preview.html)
+**I02 · wabi-sabi-japanese** — light — zen · minimalist · japanese — for seminar / keynote — type Shippori Mincho + Noto Sans JP — motion `grain-breathe` — [design.md](knowledge/style/I02/design.md) · [preview.html](knowledge/style/I02/preview.html)
 
 <img src="docs/readme/styles/I02.jpg" width="100%" alt="I02 wabi-sabi-japanese">
 
-**I03 · warm-film-grain** — dark — nostalgic · cinematic · warm — for keynote / seminar — type Playfair Display + Karla — motion `film-grain` — [design.md](knowledge/style/I03/design.md) · [preview.html](knowledge/style/I03/preview.html)
+**I03 · warm-film-grain** — dark — nostalgic · cinematic · warm — for keynote / seminar — type Instrument Serif + Space Grotesk — motion `film-grain` — [design.md](knowledge/style/I03/design.md) · [preview.html](knowledge/style/I03/preview.html)
 
 <img src="docs/readme/styles/I03.jpg" width="100%" alt="I03 warm-film-grain">
 
-**I04 · soft-bento** — light — modern · playful · structured — for product-launch / team-update — type Instrument Sans + DM Mono — motion `gradient-breathe` — [design.md](knowledge/style/I04/design.md) · [preview.html](knowledge/style/I04/preview.html)
+**I04 · soft-bento** — light — modern · playful · structured — for product-launch / team-update — type Nunito + Nunito — motion `gradient-breathe` — [design.md](knowledge/style/I04/design.md) · [preview.html](knowledge/style/I04/preview.html)
 
 <img src="docs/readme/styles/I04.jpg" width="100%" alt="I04 soft-bento">
 
 ### J · Technical / Engineering (3)
 
-**J01 · terminal-monochrome** — dark — hacker · engineering · retro — for conference-talk / workshop — type Geist Mono + Hanken Grotesk — motion `circuit-trace` — [design.md](knowledge/style/J01/design.md) · [preview.html](knowledge/style/J01/preview.html)
+**J01 · terminal-monochrome** — dark — hacker · engineering · retro — for conference-talk / workshop — type JetBrains Mono + JetBrains Mono — motion `circuit-trace` — [design.md](knowledge/style/J01/design.md) · [preview.html](knowledge/style/J01/preview.html)
 
 <img src="docs/readme/styles/J01.jpg" width="100%" alt="J01 terminal-monochrome">
 
-**J02 · data-dashboard** — dark — data · analytical · technical — for conference-talk / group-meeting — type DM Mono + DM Sans — motion `particle-float` — [design.md](knowledge/style/J02/design.md) · [preview.html](knowledge/style/J02/preview.html)
+**J02 · data-dashboard** — dark — data · analytical · technical — for conference-talk / group-meeting — type IBM Plex Sans + IBM Plex Mono — motion `particle-float` — [design.md](knowledge/style/J02/design.md) · [preview.html](knowledge/style/J02/preview.html)
 
 <img src="docs/readme/styles/J02.jpg" width="100%" alt="J02 data-dashboard">
 
-**J03 · light-engineering** — light — precise · technical · engineering — for conference-talk / thesis-defense — type IBM Plex Mono + IBM Plex Sans — motion `light-sweep` — [design.md](knowledge/style/J03/design.md) · [preview.html](knowledge/style/J03/preview.html)
+**J03 · light-engineering** — light — precise · technical · engineering — for conference-talk / thesis-defense — type IBM Plex Serif + IBM Plex Sans — motion `light-sweep` — [design.md](knowledge/style/J03/design.md) · [preview.html](knowledge/style/J03/preview.html)
 
 <img src="docs/readme/styles/J03.jpg" width="100%" alt="J03 light-engineering">
 
 ### K · Premium / Luxury (3)
 
-**K01 · monochrome-luxury** — light — luxury · fashion · minimal — for keynote / investor-pitch — type Cormorant Garamond + Mulish — motion `light-sweep` — [design.md](knowledge/style/K01/design.md) · [preview.html](knowledge/style/K01/preview.html)
+**K01 · monochrome-luxury** — light — luxury · fashion · minimal — for keynote / investor-pitch — type Cormorant Garamond + Jost — motion `light-sweep` — [design.md](knowledge/style/K01/design.md) · [preview.html](knowledge/style/K01/preview.html)
 
 <img src="docs/readme/styles/K01.jpg" width="100%" alt="K01 monochrome-luxury">
 
-**K02 · gold-dark-premium** — dark — luxury · premium · exclusive — for keynote / investor-pitch — type Playfair Display + Instrument Sans — motion `gradient-breathe` — [design.md](knowledge/style/K02/design.md) · [preview.html](knowledge/style/K02/preview.html)
+**K02 · gold-dark-premium** — dark — luxury · premium · exclusive — for keynote / investor-pitch — type Playfair Display + Lato — motion `gradient-breathe` — [design.md](knowledge/style/K02/design.md) · [preview.html](knowledge/style/K02/preview.html)
 
 <img src="docs/readme/styles/K02.jpg" width="100%" alt="K02 gold-dark-premium">
 
-**K03 · dusty-rose-editorial** — light — fashion · editorial · feminine — for keynote / product-launch — type Fraunces + DM Sans — motion `gradient-breathe` — [design.md](knowledge/style/K03/design.md) · [preview.html](knowledge/style/K03/preview.html)
+**K03 · dusty-rose-editorial** — light — fashion · editorial · feminine — for keynote / product-launch — type Libre Baskerville + Raleway — motion `gradient-breathe` — [design.md](knowledge/style/K03/design.md) · [preview.html](knowledge/style/K03/preview.html)
 
 <img src="docs/readme/styles/K03.jpg" width="100%" alt="K03 dusty-rose-editorial">
 
@@ -308,45 +314,45 @@ flowchart LR
 
 <img src="docs/readme/styles/L01.jpg" width="66%" alt="L01 deep-ai-dark">
 
-**L02 · purple-ai-immersive** — dark — ai · creative · mysterious — for keynote / product-launch — type Outfit + JetBrains Mono — motion `mesh-drift` — [design.md](knowledge/style/L02/design.md) · [preview.html](knowledge/style/L02/preview.html)
+**L02 · purple-ai-immersive** — dark — ai · creative · mysterious — for keynote / product-launch — type Bricolage Grotesque + Geist Mono — motion `mesh-drift` — [design.md](knowledge/style/L02/design.md) · [preview.html](knowledge/style/L02/preview.html)
 
 <img src="docs/readme/styles/L02.jpg" width="100%" alt="L02 purple-ai-immersive">
 
-**L03 · teal-ai-light** — light — ai · fresh · modern — for product-launch / conference-talk — type Bricolage Grotesque + Geist Mono — motion `gradient-breathe` — [design.md](knowledge/style/L03/design.md) · [preview.html](knowledge/style/L03/preview.html)
+**L03 · teal-ai-light** — light — ai · fresh · modern — for product-launch / conference-talk — type Plus Jakarta Sans + Plus Jakarta Sans — motion `gradient-breathe` — [design.md](knowledge/style/L03/design.md) · [preview.html](knowledge/style/L03/preview.html)
 
 <img src="docs/readme/styles/L03.jpg" width="100%" alt="L03 teal-ai-light">
 
 ### M · Illustration / Artistic (3)
 
-**M01 · watercolor-wash** — light — artistic · organic · creative — for seminar / keynote — type Fraunces + Mulish — motion `gradient-breathe` — [design.md](knowledge/style/M01/design.md) · [preview.html](knowledge/style/M01/preview.html)
+**M01 · watercolor-wash** — light — artistic · organic · creative — for seminar / keynote — type Playfair Display + Lato — motion `gradient-breathe` — [design.md](knowledge/style/M01/design.md) · [preview.html](knowledge/style/M01/preview.html)
 
 <img src="docs/readme/styles/M01.jpg" width="100%" alt="M01 watercolor-wash">
 
-**M02 · ink-illustration** — light — traditional · scholarly · east-asian — for seminar / thesis-defense — type Noto Serif CJK + Noto Sans — motion `grain-breathe` — [design.md](knowledge/style/M02/design.md) · [preview.html](knowledge/style/M02/preview.html)
+**M02 · ink-illustration** — light — traditional · scholarly · east-asian — for seminar / thesis-defense — type Spectral + Jost — motion `grain-breathe` — [design.md](knowledge/style/M02/design.md) · [preview.html](knowledge/style/M02/preview.html)
 
 <img src="docs/readme/styles/M02.jpg" width="100%" alt="M02 ink-illustration">
 
-**M03 · risograph-print** — light — retro · print · indie — for keynote / workshop — type Josefin Sans + EB Garamond — motion `dot-pulse` — [design.md](knowledge/style/M03/design.md) · [preview.html](knowledge/style/M03/preview.html)
+**M03 · risograph-print** — light — retro · print · indie — for keynote / workshop — type Space Grotesk + Space Grotesk — motion `dot-pulse` — [design.md](knowledge/style/M03/design.md) · [preview.html](knowledge/style/M03/preview.html)
 
 <img src="docs/readme/styles/M03.jpg" width="100%" alt="M03 risograph-print">
 
 ### N · Retro / Historical (2)
 
-**N01 · art-deco-gold** — dark — art-deco · luxurious · geometric — for keynote / investor-pitch — type Playfair Display + DM Sans — motion `gradient-breathe` — [design.md](knowledge/style/N01/design.md) · [preview.html](knowledge/style/N01/preview.html)
+**N01 · art-deco-gold** — dark — art-deco · luxurious · geometric — for keynote / investor-pitch — type Cinzel + Cormorant Garamond — motion `gradient-breathe` — [design.md](knowledge/style/N01/design.md) · [preview.html](knowledge/style/N01/preview.html)
 
 <img src="docs/readme/styles/N01.jpg" width="100%" alt="N01 art-deco-gold">
 
-**N02 · retro-modern-50s** — light — retro · playful · optimistic — for keynote / product-launch — type League Gothic + Source Code Pro — motion `light-sweep` — [design.md](knowledge/style/N02/design.md) · [preview.html](knowledge/style/N02/preview.html)
+**N02 · retro-modern-50s** — light — retro · playful · optimistic — for keynote / product-launch — type Bebas Neue + Nunito — motion `light-sweep` — [design.md](knowledge/style/N02/design.md) · [preview.html](knowledge/style/N02/preview.html)
 
 <img src="docs/readme/styles/N02.jpg" width="100%" alt="N02 retro-modern-50s">
 
 ### O · Nature / Earth (2)
 
-**O01 · organic-moss** — dark — organic · nature · environmental — for keynote / seminar — type Fraunces + DM Sans — motion `liquid-blob` — [design.md](knowledge/style/O01/design.md) · [preview.html](knowledge/style/O01/preview.html)
+**O01 · organic-moss** — dark — organic · nature · environmental — for keynote / seminar — type Lora + Nunito — motion `liquid-blob` — [design.md](knowledge/style/O01/design.md) · [preview.html](knowledge/style/O01/preview.html)
 
 <img src="docs/readme/styles/O01.jpg" width="100%" alt="O01 organic-moss">
 
-**O02 · sand-dune** — light — warm · expansive · natural — for keynote / seminar — type EB Garamond + Instrument Sans — motion `gradient-breathe` — [design.md](knowledge/style/O02/design.md) · [preview.html](knowledge/style/O02/preview.html)
+**O02 · sand-dune** — light — warm · expansive · natural — for keynote / seminar — type Fraunces + Plus Jakarta Sans — motion `gradient-breathe` — [design.md](knowledge/style/O02/design.md) · [preview.html](knowledge/style/O02/preview.html)
 
 <img src="docs/readme/styles/O02.jpg" width="100%" alt="O02 sand-dune">
 <!-- GALLERY:END -->
@@ -450,7 +456,7 @@ Studio 需要用 HTTP 打开 skill 根目录（`npx serve .`），然后访问 `
 
 | 命令 | 结果 |
 |---|---|
-| `node scripts/check-deck.js deck.html [--json report.json]` | 校验运行时、屏幕和打印版面的文字越界/裁切/重叠、窗口自适应及 PDF 页数；JSON 记录每页问题 |
+| `node scripts/check-deck.js deck.html [--json report.json] [--font-fallback]` | 校验运行时及屏幕/打印文字版面；`--font-fallback` 还会在阻断外部字体后复查两种版面 |
 | `node scripts/inline-assets.js deck.html [out.html]` | **单文件 HTML**：本地图片和字体转为 data URI，移动或发邮件都不会丢图 |
 | `node scripts/export-pdf.js deck.html [out.pdf]` | **PDF**，16:9，每页一张 1920×1080；写出前检查打印版面文字 |
 | `node scripts/export-pptx.js deck.html [plan.json] [out.pptx]` | **PPTX**：每页一张整页图片 + 演讲者备注（页面文字不可编辑）；逐页截图前检查文字 |

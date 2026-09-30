@@ -65,8 +65,8 @@
 
 :root {
   /* Font Families */
-  --font-display:  'Bebas Neue', 'Arial Black', sans-serif;  /* ALL-CAPS headlines */
-  --font-body:     'Nunito', 'Trebuchet MS', sans-serif;     /* body, captions, data */
+  --font-display:  'Bebas Neue', Arial, 'Slides CJK Sans', 'Arial Black', sans-serif;  /* ALL-CAPS headlines */
+  --font-body:     'Nunito', Arial, 'Slides CJK Sans', 'Trebuchet MS', sans-serif;     /* body, captions, data */
 
   /* Type Scale */
   --text-hero:     clamp(3.5rem, 6vw, 7.5rem);   /* slide 1 title */
@@ -474,3 +474,15 @@ All body text meets WCAG AA. The red stat numbers are decorative display-size te
 ## Fixed-stage content fit
 
 The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Bebas Neue | Arial | Slides CJK Sans |
+| Body | Nunito | Arial | Slides CJK Sans |
+| Auxiliary / data | Nunito | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

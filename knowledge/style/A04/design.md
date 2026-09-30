@@ -69,9 +69,9 @@ Cosmic-void frames every slide as a window into deep space: an ultra-dark near-b
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --type-display: 'Outfit', sans-serif;         /* headlines, big stats */
-  --type-body:    'Outfit', sans-serif;          /* body text */
-  --type-label:   'JetBrains Mono', monospace;  /* data, code, captions */
+  --type-display: 'Outfit', Arial, 'Slides CJK Sans', sans-serif;         /* headlines, big stats */
+  --type-body:    'Outfit', Arial, 'Slides CJK Sans', sans-serif;          /* body text */
+  --type-label:   'JetBrains Mono', Consolas, 'Slides CJK Sans', monospace;  /* data, code, captions */
 }
 
 .deck-stage {
@@ -222,3 +222,15 @@ const LAYERS = [
 - `--color-muted` over `--color-bg` = 4.5:1 ✓
 - Starfield drift and shooting-star events respect `prefers-reduced-motion`
 - Shooting star is purely decorative — no information is conveyed by its timing or direction
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Outfit | Arial | Slides CJK Sans |
+| Body | Outfit | Arial | Slides CJK Sans |
+| Auxiliary / data | JetBrains Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

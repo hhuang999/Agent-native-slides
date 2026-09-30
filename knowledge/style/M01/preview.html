@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../font-fallback.css">
 <style>
 /* ─── RESET ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,8 +32,8 @@
 
 /* ─── TYPOGRAPHY TOKENS ─── */
 :root {
-  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-body:    'Lato', system-ui, sans-serif;
+  --font-display: 'Playfair Display', Georgia, 'Slides CJK Serif', 'Times New Roman', serif;
+  --font-body:    'Lato', Arial, 'Slides CJK Sans', system-ui, sans-serif;
   --text-xs:   13px;
   --text-sm:   16px;
   --text-base: 20px;
@@ -523,11 +524,10 @@ body {
   <div class="slide slide-1 is-active" data-slide="1" id="slide-1">
     <div class="institution">Museum of Contemporary Art &mdash; Audience Development &amp; Engagement Research 2024</div>
     <h1 class="headline headline--hero">
-      Visitors Who Participated in Facilitated Gallery Conversations Reported 89 Percent Higher Likelihood to Return Within Six Months and Spent an Average of 47 More Minutes in the Museum Than Visitors on Self-Guided Visits.
+      Gallery conversations were linked to 89% higher return intent.
     </h1>
     <p class="abstract">
-      A longitudinal study of 4,200 visitor interactions across eight exhibition cycles reveals that structured facilitated dialogue programs produce measurable gains in both emotional connection and behavioral return intent.
-      The effect holds consistently across age cohorts, membership tiers, and exhibition format, suggesting conversation facilitation as a scalable lever for audience development.
+      Across 4,200 visits, guided dialogue was also associated with 47 more minutes in the museum.
     </p>
     <div class="detail-row">
       <div class="detail-cell">
@@ -544,7 +544,7 @@ body {
       </div>
       <div class="detail-cell">
         <div class="detail-label">Control Group</div>
-        <div class="detail-value">Self-guided visits, matched by entry ticket type</div>
+        <div class="detail-value">Self-guided visits, ticket-matched</div>
       </div>
     </div>
     <div class="folio">M01 &nbsp;·&nbsp; 01</div>
@@ -739,6 +739,15 @@ body {
         return { index: i + 1, type: 'content', assertion: '' }
       })
     }
+  }
+
+  window.__deckPlan.slides[0].assertion = 'Gallery conversations were linked to 89% higher return intent.'
+  window.__deckPlan.slides[0].speaker_notes = {
+    key_points: [
+      'The study followed 4,200 visitor interactions across eight exhibition cycles from January 2022 to December 2023.',
+      'Compared with ticket-matched self-guided visits, participants reported a higher likelihood of returning within six months and spent 47 more minutes in the museum on average.',
+      'The association held across age cohorts, membership tiers, and exhibition formats; the observational comparison does not by itself prove causation.'
+    ]
   }
 
   // Preview / print URL params

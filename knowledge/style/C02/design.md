@@ -71,9 +71,9 @@ There are no card containers. Content lives directly on the stage, separated by 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Space+Grotesk:wght@300;400;500;700&display=swap');
 
 :root {
-  --type-display: 'Cormorant Garamond', serif;   /* cinematic display — italic at large sizes */
-  --type-body:    'Space Grotesk', sans-serif;   /* functional text — modern geometric */
-  --type-label:   'Space Grotesk', sans-serif;   /* same — tight tracking at small sizes */
+  --type-display: 'Cormorant Garamond', Georgia, 'Slides CJK Serif', serif;   /* cinematic display — italic at large sizes */
+  --type-body:    'Space Grotesk', Arial, 'Slides CJK Sans', sans-serif;   /* functional text — modern geometric */
+  --type-label:   'Space Grotesk', Arial, 'Slides CJK Sans', sans-serif;   /* same — tight tracking at small sizes */
 }
 
 .deck-stage {
@@ -223,3 +223,15 @@ There are no card containers. Content lives directly on the stage, separated by 
 - Space Grotesk 300 at 11px (eyebrow/caption): `--color-muted` over `--color-bg` = 3.6:1 — large-text threshold; only for uppercase tracked labels, not for essential body content
 - No animation — `prefers-reduced-motion` has no active concerns
 - All semantic content at z-index 1 above background at z-index 0
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Cormorant Garamond | Georgia | Slides CJK Serif |
+| Body | Space Grotesk | Arial | Slides CJK Sans |
+| Auxiliary / data | Space Grotesk | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

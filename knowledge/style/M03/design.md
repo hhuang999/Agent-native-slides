@@ -73,7 +73,7 @@
 ```css
 :root {
   /* Font family */
-  --font-primary: 'Space Grotesk', system-ui, sans-serif;
+  --font-primary: 'Space Grotesk', Arial, 'Slides CJK Sans', system-ui, sans-serif;
 
   /* Type scale — all slides at 1920×1080 base */
   --text-display:   clamp(3rem, 4.2vw, 5.4rem);   /* slide 1 title */
@@ -380,3 +380,15 @@ M03's defining constraint is **editorial austerity under a two-colour RISO print
 ## Fixed-stage content fit
 
 The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Space Grotesk | Arial | Slides CJK Sans |
+| Body | Space Grotesk | Arial | Slides CJK Sans |
+| Auxiliary / data | Space Grotesk | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

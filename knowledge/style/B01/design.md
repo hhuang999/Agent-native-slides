@@ -79,9 +79,9 @@ Dark-glassmorphism layers frosted glass panels over a rich multi-blob gradient b
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
-  --type-display: 'Plus Jakarta Sans', sans-serif;   /* headlines */
-  --type-body:    'Plus Jakarta Sans', sans-serif;   /* body — lower weight */
-  --type-label:   'Space Mono', monospace;           /* data, code, captions */
+  --type-display: 'Plus Jakarta Sans', Arial, 'Slides CJK Sans', sans-serif;   /* headlines */
+  --type-body:    'Plus Jakarta Sans', Arial, 'Slides CJK Sans', sans-serif;   /* body — lower weight */
+  --type-label:   'Space Mono', Consolas, 'Slides CJK Sans', monospace;           /* data, code, captions */
 }
 
 .deck-stage {
@@ -268,3 +268,15 @@ A static three-blob radial gradient creates the ambient color field that bleeds 
 - `backdrop-filter` is progressive enhancement — falls back gracefully to the semi-transparent background color alone in environments without filter support
 - Gradient blobs are purely decorative at z-index 0; all semantic content is above at z-index 1
 - No animation in this style — `prefers-reduced-motion` has no active concerns
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Plus Jakarta Sans | Arial | Slides CJK Sans |
+| Body | Plus Jakarta Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | Space Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

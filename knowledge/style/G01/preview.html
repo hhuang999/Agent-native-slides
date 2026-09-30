@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Code+Pro:wght@400;500&family=Noto+Serif+SC:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../font-fallback.css">
 <style>
   /* ─── Reset ─────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -20,9 +21,9 @@
     --color-body:    oklch(0.22 0.01 255);
     --color-heading: oklch(0.10 0.01 255);
     --color-accent:  oklch(0.48 0.16 255);
-    --font-heading:  'EB Garamond', 'Noto Serif SC', Georgia, serif;
-    --font-body:     'EB Garamond', 'Noto Serif SC', Georgia, serif;
-    --font-mono:     'Source Code Pro', 'Courier New', monospace;
+    --font-heading:  'EB Garamond', Georgia, 'Slides CJK Serif', 'Noto Serif SC', serif;
+    --font-body:     'EB Garamond', Georgia, 'Slides CJK Serif', 'Noto Serif SC', serif;
+    --font-mono:     'Source Code Pro', Arial, 'Slides CJK Sans', 'Courier New', monospace;
     --scale: 1;
   }
 
@@ -367,7 +368,7 @@
     border: 1px solid oklch(0.70 0.01 80);
     background: oklch(0.94 0.01 85);
     color: oklch(0.35 0.02 80);
-    font-family: 'Source Code Pro', monospace;
+    font-family: 'Source Code Pro', Arial, 'Slides CJK Sans', monospace;
     font-size: 13px;
     cursor: pointer;
     transition: background 0.2s, border-color 0.2s;

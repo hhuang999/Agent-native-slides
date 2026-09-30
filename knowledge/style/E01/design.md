@@ -36,9 +36,9 @@ G01（light-journal-academic）同为浅色克制，但 G01 依赖衬线字体�
   --color-heading:  oklch(0.180 0.012 235);  /* 标题：近黑，带蓝调 */
   --color-accent:   oklch(0.520 0.140 220);  /* 冰青点缀，克制饱和 */
 
-  --font-heading:   'Hanken Grotesk', 'Noto Sans', sans-serif;
-  --font-body:      'Hanken Grotesk', 'Noto Sans', sans-serif;
-  --font-chinese:   'LXGW WenKai', 'Noto Sans SC', sans-serif;
+  --font-heading:   'Hanken Grotesk', Arial, 'Slides CJK Sans', 'Noto Sans', sans-serif;
+  --font-body:      'Hanken Grotesk', Arial, 'Slides CJK WenKai', 'Noto Sans', sans-serif;
+  --font-chinese:   'LXGW WenKai', Arial, 'Slides CJK WenKai', 'Noto Sans SC', sans-serif;
 }
 ```
 
@@ -165,3 +165,17 @@ G01（light-journal-academic）同为浅色克制，但 G01 依赖衬线字体�
 3. 页面是否保持了 50% 以上的留白比例，没有被内容填满？
 4. accent 色是否仅出现在 1–2 处（细竖线、单个数字），没有被泛化使用？
 5. 与 Canva 同类极简模板截图并排时，冷色调是否一致，字距是否更精准？
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Hanken Grotesk | Arial | Slides CJK Sans |
+| Body | Hanken Grotesk | Arial | Slides CJK WenKai |
+| Auxiliary / data | Hanken Grotesk | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.
+
+**Adjustment:** WenKai gives Chinese body copy the softer Nordic tone without changing Latin Hanken Grotesk.

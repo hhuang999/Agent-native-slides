@@ -70,9 +70,9 @@ Deep-sapphire draws authority from restraint: deep navy backgrounds with a cool 
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
 :root {
-  --type-display: 'Instrument Serif', serif;   /* headlines */
-  --type-body:    'DM Sans', sans-serif;
-  --type-label:   'DM Mono', monospace;        /* data, captions, code */
+  --type-display: 'Instrument Serif', Georgia, 'Slides CJK Serif', serif;   /* headlines */
+  --type-body:    'DM Sans', Arial, 'Slides CJK Sans', sans-serif;
+  --type-label:   'DM Mono', Consolas, 'Slides CJK Sans', monospace;        /* data, captions, code */
 }
 
 .deck-stage {
@@ -213,3 +213,15 @@ A single static horizontal radial bloom at 30% vertical height. Subtle depth; no
 - `--color-muted` over `--color-bg` = 4.5:1 ✓
 - Aurora breathe animation respects `prefers-reduced-motion`
 - Oldstyle/lining numeral distinction is aesthetic — state meaning conveyed via label, never numerals alone
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Instrument Serif | Georgia | Slides CJK Serif |
+| Body | DM Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | DM Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

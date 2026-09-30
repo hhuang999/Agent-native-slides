@@ -77,9 +77,9 @@ There are no card containers, no gradients, no shadows on text. Structure comes 
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;700&display=swap');
 
 :root {
-  --type-display:    'Archivo Black', sans-serif;       /* heavy geometric display */
-  --type-body:       'Space Grotesk', sans-serif;       /* functional text register */
-  --type-label:      'Space Grotesk', sans-serif;
+  --type-display:    'Archivo Black', Arial, 'Slides CJK Sans', sans-serif;       /* heavy geometric display */
+  --type-body:       'Space Grotesk', Arial, 'Slides CJK Sans', sans-serif;       /* functional text register */
+  --type-label:      'Space Grotesk', Arial, 'Slides CJK Sans', sans-serif;
 }
 
 .deck-stage {
@@ -251,3 +251,15 @@ There are no card containers, no gradients, no shadows on text. Structure comes 
 - Space Grotesk 300 at 10px folio: `--color-dim` over `--color-bg` = 2.8:1 — minimum graphical; folios are secondary navigation only
 - No animation — `prefers-reduced-motion` has no active concerns
 - All semantic content at z-index 1 above background at z-index 0
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Archivo Black | Arial | Slides CJK Sans |
+| Body | Space Grotesk | Arial | Slides CJK Sans |
+| Auxiliary / data | Space Grotesk | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

@@ -69,8 +69,8 @@
 ```css
 :root {
   /* Font families */
-  --ff-label:  'IBM Plex Sans', system-ui, sans-serif;   /* UI labels, body */
-  --ff-data:   'IBM Plex Mono', 'Courier New', monospace; /* stats, numbers, code */
+  --ff-label:  'IBM Plex Sans', Arial, 'Slides CJK Sans', system-ui, sans-serif;   /* UI labels, body */
+  --ff-data:   'IBM Plex Mono', Consolas, 'Slides CJK Sans', 'Courier New', monospace; /* stats, numbers, code */
 
   /* Type scale */
   --fs-2xs:   0.625rem;   /* 10px — badge labels */
@@ -393,3 +393,15 @@ All body text and UI labels meet WCAG AA. Numeric data in Mono meets AA at any u
 | Density | Very high — dashboard panels | Medium — diagram-first | High — CLI output |
 | Data surface | Raised panels + border-top accent | Flat rows + dividers | Bordered box-drawing |
 | Best for | BI, analytics, monitoring | System architecture, ops | Devops CLI output, code |
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | IBM Plex Sans | Arial | Slides CJK Sans |
+| Body | IBM Plex Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | IBM Plex Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

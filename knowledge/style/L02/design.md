@@ -81,8 +81,8 @@
 ```css
 :root {
   /* Font families */
-  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
-  --font-mono:    'Geist Mono', 'Fira Code', monospace;
+  --font-display: 'Bricolage Grotesque', Arial, 'Slides CJK Sans', system-ui, sans-serif;
+  --font-mono:    'Geist Mono', Consolas, 'Slides CJK Sans', 'Fira Code', monospace;
 
   /* Type scale (base 16px, ratio ~1.25) */
   --text-xs:   0.75rem;   /* 12px — footnote */
@@ -481,3 +481,15 @@
 | Mesh animation | Linear scan lines | **Radial drift orbs** | Grid pulse |
 | Stat marker | Horizontal line | **2px × 28px vertical bar** | Bracket notation |
 | Occasion | Cybersecurity, infra | **AI/ML, LLM research** | Developer tooling |
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Bricolage Grotesque | Arial | Slides CJK Sans |
+| Body | Geist Mono | Consolas | Slides CJK Sans |
+| Auxiliary / data | Geist Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

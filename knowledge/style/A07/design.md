@@ -69,12 +69,12 @@ Holographic-iridescent channels the visual language of diffraction gratings and 
 
 ```css
 /* CDN — OFL */
-@import url('https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@400;700;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@400;700;900&family=Lexend:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --type-display: 'Lexend Mega', sans-serif;      /* foil headlines */
-  --type-body:    'Lexend Mega', sans-serif;       /* body — lower weight */
-  --type-label:   'JetBrains Mono', monospace;    /* data, code, captions */
+  --type-display: 'Lexend Mega', Arial, 'Slides CJK Sans', sans-serif;      /* foil headlines */
+  --type-body:    'Lexend', Arial, 'Slides CJK Sans', sans-serif;            /* body — normal width */
+  --type-label:   'JetBrains Mono', Consolas, 'Slides CJK Sans', monospace;    /* data, code, captions */
 }
 
 .deck-stage {
@@ -90,7 +90,7 @@ Holographic-iridescent channels the visual language of diffraction gratings and 
 /* display = 4.4rem = 88px  (Lexend Mega 900) */
 /* h1      = 2.6rem = 52px  (Lexend Mega 700) */
 /* h2      = 1.8rem = 36px  (Lexend Mega 400) */
-/* body    = 1.0rem = 18px  (Lexend Mega 300/400) */
+/* body    = 1.0rem = 18px  (Lexend 400); generated decks use 28px+ */
 /* caption = 0.75rem = 14px (JetBrains Mono) */
 ```
 
@@ -179,7 +179,7 @@ A slow-rotating conic gradient sweeps the full hue range at low opacity over the
 │  [TAG — JetBrains Mono, teal, tracked]                 │
 │  ── prismatic rule (gradient border) ─────────────────  │
 │  DISPLAY: Headline (Lexend Mega 900, 88px, foil fill)  │
-│  Subtitle (Lexend Mega 400, 22px, muted)               │
+│  Subtitle (Lexend 400, 22px, muted)                    │
 │  Spacer                                                 │
 │  Badge row (JetBrains Mono, surface cards)             │
 └─────────────────────────────────────────────────────────┘
@@ -262,3 +262,17 @@ A slow-rotating conic gradient sweeps the full hue range at low opacity over the
 - All body text uses solid `--color-body` — no gradient text below 36px
 - `holo-spin` animation respects `prefers-reduced-motion`
 - Glow and prismatic borders are decorative — state always paired with text or icon label
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Lexend Mega | Arial | Slides CJK Sans |
+| Body | Lexend | Arial | Slides CJK Sans |
+| Auxiliary / data | JetBrains Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.
+
+**Adjustment:** Lexend Mega remains a foil display face; ordinary Lexend reduces body width and crowding.

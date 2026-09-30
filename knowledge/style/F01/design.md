@@ -194,3 +194,15 @@
 3. 极光绿点缀色是否只用于 1-2 个视觉角色，不满屏绿色？
 4. 玻璃卡片的 backdrop-filter blur 在 GPU 不可用时是否有静态 fallback？
 5. 与 Gamma/Pitch 同类暗色极光模板并排，是否不显廉价？
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Bricolage Grotesque | Arial | Slides CJK Sans |
+| Body | Geist Mono | Consolas | Slides CJK Sans |
+| Auxiliary / data | Geist Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

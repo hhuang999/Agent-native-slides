@@ -1,6 +1,6 @@
 {
   "_comment": "Style index for Agent-Native Slides. Query by mood+occasion to find 2-3 candidates. Load knowledge/style/[id]/design.md for full design language.",
-  "_schema": "id / name / scheme / mood[] / occasion[] / font_pair / bg_motion / academic_fit",
+  "_schema": "id / name / scheme / mood[] / occasion[] / font_pair (current display + body or aux) / bg_motion / academic_fit; full roles in font-policy.json",
   "styles": [
     {
       "id": "A01",
@@ -18,7 +18,7 @@
       "scheme": "dark",
       "mood": ["immersive", "creative", "energetic", "brand"],
       "occasion": ["keynote", "product-launch", "conference-talk"],
-      "font_pair": "Syne + Satoshi",
+      "font_pair": "Syne + DM Sans",
       "bg_motion": "mesh-drift",
       "academic_fit": "medium"
     },
@@ -48,7 +48,7 @@
       "scheme": "dark",
       "mood": ["edgy", "gaming", "hacker", "retro-futuristic"],
       "occasion": ["keynote", "product-launch"],
-      "font_pair": "Rajdhani + Source Code Pro",
+      "font_pair": "Rajdhani + Instrument Sans",
       "bg_motion": "hologram-scan",
       "academic_fit": "low"
     },
@@ -58,7 +58,7 @@
       "scheme": "dark",
       "mood": ["serene", "organic", "science", "environmental"],
       "occasion": ["conference-talk", "keynote", "seminar"],
-      "font_pair": "Fraunces + DM Mono",
+      "font_pair": "Fraunces + DM Sans",
       "bg_motion": "wave-sine",
       "academic_fit": "medium"
     },
@@ -68,7 +68,7 @@
       "scheme": "dark",
       "mood": ["futuristic", "creative", "fashion", "brand"],
       "occasion": ["keynote", "product-launch"],
-      "font_pair": "Lexend Mega + JetBrains Mono",
+      "font_pair": "Lexend Mega + Lexend",
       "bg_motion": "hologram-scan",
       "academic_fit": "low"
     },
@@ -88,7 +88,7 @@
       "scheme": "dark",
       "mood": ["modern", "sleek", "tech", "app"],
       "occasion": ["product-launch", "investor-pitch", "conference-talk"],
-      "font_pair": "Plus Jakarta Sans + JetBrains Mono",
+      "font_pair": "Plus Jakarta Sans + Space Mono",
       "bg_motion": "particle-float",
       "academic_fit": "medium"
     },
@@ -98,7 +98,7 @@
       "scheme": "light",
       "mood": ["airy", "modern", "clean", "app"],
       "occasion": ["product-launch", "team-update", "investor-pitch"],
-      "font_pair": "Manrope + Geist Mono",
+      "font_pair": "Instrument Serif + DM Sans",
       "bg_motion": "particle-float",
       "academic_fit": "medium"
     },
@@ -108,7 +108,7 @@
       "scheme": "dark",
       "mood": ["immersive", "colorful", "creative", "premium"],
       "occasion": ["keynote", "product-launch", "conference-talk"],
-      "font_pair": "Bricolage Grotesque + Geist Mono",
+      "font_pair": "Syne + Instrument Sans",
       "bg_motion": "aurora-band",
       "academic_fit": "medium"
     },
@@ -118,7 +118,7 @@
       "scheme": "light",
       "mood": ["warm", "elegant", "premium", "editorial"],
       "occasion": ["investor-pitch", "keynote", "product-launch"],
-      "font_pair": "Instrument Serif + DM Sans",
+      "font_pair": "Playfair Display SC + IBM Plex Sans",
       "bg_motion": "gradient-breathe",
       "academic_fit": "high"
     },
@@ -128,7 +128,7 @@
       "scheme": "dark",
       "mood": ["cinematic", "dramatic", "editorial", "storytelling"],
       "occasion": ["keynote", "product-launch", "seminar"],
-      "font_pair": "IM Fell English + Courier Prime",
+      "font_pair": "Bebas Neue + IBM Plex Mono",
       "bg_motion": "film-grain",
       "academic_fit": "medium"
     },
@@ -138,7 +138,7 @@
       "scheme": "dark",
       "mood": ["editorial", "cinematic", "creative", "brand"],
       "occasion": ["keynote", "product-launch", "conference-talk"],
-      "font_pair": "Cormorant Garamond + Karla",
+      "font_pair": "Cormorant Garamond + Space Grotesk",
       "bg_motion": "film-grain",
       "academic_fit": "medium"
     },
@@ -148,7 +148,7 @@
       "scheme": "light",
       "mood": ["editorial", "refined", "literary", "print"],
       "occasion": ["seminar", "conference-talk", "keynote"],
-      "font_pair": "Libre Baskerville + Mulish",
+      "font_pair": "DM Serif Display + DM Sans",
       "bg_motion": "light-sweep",
       "academic_fit": "medium"
     },
@@ -158,7 +158,7 @@
       "scheme": "dark",
       "mood": ["warm", "nostalgic", "cinematic", "storytelling"],
       "occasion": ["keynote", "seminar", "conference-talk"],
-      "font_pair": "Fraunces + DM Sans",
+      "font_pair": "Fraunces + Plus Jakarta Sans",
       "bg_motion": "film-grain",
       "academic_fit": "medium"
     },
@@ -168,7 +168,7 @@
       "scheme": "light",
       "mood": ["minimal", "rational", "precise", "corporate"],
       "occasion": ["conference-talk", "thesis-defense", "seminar", "team-update"],
-      "font_pair": "DM Sans + DM Mono",
+      "font_pair": "IBM Plex Sans Condensed + IBM Plex Sans",
       "bg_motion": "grain-breathe",
       "academic_fit": "high"
     },
@@ -178,7 +178,7 @@
       "scheme": "light",
       "mood": ["geometric", "artistic", "bold", "educational"],
       "occasion": ["seminar", "keynote", "conference-talk"],
-      "font_pair": "Josefin Sans + EB Garamond",
+      "font_pair": "Archivo Black + Space Grotesk",
       "bg_motion": "dot-pulse",
       "academic_fit": "high"
     },
@@ -188,7 +188,7 @@
       "scheme": "light",
       "mood": ["bold", "editorial", "raw", "typographic"],
       "occasion": ["keynote", "conference-talk"],
-      "font_pair": "League Gothic + Source Code Pro",
+      "font_pair": "Barlow Condensed + Barlow",
       "bg_motion": "grain-breathe",
       "academic_fit": "medium"
     },
@@ -198,7 +198,7 @@
       "scheme": "dark",
       "mood": ["minimal", "serious", "technical", "premium"],
       "occasion": ["conference-talk", "thesis-defense", "seminar"],
-      "font_pair": "Hanken Grotesk + JetBrains Mono",
+      "font_pair": "IBM Plex Sans Condensed + IBM Plex Sans",
       "bg_motion": "grain-breathe",
       "academic_fit": "high"
     },
@@ -208,7 +208,7 @@
       "scheme": "light",
       "mood": ["minimal", "calm", "scholarly", "zen"],
       "occasion": ["thesis-defense", "seminar", "conference-talk", "group-meeting"],
-      "font_pair": "Hanken Grotesk + LXGW WenKai",
+      "font_pair": "Hanken Grotesk + Hanken Grotesk",
       "bg_motion": "gradient-breathe",
       "academic_fit": "high"
     },
@@ -218,7 +218,7 @@
       "scheme": "light",
       "mood": ["warm", "natural", "calm", "organic"],
       "occasion": ["seminar", "thesis-defense", "group-meeting"],
-      "font_pair": "Instrument Serif + DM Sans",
+      "font_pair": "DM Serif Display + DM Sans",
       "bg_motion": "light-sweep",
       "academic_fit": "high"
     },
@@ -228,7 +228,7 @@
       "scheme": "light",
       "mood": ["cool", "minimal", "science", "refreshing"],
       "occasion": ["thesis-defense", "conference-talk", "seminar"],
-      "font_pair": "Bricolage Grotesque + Geist Mono",
+      "font_pair": "Fraunces + Plus Jakarta Sans",
       "bg_motion": "gradient-breathe",
       "academic_fit": "high"
     },
@@ -248,7 +248,7 @@
       "scheme": "light",
       "mood": ["optimistic", "creative", "fresh", "brand"],
       "occasion": ["product-launch", "keynote", "investor-pitch"],
-      "font_pair": "Syne + Satoshi",
+      "font_pair": "Lora + Nunito",
       "bg_motion": "mesh-drift",
       "academic_fit": "medium"
     },
@@ -258,7 +258,7 @@
       "scheme": "light",
       "mood": ["vibrant", "brand", "creative", "energetic"],
       "occasion": ["product-launch", "keynote", "investor-pitch"],
-      "font_pair": "Outfit + DM Mono",
+      "font_pair": "Syne + Space Grotesk",
       "bg_motion": "mesh-drift",
       "academic_fit": "low"
     },
@@ -278,7 +278,7 @@
       "scheme": "dark",
       "mood": ["academic", "focused", "nocturnal", "rigorous"],
       "occasion": ["conference-talk", "thesis-defense", "seminar"],
-      "font_pair": "Playfair Display + Source Code Pro",
+      "font_pair": "Playfair Display + EB Garamond",
       "bg_motion": "grain-breathe",
       "academic_fit": "high"
     },
@@ -288,7 +288,7 @@
       "scheme": "light",
       "mood": ["academic", "bilingual", "neutral", "scholarly"],
       "occasion": ["thesis-defense", "seminar", "group-meeting", "conference-talk"],
-      "font_pair": "Lato + Noto Serif CJK",
+      "font_pair": "Source Serif 4 + Source Sans 3",
       "bg_motion": "light-sweep",
       "academic_fit": "high"
     },
@@ -298,7 +298,7 @@
       "scheme": "light",
       "mood": ["academic", "engineering", "technical", "modern"],
       "occasion": ["thesis-defense", "conference-talk", "seminar", "group-meeting"],
-      "font_pair": "Noto Sans + Noto Sans CJK",
+      "font_pair": "DM Sans + DM Sans",
       "bg_motion": "gradient-breathe",
       "academic_fit": "high"
     },
@@ -308,7 +308,7 @@
       "scheme": "light",
       "mood": ["corporate", "professional", "clear", "modular"],
       "occasion": ["team-update", "investor-pitch", "group-meeting", "workshop"],
-      "font_pair": "Plus Jakarta Sans + IBM Plex Mono",
+      "font_pair": "Inter + Inter",
       "bg_motion": "gradient-breathe",
       "academic_fit": "high"
     },
@@ -318,7 +318,7 @@
       "scheme": "light",
       "mood": ["authoritative", "financial", "corporate", "trustworthy"],
       "occasion": ["investor-pitch", "team-update", "conference-talk"],
-      "font_pair": "Source Sans 3 + Source Serif 4",
+      "font_pair": "Libre Baskerville + Libre Franklin",
       "bg_motion": "light-sweep",
       "academic_fit": "high"
     },
@@ -328,7 +328,7 @@
       "scheme": "dark",
       "mood": ["premium", "executive", "bold", "corporate"],
       "occasion": ["investor-pitch", "keynote", "conference-talk"],
-      "font_pair": "Playfair Display + DM Sans",
+      "font_pair": "Syne + Space Grotesk",
       "bg_motion": "grain-breathe",
       "academic_fit": "high"
     },
@@ -338,7 +338,7 @@
       "scheme": "light",
       "mood": ["warm", "scholarly", "tactile", "literary"],
       "occasion": ["seminar", "thesis-defense", "workshop"],
-      "font_pair": "EB Garamond + Source Code Pro",
+      "font_pair": "Cormorant Garamond + Jost",
       "bg_motion": "grain-breathe",
       "academic_fit": "high"
     },
@@ -348,7 +348,7 @@
       "scheme": "light",
       "mood": ["zen", "minimalist", "japanese", "contemplative"],
       "occasion": ["seminar", "keynote", "thesis-defense"],
-      "font_pair": "Noto Serif JP + Noto Sans JP",
+      "font_pair": "Shippori Mincho + Noto Sans JP",
       "bg_motion": "grain-breathe",
       "academic_fit": "high"
     },
@@ -358,7 +358,7 @@
       "scheme": "dark",
       "mood": ["nostalgic", "cinematic", "warm", "storytelling"],
       "occasion": ["keynote", "seminar"],
-      "font_pair": "Playfair Display + Karla",
+      "font_pair": "Instrument Serif + Space Grotesk",
       "bg_motion": "film-grain",
       "academic_fit": "medium"
     },
@@ -368,7 +368,7 @@
       "scheme": "light",
       "mood": ["modern", "playful", "structured", "app"],
       "occasion": ["product-launch", "team-update", "investor-pitch"],
-      "font_pair": "Instrument Sans + DM Mono",
+      "font_pair": "Nunito + Nunito",
       "bg_motion": "gradient-breathe",
       "academic_fit": "medium"
     },
@@ -378,7 +378,7 @@
       "scheme": "dark",
       "mood": ["hacker", "engineering", "retro", "technical"],
       "occasion": ["conference-talk", "workshop", "group-meeting"],
-      "font_pair": "Geist Mono + Hanken Grotesk",
+      "font_pair": "JetBrains Mono + JetBrains Mono",
       "bg_motion": "circuit-trace",
       "academic_fit": "medium"
     },
@@ -388,7 +388,7 @@
       "scheme": "dark",
       "mood": ["data", "analytical", "technical", "monitoring"],
       "occasion": ["conference-talk", "group-meeting", "seminar", "team-update"],
-      "font_pair": "DM Mono + DM Sans",
+      "font_pair": "IBM Plex Sans + IBM Plex Mono",
       "bg_motion": "particle-float",
       "academic_fit": "high"
     },
@@ -398,7 +398,7 @@
       "scheme": "light",
       "mood": ["precise", "technical", "engineering", "documentation"],
       "occasion": ["conference-talk", "thesis-defense", "seminar", "group-meeting"],
-      "font_pair": "IBM Plex Mono + IBM Plex Sans",
+      "font_pair": "IBM Plex Serif + IBM Plex Sans",
       "bg_motion": "light-sweep",
       "academic_fit": "high"
     },
@@ -408,7 +408,7 @@
       "scheme": "light",
       "mood": ["luxury", "fashion", "minimal", "editorial"],
       "occasion": ["keynote", "investor-pitch", "product-launch"],
-      "font_pair": "Cormorant Garamond + Mulish",
+      "font_pair": "Cormorant Garamond + Jost",
       "bg_motion": "light-sweep",
       "academic_fit": "low"
     },
@@ -418,7 +418,7 @@
       "scheme": "dark",
       "mood": ["luxury", "premium", "exclusive", "brand"],
       "occasion": ["keynote", "investor-pitch", "product-launch"],
-      "font_pair": "Playfair Display + Instrument Sans",
+      "font_pair": "Playfair Display + Lato",
       "bg_motion": "gradient-breathe",
       "academic_fit": "low"
     },
@@ -428,7 +428,7 @@
       "scheme": "light",
       "mood": ["fashion", "editorial", "feminine", "brand"],
       "occasion": ["keynote", "product-launch", "investor-pitch"],
-      "font_pair": "Fraunces + DM Sans",
+      "font_pair": "Libre Baskerville + Raleway",
       "bg_motion": "gradient-breathe",
       "academic_fit": "low"
     },
@@ -448,7 +448,7 @@
       "scheme": "dark",
       "mood": ["ai", "creative", "mysterious", "generative"],
       "occasion": ["keynote", "product-launch", "conference-talk"],
-      "font_pair": "Outfit + JetBrains Mono",
+      "font_pair": "Bricolage Grotesque + Geist Mono",
       "bg_motion": "mesh-drift",
       "academic_fit": "medium"
     },
@@ -458,7 +458,7 @@
       "scheme": "light",
       "mood": ["ai", "fresh", "modern", "tool"],
       "occasion": ["product-launch", "conference-talk", "team-update"],
-      "font_pair": "Bricolage Grotesque + Geist Mono",
+      "font_pair": "Plus Jakarta Sans + Plus Jakarta Sans",
       "bg_motion": "gradient-breathe",
       "academic_fit": "medium"
     },
@@ -468,7 +468,7 @@
       "scheme": "light",
       "mood": ["artistic", "organic", "creative", "humanistic"],
       "occasion": ["seminar", "keynote", "workshop"],
-      "font_pair": "Fraunces + Mulish",
+      "font_pair": "Playfair Display + Lato",
       "bg_motion": "gradient-breathe",
       "academic_fit": "medium"
     },
@@ -478,7 +478,7 @@
       "scheme": "light",
       "mood": ["traditional", "scholarly", "east-asian", "artistic"],
       "occasion": ["seminar", "thesis-defense", "keynote"],
-      "font_pair": "Noto Serif CJK + Noto Sans",
+      "font_pair": "Spectral + Jost",
       "bg_motion": "grain-breathe",
       "academic_fit": "high"
     },
@@ -488,7 +488,7 @@
       "scheme": "light",
       "mood": ["retro", "print", "indie", "creative"],
       "occasion": ["keynote", "workshop", "product-launch"],
-      "font_pair": "Josefin Sans + EB Garamond",
+      "font_pair": "Space Grotesk + Space Grotesk",
       "bg_motion": "dot-pulse",
       "academic_fit": "medium"
     },
@@ -498,7 +498,7 @@
       "scheme": "dark",
       "mood": ["art-deco", "luxurious", "geometric", "historical"],
       "occasion": ["keynote", "investor-pitch", "seminar"],
-      "font_pair": "Playfair Display + DM Sans",
+      "font_pair": "Cinzel + Cormorant Garamond",
       "bg_motion": "gradient-breathe",
       "academic_fit": "medium"
     },
@@ -508,7 +508,7 @@
       "scheme": "light",
       "mood": ["retro", "playful", "optimistic", "mid-century"],
       "occasion": ["keynote", "product-launch"],
-      "font_pair": "League Gothic + Source Code Pro",
+      "font_pair": "Bebas Neue + Nunito",
       "bg_motion": "light-sweep",
       "academic_fit": "low"
     },
@@ -518,7 +518,7 @@
       "scheme": "dark",
       "mood": ["organic", "nature", "environmental", "grounding"],
       "occasion": ["keynote", "seminar", "conference-talk"],
-      "font_pair": "Fraunces + DM Sans",
+      "font_pair": "Lora + Nunito",
       "bg_motion": "liquid-blob",
       "academic_fit": "medium"
     },
@@ -528,7 +528,7 @@
       "scheme": "light",
       "mood": ["warm", "expansive", "natural", "calm"],
       "occasion": ["keynote", "seminar", "thesis-defense"],
-      "font_pair": "EB Garamond + Instrument Sans",
+      "font_pair": "Fraunces + Plus Jakarta Sans",
       "bg_motion": "gradient-breathe",
       "academic_fit": "medium"
     }

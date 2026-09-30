@@ -79,8 +79,8 @@
 
 ```css
 :root {
-  --font-display:  'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-body:     'Lato', system-ui, sans-serif;
+  --font-display:  'Playfair Display', Georgia, 'Slides CJK Serif', 'Times New Roman', serif;
+  --font-body:     'Lato', Arial, 'Slides CJK Sans', system-ui, sans-serif;
 
   /* Type scale — Major Third (1.250) base 18px */
   --text-xs:    0.694rem;   /* 12.5px — footnotes, captions */
@@ -486,3 +486,15 @@ K02 (gold-dark-premium) is the foundational K-family dark luxury style. It diffe
 - **Color economy:** Gold is the single accent — zero secondary hues. Any K-family sibling using silver, copper, or dual accents is compositionally busier.
 - **Editorial serif:** Playfair Display is an OFL-licensed editorial serif that signals traditional print wealth management. A K sibling using a grotesque or geometric sans for headlines would read as contemporary tech-luxury rather than heritage-luxury.
 - **Hairline restraint:** Rules at 1px, 60% opacity — visible but whispered. Siblings with thicker decorative rules have a different weight register.
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Playfair Display | Georgia | Slides CJK Serif |
+| Body | Lato | Arial | Slides CJK Sans |
+| Auxiliary / data | Lato | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

@@ -67,12 +67,12 @@ Deep-ocean evokes the visual language of oceanographic data visualization: press
 
 ```css
 /* CDN — OFL */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
 :root {
-  --type-display: 'Fraunces', serif;        /* headlines — optical serif */
-  --type-body:    'Fraunces', serif;        /* body — same family, lower weight */
-  --type-label:   'DM Mono', monospace;    /* data, captions, code */
+  --type-display: 'Fraunces', Georgia, 'Slides CJK Serif', serif;        /* headlines — optical serif */
+  --type-body:    'DM Sans', Arial, 'Slides CJK Sans', sans-serif;     /* body — clearer in data-dense layouts */
+  --type-label:   'DM Mono', Consolas, 'Slides CJK Sans', monospace;    /* data, captions, code */
 }
 
 .deck-stage {
@@ -85,7 +85,7 @@ Deep-ocean evokes the visual language of oceanographic data visualization: press
 /* display = 3.6rem = 72px  (Fraunces 700, opsz 72) */
 /* h1      = 2.6rem = 52px  (Fraunces 700, opsz 52) */
 /* h2      = 1.9rem = 38px  (Fraunces 600, opsz 38) */
-/* body    = 1.0rem = 20px  (Fraunces 400, opsz 20) */
+/* body    = 1.0rem = 20px  (DM Sans 400); generated decks use 28px+ */
 /* caption = 0.75rem = 15px (DM Mono 400) */
 
 /* Note: Fraunces supports font-optical-sizing: auto — enable on .deck-stage */
@@ -157,7 +157,7 @@ Three SVG sine-wave bands scroll at different horizontal speeds, creating a sens
 │  ── teal-to-transparent rule ───────────────────────── │
 │  DISPLAY: Assertion (Fraunces 700, 72px, heading)      │
 │  24px gap                                               │
-│  Subtitle (Fraunces 400, 24px, muted)                  │
+│  Subtitle (DM Sans 400, 24px, muted)                   │
 │  48px gap                                               │
 │  Meta row (DM Mono 15px, muted) · dot separators       │
 │  [bottom border rule]                                   │
@@ -238,3 +238,17 @@ Three SVG sine-wave bands scroll at different horizontal speeds, creating a sens
 - `--color-accent-light` over `--color-bg` = 8.4:1 ✓
 - Wave animation respects `prefers-reduced-motion`
 - Wave bands are purely decorative — all semantic content layers above at z-index 1
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Fraunces | Georgia | Slides CJK Serif |
+| Body | DM Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | DM Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.
+
+**Adjustment:** Fraunces retains the oceanographic editorial headline; DM Sans improves paragraph legibility.

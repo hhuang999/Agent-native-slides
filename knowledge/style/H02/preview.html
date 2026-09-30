@@ -8,7 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
+  <link rel="stylesheet" href="../font-fallback.css">
+<style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background: #000;
@@ -31,8 +32,8 @@
       --c-border-gold:    oklch(0.55 0.09 68);
       --c-positive:       oklch(0.78 0.12 160);
       --c-row-highlight:  oklch(0.29 0.07 255);
-      --font-serif:       'Libre Baskerville', Georgia, serif;
-      --font-sans:        'Libre Franklin', system-ui, sans-serif;
+      --font-serif:       'Libre Baskerville', Georgia, 'Slides CJK Serif', serif;
+      --font-sans:        'Libre Franklin', Arial, 'Slides CJK Sans', system-ui, sans-serif;
     }
     #deck-wrapper {
       position: relative;

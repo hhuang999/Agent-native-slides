@@ -78,9 +78,9 @@ Light-glassmorphism flips the dark variant's depth logic: instead of frosted pan
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
 
 :root {
-  --type-display: 'Instrument Serif', serif;     /* editorial display headlines */
-  --type-body:    'DM Sans', sans-serif;         /* body — friendly sans */
-  --type-label:   'DM Sans', sans-serif;         /* labels, captions */
+  --type-display: 'Instrument Serif', Georgia, 'Slides CJK Serif', serif;     /* editorial display headlines */
+  --type-body:    'DM Sans', Arial, 'Slides CJK Sans', sans-serif;         /* body — friendly sans */
+  --type-label:   'DM Sans', Arial, 'Slides CJK Sans', sans-serif;         /* labels, captions */
 }
 
 .deck-stage {
@@ -252,3 +252,15 @@ Light-glassmorphism flips the dark variant's depth logic: instead of frosted pan
 - Glass cards must never put light muted text over glass; use `--color-body` or `--color-heading`
 - `backdrop-filter` is progressive enhancement — semi-transparent background color alone is still readable
 - No animation — `prefers-reduced-motion` has no active concerns
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Instrument Serif | Georgia | Slides CJK Serif |
+| Body | DM Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | DM Sans | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

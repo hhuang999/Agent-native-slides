@@ -95,8 +95,8 @@
 ```css
 :root {
   /* Families */
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body:    'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Slides CJK Serif', serif;
+  --font-body:    'Plus Jakarta Sans', Arial, 'Slides CJK Sans', system-ui, sans-serif;
 
   /* Scale (1.25 major third) */
   --fs-xs:   11px;  /* captions, footnotes */
@@ -481,3 +481,15 @@ All body text uses `--color-text-primary` or `--color-text-secondary` which meet
 | Stat bar | — | 20×1 px terracotta | — |
 
 O02 is the only O-family style with variable-font optical-size exploitation in headlines, the Fraunces/Jakarta Sans pairing, and the horizontal strata rule system borrowed from geological section drawings.
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Fraunces | Georgia | Slides CJK Serif |
+| Body | Plus Jakarta Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | Plus Jakarta Sans | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

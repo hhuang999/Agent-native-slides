@@ -50,66 +50,61 @@ Agent-Native Slides — 外部资源登记表
 
 ---
 
-## Google Fonts（全部 OFL 许可）
+## Google Fonts（预览与生成页使用；具体字重见各风格的 CSS 请求）
 
-| 字体 | 用于风格 | Google Fonts URL |
-|------|---------|----------------|
-| EB Garamond | G01, G02, I01, O02 | fonts.google.com/specimen/EB+Garamond |
-| Source Code Pro | G01, G02, I01 | fonts.google.com/specimen/Source+Code+Pro |
-| Geist Mono | A01, B01, D04, E03, J01, L01 | fonts.google.com/specimen/Geist+Mono |
-| Instrument Sans | A01, B04, I04 | fonts.google.com/specimen/Instrument+Sans |
-| JetBrains Mono | A01, A04, A07, B01, L02 | fonts.google.com/specimen/JetBrains+Mono |
-| Syne | A02, F02, L01 | fonts.google.com/specimen/Syne |
-| Instrument Serif | A03, B04, E02, K02 | fonts.google.com/specimen/Instrument+Serif |
-| DM Sans | A03, A06, B04, C04, F03, H03, I02, I04 | fonts.google.com/specimen/DM+Sans |
-| Outfit | A04, F03, L02 | fonts.google.com/specimen/Outfit |
-| Rajdhani | A05 | fonts.google.com/specimen/Rajdhani |
-| Source Code Pro | A05, D03 | fonts.google.com/specimen/Source+Code+Pro |
-| Fraunces | A06, C04, I03, K03, M01, O01, O02 | fonts.google.com/specimen/Fraunces |
-| DM Mono | A06, F03, I04, J02 | fonts.google.com/specimen/DM+Mono |
-| Lexend Mega | A07 | fonts.google.com/specimen/Lexend+Mega |
-| Silkscreen | A08 | fonts.google.com/specimen/Silkscreen |
-| Josefin Sans | A08, D02, M03 | fonts.google.com/specimen/Josefin+Sans |
-| Plus Jakarta Sans | B01, H01 | fonts.google.com/specimen/Plus+Jakarta+Sans |
-| Manrope | B02 | fonts.google.com/specimen/Manrope |
-| Bricolage Grotesque | B03, E03, F01, L03 | fonts.google.com/specimen/Bricolage+Grotesque |
-| Geist Mono | B03, E03, F01, L03 | (see above) |
-| IM Fell English | C01 | fonts.google.com/specimen/IM+Fell+English |
-| Courier Prime | C01, N01 | fonts.google.com/specimen/Courier+Prime |
-| Cormorant Garamond | C02, K01 | fonts.google.com/specimen/Cormorant+Garamond |
-| Karla | C02, I03 | fonts.google.com/specimen/Karla |
-| Libre Baskerville | C03 | fonts.google.com/specimen/Libre+Baskerville |
-| Mulish | C03, K01, M01 | fonts.google.com/specimen/Mulish |
-| DM Sans | C04 | (see above) |
-| DM Sans | D01 | (see above) |
-| EB Garamond | D02 | (see above) |
-| League Gothic | D03, N02 | fonts.google.com/specimen/League+Gothic |
-| Hanken Grotesk | D04, E01, J01 | fonts.google.com/specimen/Hanken+Grotesk |
-| LXGW WenKai | E01 | fonts.google.com/specimen/LXGW+WenKai (OFL) |
-| Noto Serif JP | I02 | fonts.google.com/noto/specimen/Noto+Serif+JP |
-| Noto Sans JP | I02 | fonts.google.com/noto/specimen/Noto+Sans+JP |
-| Playfair Display | H03, I03, K02, N01 | fonts.google.com/specimen/Playfair+Display |
-| IBM Plex Mono | H01, J03 | fonts.google.com/specimen/IBM+Plex+Mono |
-| Source Sans 3 | H02 | fonts.google.com/specimen/Source+Sans+3 |
-| Source Serif 4 | H02 | fonts.google.com/specimen/Source+Serif+4 |
-| Lato | G03 | fonts.google.com/specimen/Lato |
-| Noto Serif CJK / Noto Serif SC | G03, M02 | fonts.google.com/noto/specimen/Noto+Serif+SC |
-| Noto Sans | G04, M02 | fonts.google.com/specimen/Noto+Sans |
-| Noto Sans CJK / Noto Sans SC | G04 | fonts.google.com/noto/specimen/Noto+Sans+SC |
-| Crimson Pro | — | fonts.google.com/specimen/Crimson+Pro |
-| Poppins | — | fonts.google.com/specimen/Poppins |
-| Fira Code | — | fonts.google.com/specimen/Fira+Code |
-| Atkinson Hyperlegible | — | fonts.google.com/specimen/Atkinson+Hyperlegible |
-| Smiley Sans | I02 (中文) | OFL — github.com/atelier-anchor/smiley-sans |
+| 字体 | 用于风格 | 官方字体页 |
+|---|---|---|
+| Archivo Black | D02 | [Google Fonts](https://fonts.google.com/specimen/Archivo+Black) |
+| Barlow | D03 | [Google Fonts](https://fonts.google.com/specimen/Barlow) |
+| Barlow Condensed | D03 | [Google Fonts](https://fonts.google.com/specimen/Barlow+Condensed) |
+| Bebas Neue | C01, N02 | [Google Fonts](https://fonts.google.com/specimen/Bebas+Neue) |
+| Bricolage Grotesque | F01, L02 | [Google Fonts](https://fonts.google.com/specimen/Bricolage+Grotesque) |
+| Cinzel | N01 | [Google Fonts](https://fonts.google.com/specimen/Cinzel) |
+| Cormorant Garamond | C02, I01, K01, N01 | [Google Fonts](https://fonts.google.com/specimen/Cormorant+Garamond) |
+| DM Mono | A03, A06 | [Google Fonts](https://fonts.google.com/specimen/DM+Mono) |
+| DM Sans | A02, A03, A06, B02, C03, E02, G04 | [Google Fonts](https://fonts.google.com/specimen/DM+Sans) |
+| DM Serif Display | C03, E02 | [Google Fonts](https://fonts.google.com/specimen/DM+Serif+Display) |
+| EB Garamond | G01, G02 | [Google Fonts](https://fonts.google.com/specimen/EB+Garamond) |
+| Fraunces | A06, C04, E03, O02 | [Google Fonts](https://fonts.google.com/specimen/Fraunces) |
+| Geist Mono | A01, F01, L01, L02 | [Google Fonts](https://fonts.google.com/specimen/Geist+Mono) |
+| Hanken Grotesk | E01 | [Google Fonts](https://fonts.google.com/specimen/Hanken+Grotesk) |
+| IBM Plex Mono | B04, C01, J02, J03 | [Google Fonts](https://fonts.google.com/specimen/IBM+Plex+Mono) |
+| IBM Plex Sans | B04, D01, D04, J02, J03 | [Google Fonts](https://fonts.google.com/specimen/IBM+Plex+Sans) |
+| IBM Plex Sans Condensed | D01, D04 | [Google Fonts](https://fonts.google.com/specimen/IBM+Plex+Sans+Condensed) |
+| IBM Plex Serif | J03 | [Google Fonts](https://fonts.google.com/specimen/IBM+Plex+Serif) |
+| Instrument Sans | A01, A05, B03 | [Google Fonts](https://fonts.google.com/specimen/Instrument+Sans) |
+| Instrument Serif | A03, B02, I03 | [Google Fonts](https://fonts.google.com/specimen/Instrument+Serif) |
+| Inter | H01 | [Google Fonts](https://fonts.google.com/specimen/Inter) |
+| JetBrains Mono | A04, A07, B03, J01 | [Google Fonts](https://fonts.google.com/specimen/JetBrains+Mono) |
+| Josefin Sans | A08 | [Google Fonts](https://fonts.google.com/specimen/Josefin+Sans) |
+| Jost | I01, K01, M02 | [Google Fonts](https://fonts.google.com/specimen/Jost) |
+| Lato | K02, M01 | [Google Fonts](https://fonts.google.com/specimen/Lato) |
+| Lexend | A07 | [Google Fonts](https://fonts.google.com/specimen/Lexend) |
+| Lexend Mega | A07 | [Google Fonts](https://fonts.google.com/specimen/Lexend+Mega) |
+| Libre Baskerville | H02, K03 | [Google Fonts](https://fonts.google.com/specimen/Libre+Baskerville) |
+| Libre Franklin | H02 | [Google Fonts](https://fonts.google.com/specimen/Libre+Franklin) |
+| Lora | F02, O01 | [Google Fonts](https://fonts.google.com/specimen/Lora) |
+| Noto Sans JP | I02 | [Google Fonts](https://fonts.google.com/specimen/Noto+Sans+JP) |
+| Nunito | F02, I04, N02, O01 | [Google Fonts](https://fonts.google.com/specimen/Nunito) |
+| Outfit | A04 | [Google Fonts](https://fonts.google.com/specimen/Outfit) |
+| Playfair Display | G02, K02, M01 | [Google Fonts](https://fonts.google.com/specimen/Playfair+Display) |
+| Playfair Display SC | B04 | [Google Fonts](https://fonts.google.com/specimen/Playfair+Display+SC) |
+| Plus Jakarta Sans | B01, C04, E03, L03, O02 | [Google Fonts](https://fonts.google.com/specimen/Plus+Jakarta+Sans) |
+| Rajdhani | A05 | [Google Fonts](https://fonts.google.com/specimen/Rajdhani) |
+| Raleway | K03 | [Google Fonts](https://fonts.google.com/specimen/Raleway) |
+| Shippori Mincho | I02 | [Google Fonts](https://fonts.google.com/specimen/Shippori+Mincho) |
+| Silkscreen | A08 | [Google Fonts](https://fonts.google.com/specimen/Silkscreen) |
+| Source Code Pro | A05, G01 | [Google Fonts](https://fonts.google.com/specimen/Source+Code+Pro) |
+| Source Sans 3 | G03 | [Google Fonts](https://fonts.google.com/specimen/Source+Sans+3) |
+| Source Serif 4 | G03 | [Google Fonts](https://fonts.google.com/specimen/Source+Serif+4) |
+| Space Grotesk | C02, D02, F03, H03, I03, M03 | [Google Fonts](https://fonts.google.com/specimen/Space+Grotesk) |
+| Space Mono | B01 | [Google Fonts](https://fonts.google.com/specimen/Space+Mono) |
+| Spectral | M02 | [Google Fonts](https://fonts.google.com/specimen/Spectral) |
+| Syne | A02, B03, F03, H03, L01 | [Google Fonts](https://fonts.google.com/specimen/Syne) |
 
-## Fontshare（免费商用，需 Fontshare CDN）
-
-| 字体 | License | CDN | 用于风格 |
-|------|---------|-----|---------|
-| Satoshi | Fontshare Free | api.fontshare.com/v2/css?f[]=satoshi | A02, F02 |
+中文回退由 `knowledge/style/font-fallback.css` 从本仓库 `assets/fonts/` 加载，详见下方本地字体表。A02 已使用 Google Fonts 的 DM Sans，不再依赖 Fontshare。
 
 ---
-
 ## 参考资源（reference — 仅视觉参考，未引入代码）
 
 | 资源 | URL | 参考内容 |

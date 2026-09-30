@@ -75,9 +75,9 @@ The accent is warm amber-gold `oklch(0.62 0.14 55)` — the color of first light
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,700;1,400&family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
 
 :root {
-  --type-display:  'Lora', serif;               /* warm serif — headlines + stat numerics */
-  --type-body:     'Nunito', sans-serif;         /* rounded humanist sans — all other text */
-  --type-label:    'Nunito', sans-serif;
+  --type-display:  'Lora', Georgia, 'Slides CJK Serif', serif;               /* warm serif — headlines + stat numerics */
+  --type-body:     'Nunito', Arial, 'Slides CJK Sans', sans-serif;         /* rounded humanist sans — all other text */
+  --type-label:    'Nunito', Arial, 'Slides CJK Sans', sans-serif;
 }
 
 .deck-stage {
@@ -255,3 +255,15 @@ The accent is warm amber-gold `oklch(0.62 0.14 55)` — the color of first light
 | Stat accent | — | 8px amber dot |
 | Mood | Ethereal, immersive | Hopeful, luminous |
 | Occasions | AI/tech, innovation | Education, social impact |
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Lora | Georgia | Slides CJK Serif |
+| Body | Nunito | Arial | Slides CJK Sans |
+| Auxiliary / data | Nunito | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

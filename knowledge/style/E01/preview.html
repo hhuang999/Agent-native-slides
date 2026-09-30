@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../font-fallback.css">
 <style>
 /* ── Token System ─────────────────────────────────────────────── */
 :root {
@@ -17,8 +18,8 @@
   --color-body:    oklch(0.280 0.010 230);
   --color-heading: oklch(0.180 0.012 235);
   --color-accent:  oklch(0.520 0.140 220);
-  --font-heading:  'Hanken Grotesk', 'Noto Sans', sans-serif;
-  --font-body:     'Hanken Grotesk', 'Noto Sans', sans-serif;
+  --font-heading:  'Hanken Grotesk', Arial, 'Slides CJK Sans', 'Noto Sans', sans-serif;
+  --font-body:     'Hanken Grotesk', Arial, 'Slides CJK WenKai', 'Noto Sans', sans-serif;
   --scale: 1;
 }
 
@@ -112,6 +113,7 @@ body {
 }
 
 .s1-assertion {
+  font-family: var(--font-heading);
   font-size: 104px;
   font-weight: 300;
   line-height: 1.08;
@@ -196,6 +198,7 @@ body {
 }
 
 .s2-left h2 {
+  font-family: var(--font-heading);
   font-size: 58px;
   font-weight: 300;
   line-height: 1.12;
@@ -283,7 +286,7 @@ body {
   border-color: #ccc;
 }
 .nav-label {
-  font-family: 'Hanken Grotesk', sans-serif;
+  font-family: 'Hanken Grotesk', Arial, 'Slides CJK Sans', sans-serif;
   font-size: 12px;
   color: #666;
   letter-spacing: 0.05em;

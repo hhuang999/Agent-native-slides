@@ -68,9 +68,9 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root {
-  --font-head:  'IBM Plex Serif', Georgia, serif;    /* headlines, slide title */
-  --font-body:  'IBM Plex Sans',  system-ui, sans-serif;  /* body, labels, UI */
-  --font-mono:  'IBM Plex Mono',  'Courier New', monospace; /* code, IDs, values */
+  --font-head:  'IBM Plex Serif', Georgia, 'Slides CJK Serif', serif;    /* headlines, slide title */
+  --font-body:  'IBM Plex Sans', Arial, 'Slides CJK Sans', system-ui, sans-serif;  /* body, labels, UI */
+  --font-mono:  'IBM Plex Mono', Consolas, 'Slides CJK Sans', 'Courier New', monospace; /* code, IDs, values */
 
   /* Scale — 1.250 major third */
   --fs-display: 44px;   /* slide title */
@@ -396,3 +396,15 @@ All interactive controls meet 44px minimum touch target. Focus rings use `outlin
 | Accent | Medium blue 258° | Cyan 200° | Orange-amber |
 | Stat rule | 1px solid left rule | 2px accent glow | Bottom rule |
 | Tone | Technical report | Night-mode dashboard | Product datasheet |
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | IBM Plex Serif | Georgia | Slides CJK Serif |
+| Body | IBM Plex Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | IBM Plex Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

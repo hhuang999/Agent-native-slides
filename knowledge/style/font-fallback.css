@@ -1,0 +1,28 @@
+/* Local Simplified Chinese faces shared by all 53 style previews.
+   Keep Latin glyphs in each style's chosen display/body/label font. */
+@font-face {
+  font-family: 'Slides CJK Sans';
+  src: url('../../assets/fonts/sans.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+2E80-2EFF, U+3000-303F, U+31C0-31EF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'Slides CJK Serif';
+  src: url('../../assets/fonts/serif.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+2E80-2EFF, U+3000-303F, U+31C0-31EF, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
+@font-face {
+  font-family: 'Slides CJK WenKai';
+  src: url('../../assets/fonts/wenkai.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+2E80-2EFF, U+3000-303F, U+31C0-31EF, U+3400-4DBF, U+4E00-9FFF, U+FF00-FFEF;
+}

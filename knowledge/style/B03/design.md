@@ -79,12 +79,12 @@ The animation is a slow cross-fade between two aurora states at 14 seconds, with
 
 ```css
 /* CDN — OFL */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@300;400;700&display=swap');
 
 :root {
-  --type-display: 'Syne', sans-serif;         /* display — geometric, squared */
-  --type-body:    'Syne', sans-serif;         /* body at lower weight */
-  --type-label:   'JetBrains Mono', monospace; /* data, captions */
+  --type-display: 'Syne', Arial, 'Slides CJK Sans', sans-serif;         /* display — geometric, squared */
+  --type-body:    'Instrument Sans', Arial, 'Slides CJK Sans', sans-serif; /* body with calmer proportions */
+  --type-label:   'JetBrains Mono', Consolas, 'Slides CJK Sans', monospace; /* data, captions */
 }
 
 .deck-stage {
@@ -98,7 +98,7 @@ The animation is a slow cross-fade between two aurora states at 14 seconds, with
 /* display = 3.8rem = 72px  (Syne 800) */
 /* h1      = 2.6rem = 49px  (Syne 700) */
 /* h2      = 1.75rem = 33px (Syne 600) */
-/* body    = 1.0rem = 19px  (Syne 400) */
+/* body    = 1.0rem = 19px  (Instrument Sans 400); generated decks use 28px+ */
 /* caption = 0.74rem = 14px (JetBrains Mono 300) */
 ```
 
@@ -187,7 +187,7 @@ Two frames cross-fade to create the aurora movement. The animation advances slow
 │  [TAG — JetBrains Mono, 12px, accent, tracked]         │
 │  ── teal-green accent rule ─────────────────────────── │
 │  DISPLAY: Headline (Syne 800, 72px, heading)           │
-│  Subtitle (Syne 400, 22px, muted)                      │
+│  Subtitle (Instrument Sans 400, 22px, muted)           │
 │  Spacer                                                 │
 │  [glass badge row]                                     │
 │  ── muted bottom rule ──────────────────────────────── │
@@ -278,3 +278,17 @@ Two frames cross-fade to create the aurora movement. The animation advances slow
 - `prefers-reduced-motion`: animation is cut entirely, static frame A displayed
 - `backdrop-filter` is progressive enhancement — `oklch(0.14 0.018 220 / 0.40)` alone is legible
 - All semantic content at z-index 1 above aurora background at z-index 0
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Syne | Arial | Slides CJK Sans |
+| Body | Instrument Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | JetBrains Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.
+
+**Adjustment:** Syne remains the aurora display face; Instrument Sans is calmer in continuous text.

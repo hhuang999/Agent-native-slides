@@ -76,7 +76,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', Arial, 'Slides CJK Sans', system-ui, -apple-system, sans-serif;
 
   /* Type scale — 1920×1080 base */
   --text-xs:     13px;   /* footnotes, captions */
@@ -491,3 +491,15 @@ All interactive elements (nav dots, buttons) have `focus-visible` outlines. No i
 | Animation | Particle effects | Gradient motion | None |
 | Use case | ML demos, night mode | Product launches, dark decks | Reports, APIs, light mode |
 | Typography | Geometric sans | Display mixed | Humanist sans only |
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Plus Jakarta Sans | Arial | Slides CJK Sans |
+| Body | Plus Jakarta Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | Plus Jakarta Sans | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

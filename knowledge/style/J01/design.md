@@ -64,7 +64,7 @@
 ```css
 :root {
   /* Font stack — monospace only */
-  --font-mono: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+  --font-mono: 'JetBrains Mono', Consolas, 'Slides CJK Sans', 'Fira Mono', monospace;
 
   /* Scale — px at 1920px stage */
   --text-xs:    14px;   /* footnote, folio */
@@ -410,3 +410,15 @@ No information is conveyed by hue alone — all state differences use brightness
 | Metaphor | Unix terminal / CRT phosphor | General technical |
 | Number decoration | Phosphor glow + green underline on stats | No glow |
 | Occasion fit | Security/DevOps/CLI — strongest in family | Broader technical |
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | JetBrains Mono | Consolas | Slides CJK Sans |
+| Body | JetBrains Mono | Consolas | Slides CJK Sans |
+| Auxiliary / data | JetBrains Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

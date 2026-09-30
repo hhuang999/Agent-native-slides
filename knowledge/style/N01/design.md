@@ -71,8 +71,8 @@
 ```css
 :root {
   /* Font families */
-  --f-display:  'Cinzel', 'Trajan Pro', serif;       /* headlines, labels, folios */
-  --f-body:     'Cormorant Garamond', 'Garamond', Georgia, serif; /* body, captions */
+  --f-display:  'Cinzel', Georgia, 'Slides CJK Serif', 'Trajan Pro', serif;       /* headlines, labels, folios */
+  --f-body:     'Cormorant Garamond', Georgia, 'Slides CJK Serif', 'Garamond', serif; /* body, captions */
 
   /* Type scale (base 18px → 1920px stage) */
   --t-hero:     clamp(2.4rem, 3.2vw, 3.6rem);  /* slide 1 title */
@@ -424,3 +424,15 @@ All interactive focus states use `outline: 2px solid var(--c-gold-500)` with 2px
 ## Fixed-stage content fit
 
 The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Cinzel | Georgia | Slides CJK Serif |
+| Body | Cormorant Garamond | Georgia | Slides CJK Serif |
+| Auxiliary / data | Cinzel | Georgia | Slides CJK Serif |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

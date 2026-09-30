@@ -21,13 +21,15 @@ const args = process.argv.slice(2)
 const files = []
 let shotsDir = null
 let jsonOut = null
+let fontFallback = false
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--shots') shotsDir = resolve(args[++i])
   else if (args[i] === '--json') jsonOut = resolve(args[++i])
+  else if (args[i] === '--font-fallback') fontFallback = true
   else files.push(resolve(args[i]))
 }
 if (!files.length) {
-  console.error('Usage: node check-deck.js <deck.html> [more.html ...] [--shots <dir>] [--json <out.json>]')
+  console.error('Usage: node check-deck.js <deck.html> [more.html ...] [--shots <dir>] [--json <out.json>] [--font-fallback]')
   process.exit(1)
 }
 if (shotsDir) mkdirSync(shotsDir, { recursive: true })
@@ -35,8 +37,14 @@ if (shotsDir) mkdirSync(shotsDir, { recursive: true })
 const VIEWPORT = { width: 1920, height: 1080 }
 const SETTLE_MS = 2500
 
-async function open(browser, url, contextOptions = {}) {
+async function open(browser, url, contextOptions = {}, blockWebFonts = false) {
   const context = await browser.newContext({ viewport: VIEWPORT, ...contextOptions })
+  if (blockWebFonts) await context.route('**/*', route => {
+    const request = route.request()
+    const remoteFont = request.resourceType() === 'font' && /^https?:/i.test(request.url())
+    if (remoteFont || /fonts\.googleapis\.com|fonts\.gstatic\.com|api\.fontshare\.com/.test(request.url())) route.abort()
+    else route.continue()
+  })
   const page = await context.newPage()
   const errors = []
   page.on('pageerror', err => errors.push(String(err.message || err)))
@@ -217,6 +225,26 @@ async function checkFile(browser, file) {
   if (!(await waitShown(rm.page, target))) fail('reduced-motion', `goTo(${target}) under reduced motion: states=[${await slideStates(rm.page)}]`)
   errors.push(...rm.errors)
   await rm.context.close()
+
+  // Optional offline-font pass: local CJK faces remain available, remote Latin faces do not.
+  if (fontFallback) {
+    const fb = await open(browser, url, {}, true)
+    for (let i = 1; i <= n; i++) {
+      await fb.page.evaluate(k => window.__goToSlide(k), i)
+      if (!(await waitForFonts(fb.page))) fail('fonts-ready', `fallback screen slide ${i}: fonts did not finish loading`)
+      await settleSlideMotion(fb.page, i)
+      await checkLayout(fb.page, i, 'fallback-screen')
+    }
+    errors.push(...fb.errors)
+    await fb.context.close()
+
+    const fp = await open(browser, toFileUrl(file, '?print=1'), {}, true)
+    await fp.page.emulateMedia({ media: 'print' })
+    if (!(await waitForFonts(fp.page))) fail('fonts-ready', 'fallback print layout: fonts did not finish loading')
+    for (let i = 1; i <= n; i++) await checkLayout(fp.page, i, 'fallback-print')
+    errors.push(...fp.errors)
+    await fp.context.close()
+  }
 
   if (errors.length) fail('pageerror', [...new Set(errors)].slice(0, 3).join(' | '))
   return { file: tag, pass: fails.length === 0, slides: n, fails, layout }

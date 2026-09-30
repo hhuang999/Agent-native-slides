@@ -304,6 +304,10 @@ lottie-web:    https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.m
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
 ```
 
+53 种风格的标题、正文、辅助字体及离线英文字体备选见 `knowledge/style/font-policy.json`。每个 `preview.html` 加载 `knowledge/style/font-fallback.css`，其中的本地简体中文字体使用 `font-display: swap` 与 CJK `unicode-range`，避免覆盖风格原有的拉丁字形。生成的独立 deck 应把对应 `@font-face` 规则写入自己的 `<style>`，调整 `assets/fonts/` 路径后用 `inline-assets.js` 内联；不能依赖 skill 目录里的相对 CSS 链接。日文风格 I02 在 `<html lang="zh-CN">` 时把本地简体中文字形放在日文字体之前。
+
+`document.fonts.ready` 表示已使用字体的加载及排版完成，并不证明某个字形由指定字体绘制。交付前运行 `node scripts/check-deck.js deck.html --font-fallback`，阻断外部字体请求，复查屏幕与打印版面的换行、越界和裁切；正常加载和回退状态都应通过。字体排版参考 [MDN CSS Font Loading API](https://developer.mozilla.org/en-US/docs/Web/API/Document/fonts)、[MDN font-display](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40font-face/font-display) 与 [W3C 文字间距说明](https://www.w3.org/WAI/WCAG22/Understanding/text-spacing)。
+
 ---
 
 ## 9. WebGL/Canvas fallback

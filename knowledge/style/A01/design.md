@@ -70,9 +70,9 @@ Circuit-engineered treats the slide canvas as a PCB schematic: information route
 @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap');
 
 :root {
-  --type-display: 'Geist Mono', monospace;   /* headlines, data numbers */
-  --type-body:    'Instrument Sans', sans-serif;
-  --type-label:   'Geist Mono', monospace;   /* code, captions, axis labels */
+  --type-display: 'Geist Mono', Consolas, 'Slides CJK Sans', monospace;   /* headlines, data numbers */
+  --type-body:    'Instrument Sans', Arial, 'Slides CJK Sans', sans-serif;
+  --type-label:   'Geist Mono', Consolas, 'Slides CJK Sans', monospace;   /* code, captions, axis labels */
 }
 
 /* Stage root — 1920×1080 base */
@@ -229,3 +229,15 @@ When `?print=1`, append same rules via a `<style>` injected by the deck runtime.
 - `--color-muted` over `--color-bg` = 4.6:1 ✓
 - All node pulse animations respect `prefers-reduced-motion`
 - No color-only encoding: state changes also use icon + label
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Geist Mono | Consolas | Slides CJK Sans |
+| Body | Instrument Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | Geist Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

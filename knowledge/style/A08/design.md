@@ -72,9 +72,9 @@ Dark-vaporwave remixes the aesthetic vocabulary of 1980s–90s computer graphics
 @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Josefin+Sans:wght@300;400;600&display=swap');
 
 :root {
-  --type-display: 'Silkscreen', monospace;       /* headlines — pixel grid aesthetic */
-  --type-body:    'Josefin Sans', sans-serif;    /* body — tracked geometric */
-  --type-label:   'Josefin Sans', sans-serif;   /* labels — smaller weight */
+  --type-display: 'Silkscreen', Consolas, 'Slides CJK Sans', monospace;       /* headlines — pixel grid aesthetic */
+  --type-body:    'Josefin Sans', Arial, 'Slides CJK Sans', sans-serif;    /* body — tracked geometric */
+  --type-label:   'Josefin Sans', Arial, 'Slides CJK Sans', sans-serif;   /* labels — smaller weight */
 }
 
 .deck-stage {
@@ -245,3 +245,15 @@ A static perspective-grid layer combined with a subtle grain texture — all CSS
 - `--color-accent-light` over `--color-bg` = 9.2:1 ✓
 - Grid and grain layers are purely decorative at z-index 0
 - Silkscreen display font: only used at ≥48px where legibility is adequate for the style register; body text always uses Josefin Sans
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Silkscreen | Consolas | Slides CJK Sans |
+| Body | Josefin Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | Josefin Sans | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

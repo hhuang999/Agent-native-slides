@@ -70,8 +70,8 @@ O01 uses a warm-hue neutral axis (hue ~70–78°, orange-amber family) rather th
 ```css
 :root {
   /* Font families */
-  --font-headline: 'Lora', Georgia, serif;
-  --font-body:     'Nunito', system-ui, sans-serif;
+  --font-headline: 'Lora', Georgia, 'Slides CJK Serif', serif;
+  --font-body:     'Nunito', Arial, 'Slides CJK Sans', system-ui, sans-serif;
 
   /* Type scale (base 16px, major-third ~1.25) */
   --text-xs:   12px;   /* footnote, folio */
@@ -426,3 +426,15 @@ O01 uses a warm-hue neutral axis (hue ~70–78°, orange-amber family) rather th
 | Highlighted row text on tint | 0.14 vs ~0.90 | ~13:1 | AAA |
 
 State is never conveyed by hue alone — the highlighted table row uses both background fill and font-weight 600. Section markers combine color with a left-border affordance. Stat markers are decorative (aria-hidden). All interactive elements (nav dots, prev/next) have visible focus rings (outline: 2px solid var(--c-accent); outline-offset: 2px).
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Lora | Georgia | Slides CJK Serif |
+| Body | Nunito | Arial | Slides CJK Sans |
+| Auxiliary / data | Nunito | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

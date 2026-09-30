@@ -10,6 +10,7 @@
     "imagegen": "node imagegen.js",
     "test:imagegen": "node --test test/imagegen.test.js",
     "test:layout": "node --test test/layout.test.js",
+    "test:fonts": "node --test test/font-policy.test.js",
     "inline": "node inline-assets.js"
   },
   "dependencies": {

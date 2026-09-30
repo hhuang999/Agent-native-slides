@@ -160,3 +160,15 @@
 3. 正文 EB Garamond 在 28px 以下是否通过 WCAG AA（对比度 ≥ 4.5:1）？
 4. 页面中是否没有任何装饰性几何图形、渐变色块或图标装饰？
 5. 与 Canva/Pitch 付费学术模板并排，是否不显廉价？
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | EB Garamond | Georgia | Slides CJK Serif |
+| Body | EB Garamond | Georgia | Slides CJK Serif |
+| Auxiliary / data | Source Code Pro | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

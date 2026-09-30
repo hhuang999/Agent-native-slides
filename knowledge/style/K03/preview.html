@@ -7,7 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
+  <link rel="stylesheet" href="../font-fallback.css">
+<style>
     /* ── Reset ──────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -27,8 +28,8 @@
       --border:         oklch(0.82 0.018 12);
       --border-strong:  oklch(0.65 0.025 15);
       --folio:          oklch(0.52 0.010 15);
-      --font-display:   'Libre Baskerville', Georgia, serif;
-      --font-body:      'Raleway', system-ui, sans-serif;
+      --font-display:   'Libre Baskerville', Georgia, 'Slides CJK Serif', serif;
+      --font-body:      'Raleway', Arial, 'Slides CJK Sans', system-ui, sans-serif;
     }
 
     /* ── Outer shell ────────────────────────────────── */

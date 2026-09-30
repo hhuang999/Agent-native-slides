@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../font-fallback.css">
 <style>
 /* ── Reset ──────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,7 +29,7 @@
   --color-tag-bg:        oklch(0.14 0.05 142);
 
   /* Typography scale (1920×1080 stage) */
-  --font-mono: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+  --font-mono: 'JetBrains Mono', Consolas, 'Slides CJK Sans', 'Fira Mono', monospace;
   --text-xs:   14px;
   --text-sm:   16px;
   --text-base: 20px;

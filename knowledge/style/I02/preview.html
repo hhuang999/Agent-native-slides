@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../font-fallback.css">
 <style>
 /* ── Reset ───────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,12 +30,18 @@
   --c-highlight-bg: oklch(0.90 0.04 270);
 
   /* Typography */
-  --ff-display: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
-  --ff-body:    'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  --ff-display: 'Shippori Mincho', Georgia, 'Slides CJK Serif', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --ff-body:    'Noto Sans JP', Arial, 'Slides CJK Sans', 'Hiragino Sans', 'Yu Gothic', sans-serif;
 
   /* Stage */
   --stage-w: 1920px;
   --stage-h: 1080px;
+}
+
+/* Use Simplified Chinese glyph forms for Chinese decks; keep the Japanese faces for Latin and Japanese decks. */
+:root:lang(zh) {
+  --ff-display: 'Slides CJK Serif', 'Shippori Mincho', Georgia, serif;
+  --ff-body: 'Slides CJK Sans', 'Noto Sans JP', Arial, sans-serif;
 }
 
 /* ── Stage & scaling ────────────────────────── */
@@ -557,7 +564,7 @@ html, body {
       </div>
 
       <h2 class="headline-section">
-        Artisans Who Maintained Three or More Apprentices Through the Direct-Channel Transition Period Generated 2.3 Times the Revenue of Equivalent Craft Producers Who Continued Relying Exclusively on Wholesale Distribution.
+        Producers With 3+ Apprentices Earned 2.3× More During the Direct-Channel Transition.
       </h2>
 
       <div class="stat-grid" role="list" aria-label="Key statistics">
@@ -582,13 +589,13 @@ html, body {
 
       <div class="evidence-layout">
         <p class="evidence-body">
-          The revenue differential was most pronounced among producers who invested in both digital channel infrastructure and in-studio apprentice training simultaneously. Artisans who sequenced these investments — building the digital presence first, then expanding apprenticeships — showed a lag of approximately 14 months before revenue gains materialized. The cohort maintaining three or more apprentices throughout demonstrated the highest craft continuity scores and lowest production interruption rates, suggesting that apprentice depth functions as both an operational buffer and a brand signal to high-value direct customers.
+          Revenue gains were strongest when producers built direct channels and apprentice training together. Sequenced investments took about 14 months to pay off. Maintaining three or more apprentices improved continuity and reduced interruptions.
         </p>
         <aside class="aside-panel" aria-label="Supplementary finding">
           <span class="aside-stat">78%</span>
           <span class="aside-unit">of high-revenue DTC adopters</span>
           <p class="aside-text">
-            reported that direct customer relationships — established through digital channels — created recurring commissions that accounted for over 40% of annual revenue within two years of platform launch, displacing the need for trade fair dependence.
+            reported recurring customer commissions above 40% of annual revenue within two years of launching direct channels.
           </p>
         </aside>
       </div>
@@ -765,6 +772,16 @@ html, body {
         return { index: i + 1, type: 'content', assertion: '' }
       })
     }
+  }
+
+  window.__deckPlan.slides[1].assertion = 'Producers with 3+ apprentices earned 2.3× more during the direct-channel transition.'
+  window.__deckPlan.slides[1].speaker_notes = {
+    key_points: [
+      'Among 112 Wajima and Yamanaka producers, simultaneous investment in direct channels and apprentice training had the strongest association with revenue growth.',
+      'Producers maintaining at least three apprentices generated 2.3 times the revenue of comparable craft producers who continued to rely exclusively on wholesale distribution.',
+      'Producers who built digital presence first and expanded apprenticeships later saw roughly a 14-month lag before revenue gains.',
+      'Three or more apprentices improved continuity; recurring direct commissions reduced reliance on trade fairs. These are observational associations.'
+    ]
   }
 
   // Preview / print URL params

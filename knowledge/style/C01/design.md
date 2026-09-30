@@ -67,9 +67,9 @@ This is a zero-glassmorphism style. Surfaces are opaque, borders are sharp, and 
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;700&display=swap');
 
 :root {
-  --type-display: 'Bebas Neue', sans-serif;       /* condensed display — film titles, stats */
-  --type-body:    'IBM Plex Mono', monospace;     /* all body, labels, captions */
-  --type-label:   'IBM Plex Mono', monospace;     /* same — single-typeface body/label pair */
+  --type-display: 'Bebas Neue', Arial, 'Slides CJK Sans', sans-serif;       /* condensed display — film titles, stats */
+  --type-body:    'IBM Plex Mono', Consolas, 'Slides CJK Sans', monospace;     /* all body, labels, captions */
+  --type-label:   'IBM Plex Mono', Consolas, 'Slides CJK Sans', monospace;     /* same — single-typeface body/label pair */
 }
 
 .deck-stage {
@@ -235,3 +235,15 @@ Unlike glassmorphism, film-noir uses direct-on-stage layout with ruled separator
 - Grain overlay: `opacity: 0.04` — imperceptible to text legibility, preserved as texture only
 - No animation — `prefers-reduced-motion` has no active concerns
 - All semantic content at z-index 1 above background at z-index 0
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Bebas Neue | Arial | Slides CJK Sans |
+| Body | IBM Plex Mono | Consolas | Slides CJK Sans |
+| Auxiliary / data | IBM Plex Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

@@ -68,12 +68,12 @@ Neon-cyberpunk is the loudest style in the library: high-contrast neon against n
 
 ```css
 /* CDN — OFL */
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600&family=Source+Code+Pro:wght@400;500&display=swap');
 
 :root {
-  --type-display: 'Rajdhani', sans-serif;        /* headlines — condensed geometric */
-  --type-body:    'Rajdhani', sans-serif;         /* body — same family, lower weight */
-  --type-label:   'Source Code Pro', monospace;  /* data, code, captions */
+  --type-display: 'Rajdhani', Arial, 'Slides CJK Sans', sans-serif;        /* headlines — condensed geometric */
+  --type-body:    'Instrument Sans', Arial, 'Slides CJK Sans', sans-serif;  /* body — open shapes at reading size */
+  --type-label:   'Source Code Pro', Arial, 'Slides CJK Sans', monospace;  /* data, code, captions */
 }
 
 .deck-stage {
@@ -86,7 +86,7 @@ Neon-cyberpunk is the loudest style in the library: high-contrast neon against n
 /* display = 4.5rem = 90px (Rajdhani 700) */
 /* h1      = 2.8rem = 56px (Rajdhani 700) */
 /* h2      = 1.9rem = 38px (Rajdhani 600) */
-/* body    = 1.0rem = 20px (Rajdhani 400) — open tracking +0.01em */
+/* body    = 1.0rem = 20px (Instrument Sans 400); generated decks use 28px+ */
 /* caption = 0.75rem = 15px (Source Code Pro) */
 ```
 
@@ -149,7 +149,7 @@ A repeating horizontal scan-line gradient whose `background-position` animates d
 │  [ TAG — Source Code Pro, neon cyan, tracked ]         │
 │  ── cyan rule ────────────────────────────────────────  │
 │  DISPLAY: Headline (Rajdhani 700, 90px)                │
-│  Subtitle (Rajdhani 400, 26px, muted)                  │
+│  Subtitle (Instrument Sans 400, 26px, muted)           │
 │  Spacer                                                 │
 │  Stat row or badge row (Source Code Pro)               │
 │  ── magenta right-edge glow ─────────────────────────── │
@@ -233,3 +233,17 @@ A repeating horizontal scan-line gradient whose `background-position` animates d
 - Hologram scan animation respects `prefers-reduced-motion`
 - Glow effects are decorative — state is never conveyed by glow alone (always paired with color, label, or border)
 - Text-shadow glows applied only to large display text; body text uses no text-shadow
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Rajdhani | Arial | Slides CJK Sans |
+| Body | Instrument Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | Source Code Pro | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.
+
+**Adjustment:** Rajdhani remains the condensed display face; Instrument Sans opens up running text.

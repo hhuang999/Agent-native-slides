@@ -113,7 +113,7 @@ test('check-deck reports all three layout failures; both exporters reject them',
   const report = join(dir, 'report.json')
   writeFileSync(bad, fixture(true))
   try {
-    const checked = await runScript('check-deck.js', [bad, '--json', report])
+    const checked = await runScript('check-deck.js', [bad, '--json', report, '--font-fallback'])
     assert.equal(checked.code, 1)
     for (const category of ['text-overflow', 'text-clipped', 'text-overlap'])
       assert.match(checked.output, new RegExp(category))

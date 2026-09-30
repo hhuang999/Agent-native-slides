@@ -15,7 +15,7 @@ Ultraviolet-immersive treats slides as a brand canvas: vivid color fields comman
 
 5D Evaluation:
 - **Philosophy:** Emotional brand authority. Color fields carry meaning before type is read; accent hue is kept to a single violet family so nothing competes. Evidence: all six surface variables derive from the same 285° hue with only chroma and lightness varied.
-- **Hierarchy:** Syne Extra Bold at 76px creates a typographic punch unavailable in humanist faces; Satoshi body provides the readability contrast that makes the headline pop. Three-level scale: display → body → label/caption.
+- **Hierarchy:** Syne Extra Bold at 76px creates a typographic punch; DM Sans body has calmer, more predictable proportions for paragraphs and labels. Three-level scale: display → body → label/caption.
 - **Detail:** Mesh-drift is implemented via CSS `@property` registered custom properties, giving GPU-composited gradient animation without a canvas dependency. The mesh consists of four OKLCH radial gradients whose centers animate independently.
 - **Function:** WCAG AA on all text roles verified. Reduced-motion path retains static mesh (no animation). `?print=1` removes animation and switches surface to a printable near-black.
 - **Innovation:** `--mesh-x1` through `--mesh-y4` drive four gradient origins via `@property` with `<percentage>` syntax, enabling `@keyframes` to animate them — standard CSS, zero JS, GPU-composited on Chromium and Safari.
@@ -69,15 +69,13 @@ Ultraviolet-immersive treats slides as a brand canvas: vivid color fields comman
 
 ```css
 /* CDN */
-/* Syne — OFL, Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap');
-/* Satoshi — OFL, Fontshare */
-@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap');
+/* Syne + DM Sans — OFL, Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap');
 
 :root {
-  --type-display: 'Syne', sans-serif;         /* headlines, big numbers */
-  --type-body:    'Satoshi', sans-serif;       /* all body and UI text */
-  --type-label:   'Satoshi', sans-serif;       /* labels, captions */
+  --type-display: 'Syne', Arial, 'Slides CJK Sans', sans-serif;         /* headlines, big numbers */
+  --type-body:    'DM Sans', Arial, 'Slides CJK Sans', sans-serif;       /* all body and UI text */
+  --type-label:   'DM Sans', Arial, 'Slides CJK Sans', sans-serif;       /* labels, captions */
 }
 
 .deck-stage {
@@ -90,8 +88,8 @@ Ultraviolet-immersive treats slides as a brand canvas: vivid color fields comman
 /* display = 3.8rem = 76px (Syne 800) */
 /* h1      = 2.6rem = 52px (Syne 700) */
 /* h2      = 1.8rem = 36px (Syne 700) */
-/* body    = 1.0rem = 20px (Satoshi 400) */
-/* caption = 0.75rem = 15px (Satoshi 400) */
+/* body    = 1.0rem = 20px (DM Sans 400) */
+/* caption = 0.75rem = 15px (DM Sans 400) */
 ```
 
 ---
@@ -149,11 +147,11 @@ Four radial OKLCH gradients positioned at different corners of the stage, each c
 ┌─────────────────────────────────────────────────────────┐
 │  [mesh-drift bg — full bleed, vivid violet-magenta]     │
 │                                                         │
-│  [ EYEBROW — Satoshi 500, 13px, accent, tracked ]      │
+│  [ EYEBROW — DM Sans 500, 13px, accent, tracked ]      │
 │  DISPLAY: Headline (Syne 800, 76px, heading)           │
-│  [ Sub / claim (Satoshi 400, 28px, muted) ]            │
+│  [ Sub / claim (DM Sans 400, 28px, muted) ]            │
 │  [ Spacer ]                                             │
-│  [ CTA pill or tag row — accent border, Satoshi 500 ]  │
+│  [ CTA pill or tag row — accent border, DM Sans 500 ]  │
 │                                                         │
 │  ─ bottom accent gradient rule ─────────────────────── │
 └─────────────────────────────────────────────────────────┘
@@ -166,7 +164,7 @@ Four radial OKLCH gradients positioned at different corners of the stage, each c
 │  [ HEADLINE: Syne 700, 52px, 1 assertion sentence ]    │
 │  ─ separator ────────────────────────────────────────── │
 │  [ Main content 60% ] [ Visual / callout 36% ]          │
-│  Satoshi 400/20px body · accent pills for key terms    │
+│  DM Sans 400/20px body · accent pills for key terms    │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -227,3 +225,17 @@ Four radial OKLCH gradients positioned at different corners of the stage, each c
 - Mesh animations respect `prefers-reduced-motion`
 - Accent used for semantic meaning always paired with label or icon (never hue-only)
 - Backdrop-filter used only as progressive enhancement (layout never depends on blur)
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Syne | Arial | Slides CJK Sans |
+| Body | DM Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | DM Sans | Arial | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.
+
+**Adjustment:** DM Sans replaces the Fontshare Satoshi dependency; its normal width keeps body and labels stable.

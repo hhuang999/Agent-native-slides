@@ -183,3 +183,15 @@
 3. 电光蓝是否只用于 1-2 个视觉角色，没有到处发光？
 4. 粒子密度是否足够低（< 80个），不干扰文字阅读？
 5. 与 Gamma/Pitch 同类 AI 科技模板并排，是否不显廉价？
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Syne | Arial | Slides CJK Sans |
+| Body | Syne | Arial | Slides CJK Sans |
+| Auxiliary / data | Geist Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.

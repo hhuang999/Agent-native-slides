@@ -77,12 +77,12 @@ The typographic pair is Playfair Display SC (OFL, Google Fonts) — a high-contr
 
 ```css
 /* CDN — OFL */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@400;700&family=IBM+Plex+Mono:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;700&display=swap');
 
 :root {
-  --type-display: 'Playfair Display SC', serif;   /* high-contrast editorial serif */
-  --type-body:    'Playfair Display SC', serif;   /* body at 400, lighter */
-  --type-label:   'IBM Plex Mono', monospace;     /* data, captions */
+  --type-display: 'Playfair Display SC', Georgia, 'Slides CJK Serif', serif;   /* high-contrast editorial serif */
+  --type-body:    'IBM Plex Sans', Arial, 'Slides CJK Sans', sans-serif;     /* body at reading sizes */
+  --type-label:   'IBM Plex Mono', Consolas, 'Slides CJK Sans', monospace;     /* data, captions */
 }
 
 .deck-stage {
@@ -96,7 +96,7 @@ The typographic pair is Playfair Display SC (OFL, Google Fonts) — a high-contr
 /* display = 3.8rem = 72px  (Playfair Display SC 700) */
 /* h1      = 2.6rem = 49px  (Playfair Display SC 700) */
 /* h2      = 1.75rem = 33px (Playfair Display SC 400) */
-/* body    = 1.0rem = 19px  (Playfair Display SC 400) */
+/* body    = 1.0rem = 19px  (IBM Plex Sans 400); generated decks use 28px+ */
 /* caption = 0.74rem = 14px (IBM Plex Mono 300) */
 ```
 
@@ -251,7 +251,21 @@ The blob placement is deliberate: ochre center-left sits behind the primary cont
 - `--color-heading` over `--color-bg` = 13.4:1 ✓
 - `--color-body` over `--color-bg` = 7.1:1 ✓
 - `--color-accent-light` (amber) over glass surface (approx 0.14 L warm) = 8.8:1 ✓
-- Playfair Display SC: serif letterforms require minimum 16px for legibility — deck scale (19px body) is well above threshold
+- Playfair Display SC remains at headline scale; its small-cap shapes are not used for paragraphs. IBM Plex Sans carries essential body text at 28px+ in generated decks.
 - `backdrop-filter` is progressive enhancement — `oklch(0.14 0.022 60 / 0.42)` alone is readable
 - No animation in this style — `prefers-reduced-motion` has no active concerns
 - Warm heading color `oklch(0.96 0.008 80)` is not pure white — this is intentional for the warm-environment feel and does not compromise contrast
+
+---
+
+## Screen font compatibility
+
+| Role | Latin font | Latin offline fallback | Simplified Chinese fallback |
+|---|---|---|---|
+| Display | Playfair Display SC | Georgia | Slides CJK Serif |
+| Body | IBM Plex Sans | Arial | Slides CJK Sans |
+| Auxiliary / data | IBM Plex Mono | Consolas | Slides CJK Sans |
+
+The selected Latin face stays first, followed by an explicit same-class offline Latin backup; the local CJK face covers Han characters and related punctuation. The preview loads `../font-fallback.css`. A generated deck must include the same `@font-face` rules with paths to `assets/fonts/`, then run `inline-assets.js` for portable HTML. Use the weights supplied by the font request, keep display faces out of paragraphs, and inspect both loaded and offline-fallback renders after `document.fonts.ready`. When copy is too wide, shorten or split it rather than shrinking below the shared readability rules.
+
+**Adjustment:** Playfair Display SC remains for classical headings; IBM Plex Sans avoids small-cap paragraphs.
