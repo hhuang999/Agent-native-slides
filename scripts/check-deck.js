@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * check-deck.js — HTML PPT Skill v5
+ * check-deck.js — Agent-Native Slides
  *
  * Validates a deck / preview.html against the Runtime API contract in
- * knowledge/RUNTIME.md (§2 slide switching, §3 ?preview=N, §3.1 API, §7 print/PDF).
+ * knowledge/RUNTIME.md (§1 fit-to-window stage, §2 slide switching, §3 ?preview=N,
+ * §3.1 API, §7 print/PDF, §8 pinned CDN URLs must resolve).
  *
  * Usage:
  *   node scripts/check-deck.js <deck.html> [more.html ...] [--shots <dir>] [--json <out.json>]
@@ -38,6 +39,9 @@ async function open(browser, url, contextOptions = {}) {
   const page = await context.newPage()
   const errors = []
   page.on('pageerror', err => errors.push(String(err.message || err)))
+  // A pinned CDN URL that 404s silently breaks the deck (e.g. an init script never loads).
+  // Network failures (offline) are not reported — only real HTTP errors.
+  page.on('response', res => { if (res.status() >= 400) errors.push(`HTTP ${res.status()} ${res.url()}`) })
   await page.goto(url, { waitUntil: 'load', timeout: 60_000 })
   await page.evaluate(() => Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 10_000))]))
   await page.waitForTimeout(300)
@@ -159,6 +163,19 @@ async function checkFile(browser, file) {
   if (!pvInfo.mode) fail('preview-mode', '?preview=N did not add html.preview-mode')
   errors.push(...pv.errors)
   await pv.context.close()
+
+  // ── Fit to window (RUNTIME.md §1) ────────────────────────
+  const fit = await open(browser, url, { viewport: { width: 1280, height: 720 } })
+  const box = await fit.page.evaluate(() => {
+    const s = document.querySelector('.slide.is-active') || document.querySelector('.slide')
+    const r = s.getBoundingClientRect()
+    return { l: r.left, t: r.top, w: r.width, h: r.height }
+  })
+  const inside = box.l >= -2 && box.t >= -2 && box.l + box.w <= 1282 && box.t + box.h <= 722
+  const filled = box.w >= 1270 || box.h >= 712
+  if (!inside || !filled) fail('fit', `at 1280x720 the slide is ${Math.round(box.w)}x${Math.round(box.h)} at (${Math.round(box.l)},${Math.round(box.t)}); the 1920x1080 stage must scale to fit the window`)
+  errors.push(...fit.errors)
+  await fit.context.close()
 
   // ── Print / PDF ──────────────────────────────────────────
   const pr = await open(browser, toFileUrl(file, '?print=1'))

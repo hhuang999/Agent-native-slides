@@ -1,6 +1,6 @@
 # Runtime Technical Reference
 
-HTML PPT Skill v5 — 技术规范文档
+Agent-Native Slides — 技术规范文档
 
 ---
 

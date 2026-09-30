@@ -1,8 +1,8 @@
 {
-  "name": "html-ppt-skill-v5-scripts",
+  "name": "agent-native-slides-scripts",
   "private": true,
   "type": "module",
-  "description": "Export (PDF/PPTX) and runtime-contract checks for HTML PPT Skill v5 decks",
+  "description": "Export (PDF/PPTX) and runtime-contract checks for Agent-Native Slides decks",
   "scripts": {
     "check": "node check-deck.js",
     "pdf": "node export-pdf.js",

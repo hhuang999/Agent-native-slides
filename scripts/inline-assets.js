@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * inline-assets.js — HTML PPT Skill v5
+ * inline-assets.js — Agent-Native Slides
  *
  * Turns a deck that references local images/fonts by relative path into a
  * single self-contained HTML file by replacing each reference with a data: URI.

@@ -1,6 +1,6 @@
 # Motion Library
 
-HTML PPT Skill v5 — 动效规范
+Agent-Native Slides — 动效规范
 
 ---
 

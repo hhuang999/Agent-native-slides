@@ -1,6 +1,6 @@
 # ML Visuals — 机器学习架构图
 
-HTML PPT Skill v5 — 手绘 SVG 方案，纯 CSS token 着色，零图片依赖
+Agent-Native Slides — 手绘 SVG 方案，纯 CSS token 着色，零图片依赖
 
 所有图均用内联 SVG 实现，通过 `currentColor` 和 CSS 变量适配风格 token。
 

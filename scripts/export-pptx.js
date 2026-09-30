@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * export-pptx.js — HTML PPT Skill v5
+ * export-pptx.js — Agent-Native Slides
  *
  * Exports a deck HTML file to a 16:9 PPTX (LAYOUT_WIDE = 13.33"×7.5")
  * via Playwright screenshot + pptxgenjs slide assembly.

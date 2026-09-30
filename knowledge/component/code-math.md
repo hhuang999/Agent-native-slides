@@ -1,6 +1,6 @@
 # Code & Math — 代码块与公式渲染
 
-HTML PPT Skill v5 — 代码层 + 数学层
+Agent-Native Slides — 代码层 + 数学层
 
 ---
 
@@ -206,7 +206,7 @@ def attention(Q, K, V):
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/styles/github-dark-dimmed.min.css">
-<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.10.0/lib/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"></script>
 <script>
   // 页面就绪后批量渲染
   document.addEventListener('DOMContentLoaded', () => {

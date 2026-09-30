@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * export-pdf.js — HTML PPT Skill v5
+ * export-pdf.js — Agent-Native Slides
  *
  * Exports a deck HTML file to a 16:9 PDF (1920×1080 px per page)
  * using Playwright headless print.

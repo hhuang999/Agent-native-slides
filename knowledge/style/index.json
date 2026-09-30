@@ -1,5 +1,5 @@
 {
-  "_comment": "Style index for HTML PPT Skill v5. Query by mood+occasion to find 2-3 candidates. Load knowledge/style/[id]/design.md for full design language.",
+  "_comment": "Style index for Agent-Native Slides. Query by mood+occasion to find 2-3 candidates. Load knowledge/style/[id]/design.md for full design language.",
   "_schema": "id / name / scheme / mood[] / occasion[] / font_pair / bg_motion / academic_fit",
   "styles": [
     {
