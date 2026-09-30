@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML PPT Studio v5</title>
+<style>
+/* ── Editor tokens ──────────────────────────────────────── */
+:root {
+  --ed-bg:        oklch(0.14 0.01 240);
+  --ed-surface:   oklch(0.18 0.01 240);
+  --ed-raised:    oklch(0.22 0.01 240);
+  --ed-border:    oklch(0.28 0.01 240);
+  --ed-muted:     oklch(0.50 0.02 240);
+  --ed-body:      oklch(0.78 0.02 240);
+  --ed-heading:   oklch(0.94 0.01 240);
+  --ed-accent:    oklch(0.72 0.18 235);
+  --ed-sidebar:   200px;
+  --ed-notes:     280px;
+  --ed-toolbar:   44px;
+  --radius:       6px;
+  --font-ui:      'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--ed-bg); color: var(--ed-body); font-family: var(--font-ui); font-size: 13px; }
+
+/* ── Layout ─────────────────────────────────────────────── */
+#app { display: flex; flex-direction: column; height: 100vh; }
+
+/* Toolbar */
+#toolbar {
+  height: var(--ed-toolbar);
+  min-height: var(--ed-toolbar);
+  background: var(--ed-surface);
+  border-bottom: 1px solid var(--ed-border);
+  display: flex; align-items: center; gap: 6px; padding: 0 12px;
+  flex-shrink: 0;
+}
+.tb-group { display: flex; align-items: center; gap: 4px; }
+.tb-sep { width: 1px; height: 22px; background: var(--ed-border); margin: 0 4px; }
+.tb-label { font-size: 11px; color: var(--ed-muted); margin-right: 4px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: var(--radius);
+  border: 1px solid var(--ed-border);
+  background: var(--ed-raised); color: var(--ed-body);
+  font-size: 12px; cursor: pointer; white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btn:hover { background: var(--ed-border); }
+.btn.primary { background: var(--ed-accent); border-color: transparent; color: oklch(0.14 0.01 240); }
+.btn.primary:hover { filter: brightness(1.1); }
+.btn.icon-only { padding: 4px 7px; }
+
+select.tb-select {
+  padding: 3px 8px; border-radius: var(--radius);
+  border: 1px solid var(--ed-border); background: var(--ed-raised);
+  color: var(--ed-body); font-size: 12px; cursor: pointer; max-width: 180px;
+}
+
+#slide-counter { font-size: 12px; color: var(--ed-muted); min-width: 60px; text-align: center; }
+#title-display { font-size: 12px; color: var(--ed-muted); flex: 1; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Main area */
+#main { display: flex; flex: 1; overflow: hidden; }
+
+/* Sidebar */
+#sidebar {
+  width: var(--ed-sidebar); min-width: var(--ed-sidebar);
+  background: var(--ed-surface); border-right: 1px solid var(--ed-border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+#sidebar-header {
+  padding: 8px 10px; border-bottom: 1px solid var(--ed-border);
+  font-size: 11px; color: var(--ed-muted); text-transform: uppercase; letter-spacing: 0.06em;
+  display: flex; align-items: center; justify-content: space-between;
+}
+#slide-list { flex: 1; overflow-y: auto; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+#slide-list::-webkit-scrollbar { width: 4px; }
+#slide-list::-webkit-scrollbar-thumb { background: var(--ed-border); border-radius: 2px; }
+
+.slide-thumb {
+  cursor: pointer; border-radius: var(--radius);
+  border: 2px solid transparent; overflow: hidden;
+  transition: border-color 0.15s; position: relative;
+  background: var(--ed-raised);
+  aspect-ratio: 16/9;
+}
+.slide-thumb:hover { border-color: var(--ed-muted); }
+.slide-thumb.active { border-color: var(--ed-accent); }
+.slide-thumb__num {
+  position: absolute; bottom: 3px; left: 4px;
+  font-size: 9px; color: var(--ed-muted); font-variant-numeric: tabular-nums;
+}
+.slide-thumb__preview {
+  width: 1920px; height: 1080px; border: none; display: block;
+  pointer-events: none; transform-origin: top left;
+}
+
+/* Center iframe area */
+#center {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  background: oklch(0.10 0.01 240); overflow: hidden; position: relative;
+}
+#main-frame {
+  position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+  border: none; display: block; transform-origin: top left;
+  box-shadow: 0 8px 40px oklch(0 0 0 / 0.6);
+}
+
+/* Notes panel */
+#notes-panel {
+  width: var(--ed-notes); min-width: var(--ed-notes);
+  background: var(--ed-surface); border-left: 1px solid var(--ed-border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+#notes-header {
+  padding: 8px 12px; border-bottom: 1px solid var(--ed-border);
+  font-size: 11px; color: var(--ed-muted); text-transform: uppercase; letter-spacing: 0.06em;
+  display: flex; align-items: center; justify-content: space-between;
+}
+#notes-tabs { display: flex; border-bottom: 1px solid var(--ed-border); }
+.notes-tab {
+  flex: 1; padding: 6px 8px; text-align: center;
+  font-size: 11px; color: var(--ed-muted); cursor: pointer;
+  border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s;
+}
+.notes-tab.active { color: var(--ed-accent); border-color: var(--ed-accent); }
+#notes-content { flex: 1; overflow-y: auto; padding: 10px 12px; }
+#notes-content::-webkit-scrollbar { width: 4px; }
+#notes-content::-webkit-scrollbar-thumb { background: var(--ed-border); border-radius: 2px; }
+
+.note-section { margin-bottom: 14px; }
+.note-section__label {
+  font-size: 10px; color: var(--ed-muted); text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 5px;
+}
+.note-section__body { font-size: 12px; color: var(--ed-body); line-height: 1.6; }
+.note-section__body ul { padding-left: 14px; }
+.note-section__body li { margin-bottom: 3px; }
+
+.timing-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 99px;
+  background: var(--ed-raised); border: 1px solid var(--ed-border);
+  font-size: 11px; color: var(--ed-muted); font-variant-numeric: tabular-nums;
+}
+
+/* Token overrides panel */
+#token-panel { flex: 1; overflow-y: auto; padding: 10px 12px; }
+.token-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px; gap: 8px;
+}
+.token-row label { font-size: 11px; color: var(--ed-muted); flex: 1; }
+.token-row input[type=color] {
+  width: 30px; height: 22px; border: 1px solid var(--ed-border);
+  border-radius: 4px; background: none; cursor: pointer; padding: 1px;
+}
+
+/* Status bar */
+#statusbar {
+  height: 22px; min-height: 22px;
+  background: var(--ed-surface); border-top: 1px solid var(--ed-border);
+  display: flex; align-items: center; gap: 16px; padding: 0 12px;
+  font-size: 10px; color: var(--ed-muted); flex-shrink: 0;
+}
+.status-item { display: flex; align-items: center; gap: 4px; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: oklch(0.62 0.18 145); }
+
+/* Keyboard shortcut overlay */
+#shortcut-overlay {
+  display: none; position: fixed; inset: 0; background: oklch(0 0 0 / 0.6);
+  z-index: 1000; align-items: center; justify-content: center;
+}
+#shortcut-overlay.visible { display: flex; }
+#shortcut-box {
+  background: var(--ed-surface); border: 1px solid var(--ed-border);
+  border-radius: 10px; padding: 24px; min-width: 320px;
+}
+#shortcut-box h3 { color: var(--ed-heading); margin-bottom: 16px; }
+.sc-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.sc-key {
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.key {
+  padding: 2px 7px; background: var(--ed-raised); border: 1px solid var(--ed-border);
+  border-radius: 4px; font-size: 11px; color: var(--ed-body); font-family: var(--font-mono);
+}
+.sc-desc { font-size: 12px; color: var(--ed-muted); }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Toolbar -->
+  <div id="toolbar">
+    <div class="tb-group">
+      <span style="font-size:13px;font-weight:600;color:var(--ed-heading);margin-right:6px;">PPT Studio</span>
+      <span class="tb-sep"></span>
+      <label class="tb-label">File</label>
+      <button class="btn" id="btn-open" title="Open deck HTML">Open</button>
+      <button class="btn" id="btn-reload">↺ Reload</button>
+    </div>
+    <div class="tb-sep"></div>
+    <div class="tb-group">
+      <button class="btn icon-only" id="btn-prev" title="Previous slide (←)">◀</button>
+      <span id="slide-counter">1 / 1</span>
+      <button class="btn icon-only" id="btn-next" title="Next slide (→)">▶</button>
+    </div>
+    <div class="tb-sep"></div>
+    <span id="title-display">—</span>
+    <div class="tb-sep"></div>
+    <div class="tb-group">
+      <button class="btn" id="btn-presenter" title="Open presenter view (P)">⎋ Present</button>
+      <button class="btn" id="btn-fullscreen" title="Fullscreen (F)">⤢</button>
+    </div>
+    <div class="tb-sep"></div>
+    <div class="tb-group">
+      <button class="btn primary" id="btn-export-pptx">↓ PPTX</button>
+      <button class="btn" id="btn-export-pdf">↓ PDF</button>
+    </div>
+    <div class="tb-sep"></div>
+    <button class="btn icon-only" id="btn-shortcuts" title="Keyboard shortcuts (?)">?</button>
+  </div>
+
+  <!-- Main -->
+  <div id="main">
+    <!-- Slide thumbnail sidebar -->
+    <div id="sidebar">
+      <div id="sidebar-header">
+        <span>Slides</span>
+        <span id="sidebar-count" style="color:var(--ed-muted)">0</span>
+      </div>
+      <div id="slide-list"></div>
+    </div>
+
+    <!-- Main iframe -->
+    <div id="center">
+      <iframe id="main-frame" width="1920" height="1080" src="about:blank"></iframe>
+    </div>
+
+    <!-- Notes & token panel -->
+    <div id="notes-panel">
+      <div id="notes-tabs">
+        <div class="notes-tab active" data-tab="notes">Notes</div>
+        <div class="notes-tab" data-tab="tokens">Tokens</div>
+      </div>
+      <div id="notes-content">
+        <div style="color:var(--ed-muted);font-size:12px;margin-top:16px;text-align:center;">
+          Open a deck to view speaker notes.
+        </div>
+      </div>
+      <div id="token-panel" style="display:none;">
+        <div style="color:var(--ed-muted);font-size:11px;margin-bottom:12px;">
+          Override CSS tokens live. Changes apply to the active deck only.
+        </div>
+        <div class="token-row">
+          <label>--color-accent</label>
+          <input type="color" id="tok-accent" value="#4da6ff">
+        </div>
+        <div class="token-row">
+          <label>--color-bg</label>
+          <input type="color" id="tok-bg" value="#0d0d14">
+        </div>
+        <div class="token-row">
+          <label>--color-surface</label>
+          <input type="color" id="tok-surface" value="#161622">
+        </div>
+        <div class="token-row">
+          <label>--color-body</label>
+          <input type="color" id="tok-body" value="#c8ccdc">
+        </div>
+        <div class="token-row">
+          <label>--color-heading</label>
+          <input type="color" id="tok-heading" value="#f0f2fa">
+        </div>
+        <button class="btn" id="btn-reset-tokens" style="width:100%;margin-top:8px;justify-content:center;">Reset to defaults</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status bar -->
+  <div id="statusbar">
+    <div class="status-item"><div class="status-dot"></div><span id="status-text">Ready</span></div>
+    <div class="status-item">Style: <span id="status-style">—</span></div>
+    <div class="status-item">Scale: <span id="status-scale">—</span></div>
+    <div class="status-item">Slide: <span id="status-slide">—</span></div>
+  </div>
+</div>
+
+<!-- Keyboard shortcuts overlay -->
+<div id="shortcut-overlay">
+  <div id="shortcut-box">
+    <h3>Keyboard Shortcuts</h3>
+    <div class="sc-row"><div class="sc-key"><span class="key">←</span><span class="key">→</span></div><span class="sc-desc">Previous / Next slide</span></div>
+    <div class="sc-row"><div class="sc-key"><span class="key">Home</span></div><span class="sc-desc">First slide</span></div>
+    <div class="sc-row"><div class="sc-key"><span class="key">End</span></div><span class="sc-desc">Last slide</span></div>
+    <div class="sc-row"><div class="sc-key"><span class="key">F</span></div><span class="sc-desc">Toggle fullscreen</span></div>
+    <div class="sc-row"><div class="sc-key"><span class="key">P</span></div><span class="sc-desc">Open presenter view</span></div>
+    <div class="sc-row"><div class="sc-key"><span class="key">R</span></div><span class="sc-desc">Reload deck</span></div>
+    <div class="sc-row"><div class="sc-key"><span class="key">?</span></div><span class="sc-desc">Toggle shortcuts panel</span></div>
+    <div class="sc-row"><div class="sc-key"><span class="key">Esc</span></div><span class="sc-desc">Close overlay</span></div>
+    <br>
+    <button class="btn" style="width:100%;justify-content:center;" onclick="document.getElementById('shortcut-overlay').classList.remove('visible')">Close</button>
+  </div>
+</div>
+
+<input type="file" id="file-picker" accept=".html" style="display:none">
+
+<script>
+// ── State ────────────────────────────────────────────────
+const state = {
+  deckUrl: null,
+  totalSlides: 1,
+  currentSlide: 1,
+  deckPlan: null,
+  styleId: null,
+}
+
+// ── Elements ─────────────────────────────────────────────
+const mainFrame   = document.getElementById('main-frame')
+const slideList   = document.getElementById('slide-list')
+const slideCounter = document.getElementById('slide-counter')
+const titleDisplay = document.getElementById('title-display')
+const notesContent = document.getElementById('notes-content')
+const tokenPanel  = document.getElementById('token-panel')
+const statusText  = document.getElementById('status-text')
+const statusStyle = document.getElementById('status-style')
+const statusScale = document.getElementById('status-scale')
+const statusSlide = document.getElementById('status-slide')
+const sidebarCount = document.getElementById('sidebar-count')
+const center      = document.getElementById('center')
+
+// ── Scale main frame to fit center ───────────────────────
+function scaleFrame() {
+  const W = 1920, H = 1080
+  const cw = center.clientWidth  - 48
+  const ch = center.clientHeight - 48
+  const scale = Math.min(cw / W, ch / H)
+  mainFrame.style.transform = `scale(${scale})`
+  mainFrame.style.transformOrigin = 'top left'
+  mainFrame.style.marginLeft = `${(center.clientWidth - W * scale) / 2}px`
+  mainFrame.style.marginTop  = `${(center.clientHeight - H * scale) / 2}px`
+  statusScale.textContent = (scale * 100).toFixed(0) + '%'
+}
+
+const ro = new ResizeObserver(scaleFrame)
+ro.observe(center)
+
+// ── Navigate slides ───────────────────────────────────────
+function goTo(n) {
+  n = Math.max(1, Math.min(state.totalSlides, n))
+  state.currentSlide = n
+
+  // Tell the iframe (if deck supports it via window.__goToSlide)
+  try {
+    if (mainFrame.contentWindow && mainFrame.contentWindow.__goToSlide) {
+      mainFrame.contentWindow.__goToSlide(n)
+    } else {
+      // Reload with ?preview=N
+      if (state.deckUrl) {
+        const url = new URL(state.deckUrl)
+        url.searchParams.set('preview', n)
+        mainFrame.src = url.toString()
+      }
+    }
+  } catch(e) {}
+
+  updateUI()
+}
+
+function updateUI() {
+  const n = state.currentSlide
+  slideCounter.textContent = `${n} / ${state.totalSlides}`
+  statusSlide.textContent = `${n} / ${state.totalSlides}`
+
+  // Highlight active thumbnail
+  document.querySelectorAll('.slide-thumb').forEach((el, i) => {
+    el.classList.toggle('active', i + 1 === n)
+  })
+
+  // Update notes
+  renderNotes(n)
+
+  // Title from deck plan
+  if (state.deckPlan && state.deckPlan.slides) {
+    const slide = state.deckPlan.slides[n - 1]
+    if (slide) titleDisplay.textContent = slide.assertion || state.deckPlan.title || '—'
+  }
+}
+
+// ── Load deck ─────────────────────────────────────────────
+function loadDeck(url) {
+  state.deckUrl = url
+  statusText.textContent = 'Loading…'
+
+  // Load into main iframe
+  mainFrame.src = url + (url.includes('?') ? '&' : '?') + 'preview=1'
+
+  mainFrame.onload = () => {
+    statusText.textContent = 'Ready'
+
+    // Try to read deck metadata from iframe window
+    try {
+      const win = mainFrame.contentWindow
+      if (win.__deckPlan) {
+        state.deckPlan = win.__deckPlan
+        state.totalSlides = state.deckPlan.total_slides || 1
+        state.styleId = state.deckPlan.style_id || '—'
+      } else {
+        // Count slides from DOM
+        const slides = mainFrame.contentDocument.querySelectorAll('[data-slide]')
+        state.totalSlides = slides.length || 1
+      }
+    } catch(e) {
+      state.totalSlides = 1
+    }
+
+    sidebarCount.textContent = state.totalSlides
+    statusStyle.textContent = state.styleId || state.deckPlan?.style_id || '—'
+
+    buildThumbnails()
+    goTo(1)
+  }
+}
+
+// ── Thumbnails ────────────────────────────────────────────
+function buildThumbnails() {
+  slideList.innerHTML = ''
+  for (let i = 1; i <= state.totalSlides; i++) {
+    const thumb = document.createElement('div')
+    thumb.className = 'slide-thumb'
+    thumb.dataset.slide = i
+    thumb.innerHTML = `
+      <iframe class="slide-thumb__preview" src="${state.deckUrl}?preview=${i}&thumbnail=1"
+        width="1920" height="1080" loading="lazy"></iframe>
+      <span class="slide-thumb__num">${i}</span>
+    `
+    // Scale the inner iframe to fill the thumb (16:9 = 200px wide → height = 112.5px)
+    thumb.addEventListener('click', () => goTo(i))
+
+    const iframe = thumb.querySelector('iframe')
+    iframe.onload = () => {
+      const thumbW = thumb.clientWidth
+      const s = thumbW / 1920
+      iframe.style.transform = `scale(${s})`
+      iframe.style.transformOrigin = 'top left'
+      thumb.style.height = (1080 * s) + 'px'
+    }
+
+    slideList.appendChild(thumb)
+
+    // IntersectionObserver for lazy src assignment
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          observer.disconnect()
+        }
+      })
+    }, { root: slideList, rootMargin: '200px' })
+    observer.observe(thumb)
+  }
+}
+
+// ── Notes rendering ───────────────────────────────────────
+function renderNotes(n) {
+  if (!state.deckPlan || !state.deckPlan.slides) {
+    notesContent.innerHTML = `<div style="color:var(--ed-muted);font-size:12px;text-align:center;margin-top:16px;">No deck plan loaded.</div>`
+    return
+  }
+  const slide = state.deckPlan.slides[n - 1]
+  if (!slide) { notesContent.innerHTML = ''; return }
+
+  const notes = slide.speaker_notes || {}
+  const kp = Array.isArray(notes.key_points) ? notes.key_points : []
+
+  notesContent.innerHTML = `
+    ${slide.type ? `<div class="note-section">
+      <div class="note-section__label">Slide Type</div>
+      <div class="note-section__body" style="color:var(--ed-muted);">${slide.type}</div>
+    </div>` : ''}
+    ${notes.purpose ? `<div class="note-section">
+      <div class="note-section__label">Purpose</div>
+      <div class="note-section__body">${notes.purpose}</div>
+    </div>` : ''}
+    ${kp.length ? `<div class="note-section">
+      <div class="note-section__label">Key Points</div>
+      <div class="note-section__body"><ul>${kp.map(p => `<li>${p}</li>`).join('')}</ul></div>
+    </div>` : ''}
+    ${notes.transition ? `<div class="note-section">
+      <div class="note-section__label">Transition</div>
+      <div class="note-section__body">${notes.transition}</div>
+    </div>` : ''}
+    ${notes.timing ? `<div class="note-section">
+      <div class="note-section__label">Timing</div>
+      <div class="note-section__body"><span class="timing-badge">⏱ ${notes.timing}</span></div>
+    </div>` : ''}
+    ${notes.tone ? `<div class="note-section">
+      <div class="note-section__label">Tone</div>
+      <div class="note-section__body" style="color:var(--ed-muted);">${notes.tone}</div>
+    </div>` : ''}
+  `
+}
+
+// ── Notes / Token tab switching ───────────────────────────
+document.querySelectorAll('.notes-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.notes-tab').forEach(t => t.classList.remove('active'))
+    tab.classList.add('active')
+    const which = tab.dataset.tab
+    notesContent.style.display = which === 'notes' ? 'block' : 'none'
+    tokenPanel.style.display   = which === 'tokens' ? 'block' : 'none'
+  })
+})
+
+// ── Token overrides ───────────────────────────────────────
+const tokenInputs = {
+  'tok-accent':  '--color-accent',
+  'tok-bg':      '--color-bg',
+  'tok-surface': '--color-surface',
+  'tok-body':    '--color-body',
+  'tok-heading': '--color-heading',
+}
+Object.entries(tokenInputs).forEach(([id, token]) => {
+  document.getElementById(id).addEventListener('input', (e) => {
+    try {
+      mainFrame.contentDocument.documentElement.style.setProperty(token, e.target.value)
+    } catch(err) {}
+  })
+})
+document.getElementById('btn-reset-tokens').addEventListener('click', () => {
+  Object.entries(tokenInputs).forEach(([id, token]) => {
+    try {
+      mainFrame.contentDocument.documentElement.style.removeProperty(token)
+    } catch(e) {}
+  })
+})
+
+// ── File open ─────────────────────────────────────────────
+const filePicker = document.getElementById('file-picker')
+document.getElementById('btn-open').addEventListener('click', () => filePicker.click())
+filePicker.addEventListener('change', (e) => {
+  const file = e.target.files[0]
+  if (!file) return
+  const url = URL.createObjectURL(file)
+  titleDisplay.textContent = file.name
+  loadDeck(url)
+  filePicker.value = ''
+})
+
+// ── Reload ────────────────────────────────────────────────
+document.getElementById('btn-reload').addEventListener('click', () => {
+  if (state.deckUrl) loadDeck(state.deckUrl)
+})
+
+// ── Prev / Next ───────────────────────────────────────────
+document.getElementById('btn-prev').addEventListener('click', () => goTo(state.currentSlide - 1))
+document.getElementById('btn-next').addEventListener('click', () => goTo(state.currentSlide + 1))
+
+// ── Presenter view ────────────────────────────────────────
+document.getElementById('btn-presenter').addEventListener('click', () => {
+  if (!state.deckUrl) return
+  const presUrl = 'presenter.html?deck=' + encodeURIComponent(state.deckUrl) + '&slide=' + state.currentSlide
+  window.open(presUrl, '_blank', 'width=1400,height=800')
+})
+
+// ── Fullscreen ────────────────────────────────────────────
+document.getElementById('btn-fullscreen').addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    center.requestFullscreen().catch(() => {})
+  } else {
+    document.exitFullscreen()
+  }
+})
+
+// ── Export buttons (placeholder — invoke scripts/export-*.js) ──
+document.getElementById('btn-export-pptx').addEventListener('click', () => {
+  alert('PPTX export: run scripts/export-pptx.js via Node.js CLI.\nSee _dev/MIGRATION.md for the script skeleton.')
+})
+document.getElementById('btn-export-pdf').addEventListener('click', () => {
+  alert('PDF export: run scripts/export-pdf.js via Node.js CLI.\nSee _dev/MIGRATION.md for the script skeleton.')
+})
+
+// ── Keyboard shortcuts ────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  const tag = document.activeElement.tagName.toLowerCase()
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') return
+
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(state.currentSlide - 1) }
+  if (e.key === 'ArrowRight') { e.preventDefault(); goTo(state.currentSlide + 1) }
+  if (e.key === 'Home')       { e.preventDefault(); goTo(1) }
+  if (e.key === 'End')        { e.preventDefault(); goTo(state.totalSlides) }
+  if (e.key === 'f' || e.key === 'F') { document.getElementById('btn-fullscreen').click() }
+  if (e.key === 'p' || e.key === 'P') { document.getElementById('btn-presenter').click() }
+  if (e.key === 'r' || e.key === 'R') { document.getElementById('btn-reload').click() }
+  if (e.key === '?') {
+    document.getElementById('shortcut-overlay').classList.toggle('visible')
+  }
+  if (e.key === 'Escape') {
+    document.getElementById('shortcut-overlay').classList.remove('visible')
+    if (document.fullscreenElement) document.exitFullscreen()
+  }
+})
+
+document.getElementById('btn-shortcuts').addEventListener('click', () => {
+  document.getElementById('shortcut-overlay').classList.toggle('visible')
+})
+
+// ── Init ──────────────────────────────────────────────────
+// Check for ?deck= query param (from presenter back-link or direct open)
+const params = new URLSearchParams(location.search)
+if (params.get('deck')) {
+  loadDeck(decodeURIComponent(params.get('deck')))
+}
+scaleFrame()
+</script>
+</body>
+</html>

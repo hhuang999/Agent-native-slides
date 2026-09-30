@@ -1,0 +1,16 @@
+{
+  "name": "html-ppt-skill-v5-scripts",
+  "private": true,
+  "type": "module",
+  "description": "Export (PDF/PPTX) and runtime-contract checks for HTML PPT Skill v5 decks",
+  "scripts": {
+    "check": "node check-deck.js",
+    "pdf": "node export-pdf.js",
+    "pptx": "node export-pptx.js",
+    "imagegen": "node imagegen.js"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0",
+    "pptxgenjs": "^3.12.0"
+  }
+}

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presenter View — HTML PPT v5</title>
+<style>
+:root {
+  --p-bg:       oklch(0.10 0.01 240);
+  --p-surface:  oklch(0.15 0.01 240);
+  --p-raised:   oklch(0.20 0.01 240);
+  --p-border:   oklch(0.26 0.01 240);
+  --p-muted:    oklch(0.50 0.02 240);
+  --p-body:     oklch(0.80 0.02 240);
+  --p-heading:  oklch(0.95 0.01 240);
+  --p-accent:   oklch(0.72 0.18 235);
+  --p-warn:     oklch(0.70 0.18 55);
+  --p-danger:   oklch(0.60 0.22 25);
+  --font-ui:    'Inter', system-ui, -apple-system, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100vh; overflow: hidden; background: var(--p-bg); color: var(--p-body); font-family: var(--font-ui); font-size: 14px; }
+
+/* ── Layout ─────────────────────────────────────────────── */
+#app {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  grid-template-columns: 1fr 340px;
+  gap: 0;
+  height: 100vh;
+}
+/* Main current slide + notes */
+#left { display: flex; flex-direction: column; border-right: 1px solid var(--p-border); overflow: hidden; }
+/* Next slide preview + timer + counter */
+#right { display: flex; flex-direction: column; overflow: hidden; }
+/* Bottom bar */
+#bottom { grid-column: 1 / -1; border-top: 1px solid var(--p-border); background: var(--p-surface); }
+
+/* ── Current slide frame ─────────────────────────────────── */
+#current-wrap {
+  flex: 0 0 auto;
+  background: oklch(0.08 0.01 240);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px; position: relative;
+  border-bottom: 1px solid var(--p-border);
+}
+#current-frame {
+  position: absolute; top: 16px; left: 16px; width: 1920px; height: 1080px;
+  border: none; display: block;
+  transform-origin: top left;
+  box-shadow: 0 4px 24px oklch(0 0 0 / 0.5);
+}
+
+/* ── Notes ─────────────────────────────────────────────── */
+#notes-wrap {
+  flex: 1; overflow-y: auto; padding: 16px 20px;
+}
+#notes-wrap::-webkit-scrollbar { width: 4px; }
+#notes-wrap::-webkit-scrollbar-thumb { background: var(--p-border); border-radius: 2px; }
+
+.note-block { margin-bottom: 16px; }
+.note-block__label {
+  font-size: 10px; color: var(--p-muted); text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 6px;
+}
+.note-block__body {
+  font-size: var(--notes-size, 15px);
+  color: var(--p-body); line-height: 1.65;
+}
+.note-block__body ul { padding-left: 16px; }
+.note-block__body li { margin-bottom: 4px; }
+
+.transition-hint {
+  background: oklch(0.72 0.18 235 / 0.10);
+  border: 1px solid oklch(0.72 0.18 235 / 0.30);
+  border-radius: 6px; padding: 8px 12px;
+  font-size: 13px; color: var(--p-accent);
+  font-style: italic;
+}
+
+/* ── Right column ────────────────────────────────────────── */
+#right { gap: 0; }
+
+/* Timer block */
+#timer-block {
+  padding: 20px 20px 0;
+}
+.timer-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.timer-label { font-size: 11px; color: var(--p-muted); min-width: 80px; }
+.timer-value {
+  font-size: 28px; font-variant-numeric: tabular-nums; font-weight: 600;
+  color: var(--p-heading); letter-spacing: 0.02em;
+}
+.timer-value.warn { color: var(--p-warn); }
+.timer-value.danger { color: var(--p-danger); }
+
+.timer-controls { display: flex; gap: 6px; margin-bottom: 12px; }
+.tc-btn {
+  padding: 5px 12px; border-radius: 5px;
+  border: 1px solid var(--p-border); background: var(--p-raised);
+  color: var(--p-body); font-size: 12px; cursor: pointer;
+}
+.tc-btn:hover { background: var(--p-border); }
+
+.slide-progress {
+  width: 100%; height: 4px; background: var(--p-border); border-radius: 2px; overflow: hidden;
+}
+.slide-progress__bar {
+  height: 100%; background: var(--p-accent); border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Next slide preview */
+#next-block {
+  padding: 16px 20px;
+  border-top: 1px solid var(--p-border);
+}
+.next-label {
+  font-size: 11px; color: var(--p-muted); text-transform: uppercase;
+  letter-spacing: 0.06em; margin-bottom: 8px;
+}
+#next-wrap {
+  width: 100%; background: oklch(0.08 0.01 240);
+  border-radius: 6px; overflow: hidden;
+  position: relative; display: flex; align-items: flex-start;
+}
+#next-frame {
+  position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+  border: none; display: block;
+  transform-origin: top left;
+}
+.next-empty {
+  padding: 24px; text-align: center;
+  color: var(--p-muted); font-size: 12px; width: 100%;
+}
+
+/* Slide counter + font size */
+#meta-block {
+  padding: 12px 20px; border-top: 1px solid var(--p-border);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  flex-shrink: 0;
+}
+.counter-large {
+  font-size: 22px; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--p-heading);
+}
+.counter-total { font-size: 13px; color: var(--p-muted); }
+
+.font-adj { display: flex; align-items: center; gap: 4px; }
+.font-adj span { font-size: 11px; color: var(--p-muted); }
+.adj-btn {
+  width: 24px; height: 24px; border-radius: 4px;
+  border: 1px solid var(--p-border); background: var(--p-raised);
+  color: var(--p-body); font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.adj-btn:hover { background: var(--p-border); }
+
+/* ── Bottom bar ──────────────────────────────────────────── */
+#bottom {
+  height: 40px; display: flex; align-items: center;
+  gap: 12px; padding: 0 16px;
+}
+.bb-item { font-size: 11px; color: var(--p-muted); display: flex; align-items: center; gap: 5px; }
+.bb-sep { width: 1px; height: 16px; background: var(--p-border); }
+.key-hint {
+  padding: 1px 5px; background: var(--p-raised); border: 1px solid var(--p-border);
+  border-radius: 3px; font-size: 10px; color: var(--p-muted);
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Left: current slide + notes -->
+  <div id="left">
+    <div id="current-wrap">
+      <iframe id="current-frame" width="1920" height="1080" src="about:blank"></iframe>
+    </div>
+    <div id="notes-wrap">
+      <div id="notes-body">
+        <div style="color:var(--p-muted);font-size:13px;text-align:center;margin-top:20px;">
+          No deck loaded. Open from editor.html.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: timer + next slide -->
+  <div id="right">
+    <div id="timer-block">
+      <div class="timer-row">
+        <span class="timer-label">Elapsed</span>
+        <span class="timer-value" id="t-elapsed">0:00:00</span>
+      </div>
+      <div class="timer-row">
+        <span class="timer-label">Slide time</span>
+        <span class="timer-value" id="t-slide">0:00</span>
+      </div>
+      <div class="timer-controls">
+        <button class="tc-btn" id="btn-start">▶ Start</button>
+        <button class="tc-btn" id="btn-pause">⏸ Pause</button>
+        <button class="tc-btn" id="btn-reset">↺ Reset</button>
+      </div>
+      <div class="slide-progress"><div class="slide-progress__bar" id="progress-bar" style="width:0%"></div></div>
+    </div>
+
+    <div id="meta-block">
+      <div>
+        <span class="counter-large" id="slide-num">1</span>
+        <span class="counter-total"> / <span id="slide-total">—</span></span>
+      </div>
+      <div class="font-adj">
+        <span>Notes size</span>
+        <button class="adj-btn" id="btn-font-down">−</button>
+        <button class="adj-btn" id="btn-font-up">+</button>
+      </div>
+    </div>
+
+    <div id="next-block">
+      <div class="next-label">Next slide</div>
+      <div id="next-wrap">
+        <iframe id="next-frame" width="1920" height="1080" src="about:blank"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div id="bottom">
+    <div class="bb-item"><span class="key-hint">←</span><span class="key-hint">→</span> Navigate</div>
+    <div class="bb-sep"></div>
+    <div class="bb-item"><span class="key-hint">Space</span> Advance</div>
+    <div class="bb-sep"></div>
+    <div class="bb-item"><span class="key-hint">B</span> Black screen</div>
+    <div class="bb-sep"></div>
+    <div class="bb-item" id="bb-sync">Sync: <span id="sync-status" style="color:var(--p-muted);">—</span></div>
+    <div class="bb-sep"></div>
+    <div class="bb-item">Style: <span id="bb-style">—</span></div>
+  </div>
+</div>
+
+<script>
+// ── Read URL params ──────────────────────────────────────
+const params    = new URLSearchParams(location.search)
+const deckUrl   = params.get('deck')   ? decodeURIComponent(params.get('deck'))  : null
+const startSlide = params.get('slide') ? parseInt(params.get('slide')) : 1
+
+// ── State ────────────────────────────────────────────────
+const state = {
+  deck: deckUrl,
+  total: 1,
+  current: startSlide,
+  deckPlan: null,
+  blackout: false,
+  // Timer
+  running: false,
+  elapsed: 0,     // ms total
+  slideStart: 0,  // Date.now() when current slide was entered
+  timerInterval: null,
+  notesSize: 15,
+}
+
+// ── Elements ─────────────────────────────────────────────
+const currentFrame = document.getElementById('current-frame')
+const nextFrame    = document.getElementById('next-frame')
+const notesBody    = document.getElementById('notes-body')
+const slideNum     = document.getElementById('slide-num')
+const slideTotal   = document.getElementById('slide-total')
+const progressBar  = document.getElementById('progress-bar')
+const tElapsed     = document.getElementById('t-elapsed')
+const tSlide       = document.getElementById('t-slide')
+const syncStatus   = document.getElementById('sync-status')
+const bbStyle      = document.getElementById('bb-style')
+const notesWrap    = document.getElementById('notes-wrap')
+
+// ── Size frames ───────────────────────────────────────────
+function sizeCurrent() {
+  const wrap = document.getElementById('current-wrap')
+  // Reserve ~55% of left column height for the current slide
+  const leftW = document.getElementById('left').clientWidth - 32
+  const targetH = Math.min(leftW * (9/16), window.innerHeight * 0.55)
+  const scale = targetH / 1080
+  const W = 1920 * scale
+  currentFrame.style.transform = `scale(${scale})`
+  currentFrame.style.transformOrigin = 'top left'
+  wrap.style.height = targetH + 32 + 'px'
+  wrap.style.minWidth = W + 32 + 'px'
+  currentFrame.style.left = Math.max(16, (wrap.clientWidth - W) / 2) + 'px'
+}
+
+function sizeNext() {
+  const wrap = document.getElementById('next-wrap')
+  const w = wrap.clientWidth || 300
+  const scale = w / 1920
+  nextFrame.style.transform = `scale(${scale})`
+  nextFrame.style.transformOrigin = 'top left'
+  wrap.style.height = (1080 * scale) + 'px'
+}
+
+const ro = new ResizeObserver(() => { sizeCurrent(); sizeNext() })
+ro.observe(document.getElementById('left'))
+ro.observe(document.getElementById('next-wrap'))
+
+// ── Load deck ─────────────────────────────────────────────
+function loadDeck(url, startAt) {
+  state.deck = url
+  const qp = url.includes('?') ? '&' : '?'
+  currentFrame.src = url + qp + 'preview=' + startAt
+  currentFrame.onload = () => {
+    currentFrame.onload = null   // run once; goTo() may reload the frame later
+    try {
+      const win = currentFrame.contentWindow
+      if (win.__deckPlan) {
+        state.deckPlan = win.__deckPlan
+        state.total = state.deckPlan.total_slides || 1
+        bbStyle.textContent = state.deckPlan.style_id || '—'
+      } else {
+        const slides = currentFrame.contentDocument.querySelectorAll('[data-slide]')
+        state.total = slides.length || 1
+      }
+    } catch(e) {}
+    state.current = startAt
+    slideTotal.textContent = state.total
+    loadNext(startAt + 1)
+    updateUI()
+  }
+}
+
+// ── Next-slide preview ────────────────────────────────────
+function loadNext(next) {
+  if (next <= state.total) {
+    const qp = state.deck.includes('?') ? '&' : '?'
+    nextFrame.src = state.deck + qp + 'preview=' + next
+    nextFrame.onload = sizeNext
+  } else {
+    nextFrame.src = 'about:blank'
+  }
+}
+
+// ── Navigate ──────────────────────────────────────────────
+function goTo(n) {
+  n = Math.max(1, Math.min(state.total, n))
+  if (n === state.current) return
+  state.current = n
+  state.slideStart = Date.now()
+
+  try {
+    if (currentFrame.contentWindow.__goToSlide) {
+      currentFrame.contentWindow.__goToSlide(n)
+    } else {
+      const qp = state.deck.includes('?') ? '&' : '?'
+      currentFrame.src = state.deck + qp + 'preview=' + n
+    }
+  } catch(e) {
+    const qp = state.deck.includes('?') ? '&' : '?'
+    currentFrame.src = state.deck + qp + 'preview=' + n
+  }
+
+  loadNext(n + 1)
+  updateUI()
+  broadcastSlide(n)
+}
+
+// ── Sync to main window ───────────────────────────────────
+let mainWindow = null
+function broadcastSlide(n) {
+  // Try to reach the opener (editor.html) via BroadcastChannel
+  try {
+    presenterChannel.postMessage({ type: 'slide', slide: n })
+    syncStatus.textContent = 'Synced'
+  } catch(e) {}
+}
+
+let presenterChannel
+try {
+  presenterChannel = new BroadcastChannel('ppt-presenter')
+  presenterChannel.onmessage = (e) => {
+    if (e.data.type === 'slide' && e.data.slide !== state.current) {
+      goTo(e.data.slide)
+    }
+  }
+  syncStatus.textContent = 'Active'
+} catch(e) {
+  syncStatus.textContent = 'N/A'
+}
+
+// ── Update UI ─────────────────────────────────────────────
+function updateUI() {
+  slideNum.textContent = state.current
+  progressBar.style.width = ((state.current / state.total) * 100) + '%'
+  renderNotes(state.current)
+}
+
+// ── Notes ─────────────────────────────────────────────────
+function renderNotes(n) {
+  notesWrap.style.setProperty('--notes-size', state.notesSize + 'px')
+
+  if (!state.deckPlan || !state.deckPlan.slides) {
+    notesBody.innerHTML = `<div style="color:var(--p-muted);text-align:center;font-size:13px;margin-top:16px;">No deck plan. Add <code>window.__deckPlan = {...}</code> to the deck.</div>`
+    return
+  }
+
+  const slide = state.deckPlan.slides[n - 1]
+  if (!slide) { notesBody.innerHTML = ''; return }
+
+  const sn = slide.speaker_notes || {}
+  const kp = Array.isArray(sn.key_points) ? sn.key_points : []
+
+  let html = ''
+
+  if (sn.purpose) {
+    html += `<div class="note-block">
+      <div class="note-block__label">Purpose</div>
+      <div class="note-block__body">${sn.purpose}</div>
+    </div>`
+  }
+
+  if (kp.length) {
+    html += `<div class="note-block">
+      <div class="note-block__label">Key Points</div>
+      <div class="note-block__body"><ul>${kp.map(p => `<li>${p}</li>`).join('')}</ul></div>
+    </div>`
+  }
+
+  if (sn.transition) {
+    html += `<div class="note-block">
+      <div class="note-block__body transition-hint">↪ ${sn.transition}</div>
+    </div>`
+  }
+
+  if (sn.timing) {
+    html += `<div class="note-block">
+      <div class="note-block__label">Target Time</div>
+      <div class="note-block__body" style="color:var(--p-accent);font-weight:600;">⏱ ${sn.timing}</div>
+    </div>`
+  }
+
+  if (sn.tone) {
+    html += `<div class="note-block">
+      <div class="note-block__label">Tone</div>
+      <div class="note-block__body" style="color:var(--p-muted);">${sn.tone}</div>
+    </div>`
+  }
+
+  notesBody.innerHTML = html || `<div style="color:var(--p-muted);font-size:13px;">No notes for this slide.</div>`
+}
+
+// ── Timer ─────────────────────────────────────────────────
+function fmtMs(ms) {
+  const tot = Math.floor(ms / 1000)
+  const h = Math.floor(tot / 3600)
+  const m = Math.floor((tot % 3600) / 60)
+  const s = tot % 60
+  if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+  return `${m}:${String(s).padStart(2,'0')}`
+}
+
+function tickTimer() {
+  if (!state.running) return
+  state.elapsed += 250
+  tElapsed.textContent = fmtMs(state.elapsed)
+
+  const slideMs = Date.now() - state.slideStart
+  tSlide.textContent = fmtMs(slideMs)
+
+  // Color warn/danger thresholds (30min/45min total)
+  const mins = state.elapsed / 60000
+  tElapsed.className = 'timer-value' + (mins > 45 ? ' danger' : mins > 30 ? ' warn' : '')
+}
+
+document.getElementById('btn-start').addEventListener('click', () => {
+  if (!state.running) {
+    state.running = true
+    state.slideStart = Date.now()
+    state.timerInterval = setInterval(tickTimer, 250)
+  }
+})
+document.getElementById('btn-pause').addEventListener('click', () => {
+  state.running = false
+  clearInterval(state.timerInterval)
+})
+document.getElementById('btn-reset').addEventListener('click', () => {
+  state.running = false
+  clearInterval(state.timerInterval)
+  state.elapsed = 0
+  state.slideStart = Date.now()
+  tElapsed.textContent = '0:00:00'
+  tSlide.textContent = '0:00'
+  tElapsed.className = 'timer-value'
+})
+
+// ── Notes font size ───────────────────────────────────────
+document.getElementById('btn-font-up').addEventListener('click', () => {
+  state.notesSize = Math.min(26, state.notesSize + 1)
+  notesWrap.style.setProperty('--notes-size', state.notesSize + 'px')
+})
+document.getElementById('btn-font-down').addEventListener('click', () => {
+  state.notesSize = Math.max(11, state.notesSize - 1)
+  notesWrap.style.setProperty('--notes-size', state.notesSize + 'px')
+})
+
+// ── Blackout ──────────────────────────────────────────────
+function toggleBlackout() {
+  state.blackout = !state.blackout
+  const wrap = document.getElementById('current-wrap')
+  wrap.style.opacity = state.blackout ? '0' : '1'
+}
+
+// ── Keyboard shortcuts ────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+    e.preventDefault(); goTo(state.current + 1)
+  }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+    e.preventDefault(); goTo(state.current - 1)
+  }
+  if (e.key === 'Home') { e.preventDefault(); goTo(1) }
+  if (e.key === 'End')  { e.preventDefault(); goTo(state.total) }
+  if (e.key === 'b' || e.key === 'B') toggleBlackout()
+  if (e.key === ' ' && !state.running) {
+    // Start timer on first space if not running
+    document.getElementById('btn-start').click()
+  }
+})
+
+// ── Init ──────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  sizeCurrent()
+  sizeNext()
+  if (deckUrl) loadDeck(deckUrl, startSlide)
+})
+</script>
+</body>
+</html>

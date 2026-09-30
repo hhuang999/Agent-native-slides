@@ -1,0 +1,23 @@
+# ---- Secrets: never commit ----
+.env
+.env.*
+*.env.local
+
+# ---- Node deps ----
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ---- OS / editor cruft ----
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*~
+.vscode/
+.idea/
+
+# ---- Tool caches (local only) ----
+.playwright-mcp/
+.firecrawl/
+.claude/
