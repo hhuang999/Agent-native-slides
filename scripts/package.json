@@ -9,6 +9,7 @@
     "pptx": "node export-pptx.js",
     "imagegen": "node imagegen.js",
     "test:imagegen": "node --test test/imagegen.test.js",
+    "test:layout": "node --test test/layout.test.js",
     "inline": "node inline-assets.js"
   },
   "dependencies": {

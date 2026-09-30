@@ -4,7 +4,7 @@
  *
  * Validates a deck / preview.html against the Runtime API contract in
  * knowledge/RUNTIME.md (§1 fit-to-window stage, §2 slide switching, §3 ?preview=N,
- * §3.1 API, §7 print/PDF, §8 pinned CDN URLs must resolve).
+ * §3.1 API, §6.1 rendered text fit, §7 print/PDF, §8 pinned CDN URLs).
  *
  * Usage:
  *   node scripts/check-deck.js <deck.html> [more.html ...] [--shots <dir>] [--json <out.json>]
@@ -15,6 +15,7 @@
 import { mkdirSync, writeFileSync } from 'fs'
 import { resolve, basename, dirname, join } from 'path'
 import { launchChromium, toFileUrl } from './lib/browser.js'
+import { auditSlideLayout, layoutIssueDetail, settleSlideMotion, waitForFonts } from './lib/layout-audit.js'
 
 const args = process.argv.slice(2)
 const files = []
@@ -43,7 +44,7 @@ async function open(browser, url, contextOptions = {}) {
   // Network failures (offline) are not reported — only real HTTP errors.
   page.on('response', res => { if (res.status() >= 400) errors.push(`HTTP ${res.status()} ${res.url()}`) })
   await page.goto(url, { waitUntil: 'load', timeout: 60_000 })
-  await page.evaluate(() => Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 10_000))]))
+  if (!(await waitForFonts(page))) errors.push('fonts did not finish loading before layout inspection')
   await page.waitForTimeout(300)
   return { context, page, errors }
 }
@@ -79,7 +80,14 @@ function countPdfPages(buf) {
 
 async function checkFile(browser, file) {
   const fails = []
+  const layout = []
   const fail = (check, detail) => fails.push({ check, detail })
+  const checkLayout = async (page, index, mode) => {
+    const issues = await auditSlideLayout(page, index)
+    layout.push(...issues.map(issue => ({ mode, ...issue })))
+    for (const issue of issues.slice(0, 5)) fail(issue.type, layoutIssueDetail(issue, mode))
+    if (issues.length > 5) fail('layout-more', `${mode} slide ${index}: ${issues.length - 5} more layout issue(s); see --json output`)
+  }
   const url = toFileUrl(file)
   const tag = basename(dirname(file)) + '/' + basename(file)
 
@@ -111,7 +119,7 @@ async function checkFile(browser, file) {
   if (info.goType !== 'function') {
     fail('goToSlide', '__goToSlide is not a function')
     await context.close()
-    return { file: tag, pass: false, slides: n, fails, errors }
+    return { file: tag, pass: false, slides: n, fails, layout, errors }
   }
 
   // ── __goToSlide(1..n), switching method, screenshots ─────
@@ -121,6 +129,9 @@ async function checkFile(browser, file) {
     const cur = await page.evaluate(() => window.__currentSlide)
     const active = await page.evaluate(k => document.querySelectorAll('.slide')[k - 1]?.classList.contains('is-active'), i)
     if (!ok || cur !== i || !active) fail('goToSlide', `goTo(${i}): current=${cur}, is-active=${active}, states=[${await slideStates(page)}]`)
+    if (!(await waitForFonts(page))) fail('fonts-ready', `screen slide ${i}: fonts did not finish loading`)
+    await settleSlideMotion(page, i)
+    await checkLayout(page, i, 'screen')
     const hiddenByDisplay = await page.evaluate(() => Array.from(document.querySelectorAll('.slide'))
       .filter(s => getComputedStyle(s).display === 'none').length)
     if (hiddenByDisplay) fail('no-display-none', `goTo(${i}): ${hiddenByDisplay} slide(s) hidden with display:none`)
@@ -180,7 +191,9 @@ async function checkFile(browser, file) {
   // ── Print / PDF ──────────────────────────────────────────
   const pr = await open(browser, toFileUrl(file, '?print=1'))
   await pr.page.emulateMedia({ media: 'print' })
+  if (!(await waitForFonts(pr.page))) fail('fonts-ready', 'print layout: fonts did not finish loading')
   await pr.page.waitForTimeout(200)
+  for (let i = 1; i <= n; i++) await checkLayout(pr.page, i, 'print')
   const printInfo = await pr.page.evaluate(() => Array.from(document.querySelectorAll('.slide')).map(s => {
     const cs = getComputedStyle(s)
     const r = s.getBoundingClientRect()
@@ -206,7 +219,7 @@ async function checkFile(browser, file) {
   await rm.context.close()
 
   if (errors.length) fail('pageerror', [...new Set(errors)].slice(0, 3).join(' | '))
-  return { file: tag, pass: fails.length === 0, slides: n, fails }
+  return { file: tag, pass: fails.length === 0, slides: n, fails, layout }
 }
 
 const browser = await launchChromium()

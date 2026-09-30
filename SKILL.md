@@ -37,8 +37,9 @@ Review in Studio → Present → Export single-file HTML / PDF / PPTX
 - Extract title, author, venue, approximate length
 
 ### Step 2 — Build Deck Plan
-- Split into ~100–200 word chunks per slide
-- Each slide: `assertion` headline (Assertion-Evidence format), `display_content`, `speaker_notes`
+- Split source material into ~100–200 word ideas for planning; this is **not** a visible-text allowance
+- Each slide: one `assertion` headline, a short `visible_text` list, visual `display_content`, and fuller `speaker_notes`
+- Keep speaker slides to one claim and one visual; put explanations in notes. If a claim, labels, or evidence need more room, simplify or split the slide before changing type size.
 - Mark `visual_evidence_type`: `chart | diagram | image | formula | code | none`
 - Output: Deck Plan JSON (see `prompts/deck-plan-schema.md`)
 
@@ -64,10 +65,12 @@ Review in Studio → Present → Export single-file HTML / PDF / PPTX
 - Data charts always use ECharts — never image API
 
 ### Step 5 — Generate HTML deck
+- Read `knowledge/element/elements.md` before the selected style's `design.md`. Its readability and content-fit rules take precedence over small example type sizes in style previews.
 - Follow design language from `knowledge/style/[id]/design.md`
 - Pull components from `knowledge/component/`
 - Pull motion snippets from `knowledge/motion/motion.md`
 - Fixed 1920×1080 stage, visibility/opacity switching, `?preview=N` support
+- After `document.fonts.ready`, inspect every rendered slide at 1920×1080, including Chinese, English, and mixed-script lines where present. Fix text overflow, clipping, and overlap by shortening copy, changing layout, or splitting slides; retain readable type sizes.
 - All CDN deps must pin version numbers
 
 ### Step 6 — Review in Studio (optional)
@@ -85,6 +88,7 @@ Review in Studio → Present → Export single-file HTML / PDF / PPTX
 - **PDF 16:9**: `node scripts/export-pdf.js <deck.html>` (Playwright headless print, one 1920×1080 page per slide)
 - **PPTX**: `node scripts/export-pptx.js <deck.html> [deck-plan.json]` → one full-slide image per slide + speaker notes (text is not editable)
 - Validate first: `node scripts/check-deck.js <deck.html>` must pass
+- `check-deck.js` audits text geometry in screen and print layouts after fonts load; PDF/PPTX export also stops if its capture layout has text overflow, clipping, or overlap.
 
 ---
 

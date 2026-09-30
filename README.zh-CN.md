@@ -87,13 +87,19 @@ flowchart LR
 ```
 
 1. **读入**：`.docx` 用 mammoth 转成 Markdown，提取标题、场合和篇幅。
-2. **规划**：生成 Deck Plan JSON（`prompts/deck-plan-schema.md`），每页一个论点标题、证据类型和演讲者备注。
+2. **规划**：Deck Plan JSON（`prompts/deck-plan-schema.md`）把简短的上屏 `visible_text` 与详细演讲备注分开。100–200 词是输入材料的规划块，不是每页可见文字额度。
 3. **选风格**：按情绪 × 场合检索 `knowledge/style/index.json`，展示 2–3 个动态预览，这一步从不跳过。
 4. **配图（可选）**：`imagegen.js` 生成装饰性配图；图表始终用 ECharts。
-5. **生成**：按所选风格的 `design.md`，用知识层里的组件和动效写出单文件 HTML deck。
+5. **生成**：按所选风格的 `design.md` 和 `knowledge/element/elements.md` 的通用可读性规则写出 HTML；先精简、重排或拆页，再考虑字号微调。
 6. **审阅**：Studio 查看器显示缩略图和备注。
 7. **演示**：键盘翻页、`data-step` 逐项揭示、演讲者视图。
-8. **导出**：先通过 `check-deck`，再内联 / 导出 PDF / 导出 PPTX。
+8. **导出**：字体加载后，`check-deck` 逐页检查屏幕与打印版面的文字越界、裁切和重叠；PDF/PPTX 导出也会检查实际捕获的版面。
+
+### 文字容量与可读性
+
+演讲型页面保留一个主张和一项视觉证据，把长解释放入演讲备注；阅读型页面把长段落拆到续页。固定 1920×1080 舞台上的演讲正文通常用 28–36px，阅读正文至少 24px。舞台本身已按窗口缩放，不要再用 `vw` 字号造成双重缩小。字体加载后以实际渲染结果为准，尤其要检查中文、英文和中英混排的换行；字数预算不能代替版面检查。几何校验能发现可见文字的裁切与相撞，但图表画布文字和整体信息密度仍需人工看截图。
+
+运行 `node --test scripts/test/layout.test.js` 可验证中文、英文和中英混排样例，以及故意制造的越界、裁切、重叠和 PDF/PPTX 导出拦截。
 
 ## 风格一览
 
@@ -444,10 +450,10 @@ Studio 需要用 HTTP 打开 skill 根目录（`npx serve .`），然后访问 `
 
 | 命令 | 结果 |
 |---|---|
-| `node scripts/check-deck.js deck.html` | 校验运行时合同（翻页 API、每页一个 `data-slide`、不用 `display:none` 切换、窗口自适应、打印样式、CDN 地址可用） |
+| `node scripts/check-deck.js deck.html [--json report.json]` | 校验运行时、屏幕和打印版面的文字越界/裁切/重叠、窗口自适应及 PDF 页数；JSON 记录每页问题 |
 | `node scripts/inline-assets.js deck.html [out.html]` | **单文件 HTML**：本地图片和字体转为 data URI，移动或发邮件都不会丢图 |
-| `node scripts/export-pdf.js deck.html [out.pdf]` | **PDF**，16:9，每页一张 1920×1080 |
-| `node scripts/export-pptx.js deck.html [plan.json] [out.pptx]` | **PPTX**：每页一张整页图片 + 演讲者备注（页面文字不可编辑） |
+| `node scripts/export-pdf.js deck.html [out.pdf]` | **PDF**，16:9，每页一张 1920×1080；写出前检查打印版面文字 |
+| `node scripts/export-pptx.js deck.html [plan.json] [out.pptx]` | **PPTX**：每页一张整页图片 + 演讲者备注（页面文字不可编辑）；逐页截图前检查文字 |
 | `node scripts/imagegen.js "<prompt>" out.jpg` | 通过已配置的服务生成装饰性配图 |
 
 ## 目录结构

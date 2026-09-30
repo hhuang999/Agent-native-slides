@@ -374,3 +374,9 @@
 | Ink economy | Extreme (two inks only) | Moderate | Moderate |
 
 M03's defining constraint is **editorial austerity under a two-colour RISO printing metaphor** — it reads as printed artefact rather than screen design, and that physicality is its core differentiator.
+
+---
+
+## Fixed-stage content fit
+
+The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.

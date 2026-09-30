@@ -15,6 +15,7 @@
  * The deck must implement the Runtime API in knowledge/RUNTIME.md §3.1
  * (1-indexed window.__goToSlide(n), window.__deckPlan.total_slides).
  * Speaker notes come from [deck-plan.json] or, if omitted, window.__deckPlan.slides.
+ * Each slide's rendered text is checked before its screenshot is captured.
  *
  * Environment variables:
  *   Image generation credentials are only needed by imagegen.js, not PPTX export.
@@ -25,6 +26,7 @@ import { resolve, basename, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import pptxgen from 'pptxgenjs'
 import { launchChromium, toFileUrl } from './lib/browser.js'
+import { auditSlideLayout, layoutIssueDetail, settleSlideMotion, waitForFonts } from './lib/layout-audit.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -70,7 +72,7 @@ async function exportToPptx() {
   await page.goto(fileUrl, { waitUntil: 'networkidle', timeout: 30_000 })
 
   // Wait for fonts
-  await page.evaluate(() => document.fonts.ready)
+  if (!(await waitForFonts(page))) throw new Error('Fonts did not finish loading before PPTX export')
 
   // Hide on-screen deck chrome (prev/next buttons, dots, counters) so it is not
   // baked into the slide images — same selectors as the decks' @media print.
@@ -115,12 +117,14 @@ async function exportToPptx() {
     if (!moved) {
       // Reload with ?preview=N if __goToSlide not available
       await page.goto(`${fileUrl}?preview=${i}`, { waitUntil: 'networkidle', timeout: 20_000 })
-      await page.evaluate(() => document.fonts.ready)
+      if (!(await waitForFonts(page))) throw new Error(`Fonts did not finish loading on slide ${i}`)
       await page.addStyleTag({ content: HIDE_NAV })
     }
 
-    // Let entrance animations settle (300 ms is enough for CSS transitions)
-    await page.waitForTimeout(350)
+    if (!(await waitForFonts(page))) throw new Error(`Fonts did not finish loading on slide ${i}`)
+    await settleSlideMotion(page, i)
+    const issues = await auditSlideLayout(page, i)
+    if (issues.length) throw new Error(`PPTX export stopped: ${layoutIssueDetail(issues[0], 'screen')}`)
 
     // Screenshot at full 1920×1080
     const screenshot = await page.screenshot({

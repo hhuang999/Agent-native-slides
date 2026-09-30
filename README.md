@@ -87,13 +87,19 @@ flowchart LR
 ```
 
 1. **Read**: `.docx` is converted with mammoth; title, venue and length are extracted.
-2. **Plan**: the Deck Plan JSON (`prompts/deck-plan-schema.md`) sets one assertion headline per slide, the evidence type and speaker notes.
+2. **Plan**: the Deck Plan JSON (`prompts/deck-plan-schema.md`) separates short on-slide `visible_text` from fuller speaker notes. The 100–200-word planning chunks are source material, not slide copy.
 3. **Pick a style**: the agent queries `knowledge/style/index.json` by mood × occasion and shows you 2–3 live previews. It never skips this step.
 4. **Images (optional)**: `imagegen.js` makes decorative art; charts stay in ECharts.
-5. **Generate**: a single HTML deck following the chosen `design.md`, built from knowledge-layer components and motion.
+5. **Generate**: a single HTML deck following the chosen `design.md` and shared readability rules in `knowledge/element/elements.md`. Shorten copy, change layout, or split a slide before reducing type size.
 6. **Review**: a Studio viewer shows thumbnails and notes.
 7. **Present**: keyboard navigation, `data-step` reveals, presenter view.
-8. **Export**: `check-deck` must pass, then inline / PDF / PPTX.
+8. **Export**: after fonts load, `check-deck` checks each slide for text overflow, clipping, and overlap in screen and print layouts. Then inline / PDF / PPTX; PDF and PPTX exports check their capture layouts too.
+
+### Text fit and readability
+
+Plan one claim and one visual per speaker slide. Keep explanations in speaker notes; for a reading deck, split long passages across slides. Design on the fixed 1920×1080 stage with readable body text (usually 28–36px for speaking, at least 24px for reading). Do not use viewport-sized typography inside the stage: the stage already scales to the window. Check the real rendered page after fonts load, including Chinese, English, and mixed-script text; word counts alone cannot predict line breaks. The geometry check reports visible text collisions and clipping, while final screenshot review remains necessary for charts, canvas labels, and overall density.
+
+Run `node --test scripts/test/layout.test.js` for Chinese, English, and mixed-script cases, including deliberate overflow, clipping, and overlap and the PDF/PPTX export guards.
 
 ## Style gallery
 
@@ -444,10 +450,10 @@ Serve the skill root over HTTP for the Studio (`npx serve .`), then open `studio
 
 | Command | Output |
 |---|---|
-| `node scripts/check-deck.js deck.html` | Validates the runtime contract (slide API, one `data-slide` per slide, no `display:none` switching, fit-to-window, print CSS, CDN URLs resolve) |
+| `node scripts/check-deck.js deck.html [--json report.json]` | Validates runtime, screen and print text overflow/clipping/overlap, fit-to-window, and PDF page count; JSON includes per-slide layout findings |
 | `node scripts/inline-assets.js deck.html [out.html]` | **Single-file HTML**: local images and fonts become data URIs, so the deck survives being moved or emailed |
-| `node scripts/export-pdf.js deck.html [out.pdf]` | **PDF**, 16:9, one 1920×1080 page per slide |
-| `node scripts/export-pptx.js deck.html [plan.json] [out.pptx]` | **PPTX**: one full-bleed image per slide plus speaker notes (slide text is not editable) |
+| `node scripts/export-pdf.js deck.html [out.pdf]` | **PDF**, 16:9, one 1920×1080 page per slide; checks print text layout before writing |
+| `node scripts/export-pptx.js deck.html [plan.json] [out.pptx]` | **PPTX**: one full-bleed image per slide plus speaker notes (slide text is not editable); checks each capture before writing |
 | `node scripts/imagegen.js "<prompt>" out.jpg` | AI decorative image via the configured service |
 
 ## Repository layout

@@ -17,12 +17,14 @@
  *   - Disable all animations and transitions
  *   - Apply page-break-after: always to each .slide
  * ?print=1 is also appended so decks can add html.print-mode.
+ * Stops before writing when rendered text is clipped, outside a slide, or overlapping.
  */
 
 import { existsSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { launchChromium, toFileUrl } from './lib/browser.js'
+import { auditSlideLayout, layoutIssueDetail, waitForFonts } from './lib/layout-audit.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -58,10 +60,20 @@ async function exportToPdf() {
   await page.goto(fileUrl, { waitUntil: 'networkidle', timeout: 30_000 })
 
   // Wait for fonts to fully load before capturing
-  await page.evaluate(() => document.fonts.ready)
+  if (!(await waitForFonts(page))) throw new Error('Fonts did not finish loading before PDF export')
+
+  // Measure the same print layout that page.pdf() will capture.
+  await page.emulateMedia({ media: 'print' })
+  if (!(await waitForFonts(page))) throw new Error('Fonts did not finish loading in print layout')
 
   // Small settle delay for any remaining layout shifts
   await page.waitForTimeout(500)
+
+  const slideCount = await page.locator('.slide').count()
+  for (let i = 1; i <= slideCount; i++) {
+    const issues = await auditSlideLayout(page, i)
+    if (issues.length) throw new Error(`PDF export stopped: ${layoutIssueDetail(issues[0], 'print')}`)
+  }
 
   // Print to PDF — each slide is a 1920×1080 page at screen resolution
   // Playwright converts px → inches using 96 dpi, so 1920px = 20in, 1080px = 11.25in

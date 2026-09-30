@@ -227,15 +227,27 @@ function advanceStep() {
   --type-body:    'Source Code Pro', monospace; /* 正文字体 */
   --type-label:   var(--type-body);
 
-  /* 字号 token（由 design.md 定义） */
-  --text-hero:    clamp(72px, 6vw, 120px);
-  --text-title:   clamp(48px, 4vw, 80px);
-  --text-subtitle:clamp(28px, 2.5vw, 40px);
-  --text-body:    clamp(20px, 1.6vw, 28px);
-  --text-caption: clamp(14px, 1.2vw, 18px);
-  --text-code:    clamp(16px, 1.4vw, 22px);
+  /* 固定 1920×1080 舞台字号；窗口适配仅由舞台 transform 负责 */
+  --text-hero:    104px;
+  --text-title:   64px;
+  --text-subtitle:36px;
+  --text-body:    30px;
+  --text-caption: 20px;
+  --text-code:    24px;
 }
 ```
+
+在固定舞台内不要用 `vw` 或随浏览器窗口变化的 `clamp(...vw...)` 给正文定字号：舞台已按窗口缩放，再按视口缩字会造成双重缩小。具体风格可以调整比例，但核心正文须遵循 `knowledge/element/elements.md` 的可读性下限；若装不下，先删减、重排或拆页。
+
+### 6.1 文字版面检查
+
+生成后等待 `document.fonts.ready`，逐页在 1920×1080 屏幕布局中检查，再在 `@media print` 布局中复查。`scripts/check-deck.js` 使用实际文本片段的位置报告：
+
+- `text-overflow`：文字伸出幻灯片边界；
+- `text-clipped`：文字被某个 `overflow: hidden/clip/auto/scroll` 容器裁切；
+- `text-overlap`：两段可见文字的渲染区域明显重叠。
+
+运行 `node scripts/check-deck.js deck.html --json layout-report.json` 查看页码、元素路径和位置。报告不输出正文，避免把敏感内容写入日志。屏幕与打印布局都必须通过。只可给纯装饰且不承载内容的文字加 `data-layout-ignore` 或 `aria-hidden="true"`；不能用它们跳过必要正文。自动几何检查不能判断语义密度或图表画布中的字，应同时审看每页截图。
 
 ---
 
@@ -246,6 +258,8 @@ function advanceStep() {
 | HTML | 直接交付单文件 | 主产物，所有资源内联或 CDN（版本号 pin） |
 | PDF 16:9 | `scripts/export-pdf.js` → Playwright headless print（`?print=1`） | `@page { size: 1920px 1080px; margin: 0 }` |
 | PPTX | `scripts/export-pptx.js` → Playwright 截图 + pptxgenjs | 每页整图 + 演讲者注释；非可编辑，标注"仅供演示" |
+
+PDF 导出前会检查打印版面，PPTX 导出前会检查逐页截图版面；发现文字越界、裁切或重叠时停止导出。交付前仍应打开导出的 PDF/PPTX 核对页数和视觉效果。
 
 PDF 导出 CSS（`page.pdf()` 会自动启用 print media；舞台和页面改为文档流，每页一张 1920×1080）：
 
@@ -323,7 +337,7 @@ if (!canWebGL()) {
 
 ## 10. WCAG 对比度检查
 
-Runtime API 合同（§3.1）、切换方式（§2）、打印模式（§7）由 `node scripts/check-deck.js <deck.html>` 自动校验，交付前必须通过。
+Runtime API 合同（§3.1）、切换方式（§2）、文字版面（§6.1）和打印模式（§7）由 `node scripts/check-deck.js <deck.html>` 自动校验，交付前必须通过。
 
 对比度检查逻辑：
 

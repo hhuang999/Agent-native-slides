@@ -359,3 +359,9 @@ State indicators (focused, highlighted row) pair color change with border weight
 | Density | Low — magazine breathing room | Medium — denser data tolerance |
 | Color chroma | Deliberately desaturated | May use richer metallics |
 | Best for | Lifestyle, wellness, beauty | Finance, spirits, hospitality |
+
+---
+
+## Fixed-stage content fit
+
+The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.

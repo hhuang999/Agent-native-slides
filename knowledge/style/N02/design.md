@@ -468,3 +468,9 @@ All body text meets WCAG AA. The red stat numbers are decorative display-size te
 - **vs. N01 (Art Deco):** Where N01 uses geometric gold symmetry and luxury hotel grandeur, N02 is asymmetric, populist, and poster-bold. Red+turquoise vs. gold+navy.
 - **vs. N03+ (other retro):** N02 is specifically 1950s–60s American commercial design. It references identifiable designers (Bass, Rand) and design objects (TWA poster, IBM packaging). Other N-family styles may reference different periods or geographies.
 - **Signature move:** The Bebas Neue ALL-CAPS headline + diagonal red rule combination is unique to N02 within this skill's style library. No other style uses Bebas Neue as primary display face.
+
+---
+
+## Fixed-stage content fit
+
+The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.

@@ -491,3 +491,9 @@ Notes:
 | Font pairing | Syne + Space Grotesk | Likely Inter or similar | Varies |
 | Mood | High-stakes boardroom | Professional / accessible | Varies |
 | Best context | Investment pitch, M&A, board | Annual report, all-hands | Varies |
+
+---
+
+## Fixed-stage content fit
+
+The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.

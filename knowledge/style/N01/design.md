@@ -418,3 +418,9 @@ All interactive focus states use `outline: 2px solid var(--c-gold-500)` with 2px
 - **N01 vs N02 (art-nouveau-ink):** N01 is geometric-angular; N02 is organic-curvilinear. N01 uses gold on black; N02 uses deep ink on parchment.
 - **N01 vs N03 (bauhaus-primary):** N01 is ornamental luxury; N03 is functional minimalism. N01 uses serif display type; N03 uses grotesque sans.
 - **N01 stands alone** as the only style in the family using a warm-black ground with gold type — all others use light or neutral grounds.
+
+---
+
+## Fixed-stage content fit
+
+The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.

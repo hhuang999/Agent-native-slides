@@ -23,7 +23,8 @@
       "index": "number (1-based)",
       "type": "slide type (见下表)",
       "assertion": "string — A-E 断言句标题（完整句子，≤12汉字/≤10英文词）",
-      "display_content": "string — 观众看到什么：布局结构、视觉元素、数据",
+      "visible_text": ["string — 实际显示在幻灯片上的短句、标签或关键数字"],
+      "display_content": "string — 布局结构、视觉元素和数据；不粘贴讲稿",
       "visual_evidence_type": "chart | diagram | image | formula | code | table | none",
       "visual_spec": "object — 图表/图的具体说明（见下）",
       "speaker_notes": {
@@ -125,14 +126,15 @@
 
 ---
 
-## ~200 字拆分规则
+## 内容预算与拆页规则
 
-单张幻灯片的 `display_content` 描述超过约 200 字时，AI 应自动拆分为两页。衡量标准：
+步骤中提到的 100–200 词是**输入材料的规划块**，不是幻灯片可见文字量。`display_content` 描述布局；`visible_text` 才是打算上屏的原文。先写简短可见文字，把解释、推导和完整句子放入 `speaker_notes.key_points`。
 
-1. 观众能在 ≤15 秒内吸收这页的核心内容吗？
-2. 这页是否有两个平等的视觉重心？
-
-如有，拆分。
+- `speaker`：每页一个断言和一个视觉证据。正文初稿最多约 30 个汉字或 25 个英文词，最多 3 个短要点；标题另计，但应在目标字号下不超过两行。
+- `reading`：正文初稿最多约 80 个汉字或 60 个英文词，最多两个文本块。更长内容进备注、附录或下一页。
+- 中英混排、长单词、公式、代码和图例不能仅按字数判断；按实际字体和可用宽度测量。图表或代码占据较大区域时，进一步削减文字。
+- 若标题超过两行、文字挤占证据区域、出现第二个视觉重心，或观众无法在约 15 秒内抓住要点，先精简或拆页。不要用更小字号、裁切或省略号掩盖超量内容。
+- HTML 生成后必须等待字体加载，逐页用 `check-deck.js` 检查屏幕和打印布局；以真实渲染结果修订计划与页面。
 
 ---
 
@@ -154,6 +156,7 @@
       "index": 1,
       "type": "cover",
       "assertion": "Compute-optimal training follows a power law",
+      "visible_text": ["Compute-optimal training follows a power law", "Kaplan et al. · NeurIPS"],
       "display_content": "Large headline assertion + author/venue line + affiliation logos + minimal dark atmospheric background",
       "visual_evidence_type": "none",
       "speaker_notes": {
@@ -168,6 +171,7 @@
       "index": 2,
       "type": "claim-evidence",
       "assertion": "Doubling compute should go 50% to data, 50% to model",
+      "visible_text": ["Doubling compute should go 50% to data, 50% to model", "GPT-3 is undertrained"],
       "display_content": "Assertion headline (large) + one ECharts scatter plot showing compute-optimal frontier curve (Chinchilla frontier vs GPT-3 training point highlighted)",
       "visual_evidence_type": "chart",
       "visual_spec": {
@@ -200,5 +204,6 @@
 
 | 字段 | 位置 | 内容规则 |
 |------|------|---------|
-| `display_content` | 幻灯片可见区域 | 描述观众看到什么：布局结构、核心视觉元素。**不是演讲者说的话。** |
+| `visible_text` | 幻灯片可见区域 | 上屏的确切短句、标签和关键数字；用它检查字数与渲染宽度。 |
+| `display_content` | 布局规划 | 描述视觉结构和核心证据。**不是讲稿，也不是 200 字的上屏额度。** |
 | `speaker_notes` | 演讲者注释面板 | 结构化字段：purpose / key_points / transition / timing。辅助口头解说，观众看不到。 |

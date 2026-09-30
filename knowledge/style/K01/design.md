@@ -399,3 +399,9 @@ Note: `--c-grey-70` used only for captions at 12 px is marginal at 3.2 : 1; meet
 | Mood | Still, fashion-editorial | Varies |
 | Target context | Ultra-prime RE, luxury brand | Broadened premium |
 | Structural ornament | 1 px horizontal rule only | May add geometric motifs |
+
+---
+
+## Fixed-stage content fit
+
+The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.

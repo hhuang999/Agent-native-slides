@@ -386,3 +386,9 @@ All interactive focus rings use `--c-accent` at 2px solid with 2px offset on dar
 | I02 (concrete-grid) | CSS repeating-linear grid | Cool mid-gray | Lime accent | JetBrains Mono + Inter |
 
 I03 is unique in combining darkroom-warm ground, editorial serif headline, and a true film-grain composited overlay — the other organic siblings either go light/neutral or use geometric textures.
+
+---
+
+## Fixed-stage content fit
+
+The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.

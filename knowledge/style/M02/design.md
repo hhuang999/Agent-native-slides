@@ -414,3 +414,9 @@ All interactive UI (nav dots, prev/next) include `:focus-visible` ring in `--c-v
 | Typography | Spectral (serif with ink traps) + Jost | May use display/script fonts |
 | Table style | Hairline 0.5 px rules, single highlight row | Siblings may use banded rows or bold borders |
 | Occasion | Literary / cultural journalism | Siblings target different cultural niches |
+
+---
+
+## Fixed-stage content fit
+
+The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.

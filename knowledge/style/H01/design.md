@@ -390,3 +390,9 @@ No animation is used — prefers-reduced-motion has no effect on this style. Foc
 | Font | Inter only | May add display or condensed face |
 | Background | Pure near-white | May use off-white, tinted, or dark |
 | Best for | Consultant-facing deliverables, board decks | Internal reporting, marketing |
+
+---
+
+## Fixed-stage content fit
+
+The vw / clamp(...vw...) type values above are preview references. For a generated 1920×1080 deck, use fixed pixel type tokens and let the stage transform handle window scaling; otherwise text shrinks twice. Essential body copy follows knowledge/element/elements.md (normally 28–36px for speaker slides). Shorten copy, change layout, move explanation into speaker notes, or split the slide before reducing type size.

@@ -86,9 +86,12 @@ Circuit-engineered treats the slide canvas as a PCB schematic: information route
 /* display = 3.2rem = 64px */
 /* h1      = 2.4rem = 48px */
 /* h2      = 1.6rem = 32px */
-/* body    = 1.0rem = 20px */
+/* 20px is the preview/UI base, not a projected slide-copy target. */
+/* generated slide body = 28–36px; essential diagram labels >=22px */
 /* caption = 0.75rem = 15px */
 ```
+
+For a generated deck, keep the circuit grid and typefaces while giving the claim and evidence their own space. Move explanatory prose to speaker notes. If a two-column evidence slide cannot hold 28px body text, shorten the copy or split the evidence; do not reuse 15px captions for essential content.
 
 ---
 

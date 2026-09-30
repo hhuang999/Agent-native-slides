@@ -93,7 +93,8 @@ All tokens in OKLCH. Copy these as CSS custom properties.
   /* Type scale — ratio ~1.25 */
   --text-xs:   0.75rem;   /* 12px — folio, fine print */
   --text-sm:   0.875rem;  /* 14px — table cells, captions */
-  --text-base: 1rem;      /* 16px — body, aside */
+  --text-base: 1rem;      /* 16px — preview UI and compact metadata only */
+  --text-content: 1.75rem;/* 28px — generated slide body */
   --text-lg:   1.125rem;  /* 18px — stat labels, sub-heads */
   --text-xl:   1.375rem;  /* 22px — section markers, slide sub-title */
   --text-2xl:  1.75rem;   /* 28px — stat values */
@@ -110,6 +111,8 @@ All tokens in OKLCH. Copy these as CSS custom properties.
 ```
 
 Nunito's rounded letterforms reinforce the soft-bento aesthetic. Use weight 700–800 for headlines, 600 for sub-heads and labels, 400–500 for body.
+
+For generated slides, use `--text-content` for essential text. The preview's 12–16px labels are decorative/metadata examples, not a way to fit paragraphs inside bento cards. Keep no more than one short claim per card; enlarge or remove cards, or split the slide when content needs more room.
 
 ---
 
