@@ -34,7 +34,7 @@ Most slide skills hand the agent a pile of templates. This one hands it a **desi
 | 👀 **Show, don't tell** | The agent matches your *mood × occasion* against the style index and opens **2–3 real, animated previews** for you to pick from. You react to what you see instead of describing a vibe. |
 | 🎨 **53 styles · 15 families** | From circuit-board dark tech to journal-grade academic, Swiss grids, glassmorphism, risograph and art-deco. Each style ships a `design.md` (OKLCH tokens, type pairing, layout rules) **and** a working 3-slide `preview.html`. |
 | 📊 **Research-grade components** | ECharts charts, KaTeX formulas, highlighted code, and hand-drawn SVG diagrams for ML (architectures, attention, retrieval pipelines) — all themed by CSS tokens. |
-| 🖼️ **AI imagery, optional** | Bring your own [AIHubMix](https://aihubmix.com) key to generate cover and section art (7 image models tested), then inline it into a single portable file. Data charts never go through an image model. |
+| 🖼️ **AI imagery, optional** | Configure AIHubMix or an OpenAI Images API compatible service for cover and section art, then inline it into a single portable file. Data charts never go through an image model. |
 | ✅ **One runtime contract** | Every deck exposes `__goToSlide(n)`, `?preview=N`, `?print=1`, fit-to-window scaling and a shared print stylesheet (`knowledge/RUNTIME.md`). `check-deck.js` validates it, so export and presenter tools just work. All 57 bundled decks pass. |
 | 📤 **Real exports** | Single-file HTML (images and fonts inlined), 16:9 PDF (one slide per page), PPTX with speaker notes. |
 | 🔓 **Free and open only** | Every dependency is open source with pinned versions; CJK and mono fonts (OFL) are bundled. Paid platforms are cited as visual reference only. |
@@ -83,7 +83,7 @@ flowchart LR
   D --> E["check-deck.js"]
   E --> F["Present<br/>presenter view"]
   E --> G["Export<br/>HTML · PDF · PPTX"]
-  B -. optional .-> H["AI cover art<br/>AIHubMix"] -.-> D
+  B -. optional .-> H["AI cover art<br/>configured image service"] -.-> D
 ```
 
 1. **Read**: `.docx` is converted with mammoth; title, venue and length are extracted.
@@ -366,14 +366,35 @@ Each style below shows its three preview slides: a **title**, an **evidence** sl
 
 <img src="docs/readme/ai-embed.jpg" width="100%" alt="Generated cover art embedded as an img background and as a CSS background">
 
+Copy `.env.example` to `.env` in the **project root** (PowerShell: `Copy-Item .env.example .env`; Bash: `cp .env.example .env`). Put your key in `.env`; this file is Git ignored. Image generation is optional: planning, rendering, charts, and exports do not require an image key. Shell environment variables override `.env` values.
+
+| Setting | AIHubMix default | What it does |
+|---|---|---|
+| `IMAGE_PROVIDER` | `aihubmix` if omitted | `aihubmix` or `openai-compatible` |
+| `IMAGE_API_URL` | `https://aihubmix.com/ai/v1/images/generations` | Full POST endpoint; required for `openai-compatible` |
+| `IMAGE_API_KEY` | None | Bearer token; required only when running `imagegen.js`. For AIHubMix, the existing `AIHUBMIX_API_KEY` environment variable also works. |
+| `IMAGE_MODEL` | `gpt-image-2.5-sunburst` | Model ID; required for `openai-compatible` unless `--model` is passed. `--model` takes precedence. |
+
+For the default AIHubMix route, leave `IMAGE_PROVIDER`, `IMAGE_API_URL`, and `IMAGE_MODEL` as shown or commented in `.env.example`, and set `IMAGE_API_KEY` (or continue using `AIHUBMIX_API_KEY` in the shell). The native endpoint reads the model schema to choose `size` or `aspect_ratio`, polls async tasks, falls back to AIHubMix's synchronous endpoint when async tasks are disabled, and retries with `gpt-image-2` if the selected model fails. `--no-fallback` disables that model retry.
+
+To switch to a service that implements the **synchronous OpenAI Images API** `POST /images/generations` contract, set these values in `.env`:
+
+```dotenv
+IMAGE_PROVIDER=openai-compatible
+IMAGE_API_URL=https://your-service.example/v1/images/generations
+IMAGE_API_KEY=replace-with-your-own-key
+IMAGE_MODEL=your-image-model
+```
+
+This adapter sends a Bearer token and JSON `{model,prompt,n:1,size}` (plus `quality` only when requested). It accepts `data[0].b64_json` or `data[0].url`. It does not perform schema lookup, async polling, model fallback, or adapt native Gemini, Flux, or other provider-specific APIs. A service with a different request or response format needs its own adapter; changing the URL alone will not make it compatible.
+
 ```bash
-export AIHUBMIX_API_KEY=...      # read from the environment only — never written to a deck
 node scripts/imagegen.js "soft aurora over dark sea, empty left third, no text" deck/assets/cover.jpg --size 2048x1152
 # reference it as assets/cover.jpg in the deck, then make one portable file:
 node scripts/inline-assets.js deck/deck.html
 ```
 
-The script reads each model's schema (sending `size` or the nearest `aspect_ratio`), polls async tasks, and falls back to `gpt-image-2` if the chosen model fails.
+Run `node --test scripts/test/imagegen.test.js` to verify the default AIHubMix settings and the native and custom URL request flows against local mock servers. The tests make no billable image API calls and check that server error text cannot leak the key. Secrets are never inserted into deck files or printed by `imagegen.js`.
 
 <details>
 <summary><b>Model comparison</b> — same prompt, 1536×1024, tested 2026-09-30</summary>
@@ -427,7 +448,7 @@ Serve the skill root over HTTP for the Studio (`npx serve .`), then open `studio
 | `node scripts/inline-assets.js deck.html [out.html]` | **Single-file HTML**: local images and fonts become data URIs, so the deck survives being moved or emailed |
 | `node scripts/export-pdf.js deck.html [out.pdf]` | **PDF**, 16:9, one 1920×1080 page per slide |
 | `node scripts/export-pptx.js deck.html [plan.json] [out.pptx]` | **PPTX**: one full-bleed image per slide plus speaker notes (slide text is not editable) |
-| `node scripts/imagegen.js "<prompt>" out.jpg` | AI decorative image via AIHubMix |
+| `node scripts/imagegen.js "<prompt>" out.jpg` | AI decorative image via the configured service |
 
 ## Repository layout
 

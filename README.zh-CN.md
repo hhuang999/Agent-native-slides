@@ -34,7 +34,7 @@
 | 👀 **看了再选** | Agent 按"情绪 × 场合"检索风格索引，打开 **2–3 个真实的动态预览**给你挑。你只需要对看到的东西做反应，不用描述"感觉"。 |
 | 🎨 **53 种风格 · 15 个家族** | 从电路板暗色科技到期刊级学术风，瑞士网格、玻璃拟态、孔版印刷、装饰艺术……每种风格都有 `design.md`（OKLCH 色彩 token、字体搭配、版式规则）**和**一个可运行的 3 页 `preview.html`。 |
 | 📊 **科研级组件** | ECharts 图表、KaTeX 公式、代码高亮、手绘 SVG 的 ML 示意图（模型架构、注意力、检索流程），全部由 CSS token 统一着色。 |
-| 🖼️ **AI 配图（可选）** | 用你自己的 [AIHubMix](https://aihubmix.com) key 生成封面和章节配图（实测 7 个生图模型），再内联成单个可移动的文件。数据图表永远不走生图模型。 |
+| 🖼️ **AI 配图（可选）** | 配置 AIHubMix 或兼容 OpenAI Images API 的服务，生成封面和章节配图，再内联成单个可移动的文件。数据图表永远不走生图模型。 |
 | ✅ **统一的运行时合同** | 每个 deck 都提供 `__goToSlide(n)`、`?preview=N`、`?print=1`、自适应窗口缩放和统一的打印样式（`knowledge/RUNTIME.md`）。`check-deck.js` 负责校验，导出和演讲工具因此开箱即用。仓库自带的 57 个 deck 全部通过。 |
 | 📤 **真正可用的导出** | 单文件 HTML（图片、字体内联）、16:9 PDF（每页一张幻灯片）、带演讲者备注的 PPTX。 |
 | 🔓 **只用免费开源资源** | 所有依赖开源并锁定版本；内置中文和等宽字体（OFL）。付费平台仅作视觉参考。 |
@@ -83,7 +83,7 @@ flowchart LR
   D --> E["check-deck.js 校验"]
   E --> F["演示<br/>演讲者视图"]
   E --> G["导出<br/>HTML · PDF · PPTX"]
-  B -. 可选 .-> H["AI 封面配图<br/>AIHubMix"] -.-> D
+  B -. 可选 .-> H["AI 封面配图<br/>已配置的生图服务"] -.-> D
 ```
 
 1. **读入**：`.docx` 用 mammoth 转成 Markdown，提取标题、场合和篇幅。
@@ -366,14 +366,35 @@ flowchart LR
 
 <img src="docs/readme/ai-embed.jpg" width="100%" alt="生成的封面图分别以 img 背景和 CSS 背景嵌入">
 
+把项目根目录的 `.env.example` 复制为 `.env`（PowerShell：`Copy-Item .env.example .env`；Bash：`cp .env.example .env`），再填入密钥。`.env` 已被 Git 忽略。生图是可选功能：规划、渲染、图表和导出幻灯片都不需要生图密钥。进程环境变量优先于 `.env`。
+
+| 配置项 | AIHubMix 默认值 | 作用 |
+|---|---|---|
+| `IMAGE_PROVIDER` | 未填写时为 `aihubmix` | 可选 `aihubmix` 或 `openai-compatible` |
+| `IMAGE_API_URL` | `https://aihubmix.com/ai/v1/images/generations` | 完整的 POST 接口地址；`openai-compatible` 必填 |
+| `IMAGE_API_KEY` | 无 | Bearer 密钥，仅运行 `imagegen.js` 时需要；AIHubMix 仍兼容原有的 `AIHUBMIX_API_KEY` 环境变量 |
+| `IMAGE_MODEL` | `gpt-image-2.5-sunburst` | 模型 ID；`openai-compatible` 必填，也可用 `--model` 传入并覆盖配置 |
+
+使用默认 AIHubMix 时，保留 `.env.example` 中的服务商、地址和模型设置，只需填写 `IMAGE_API_KEY`；也可继续在终端设置 `AIHUBMIX_API_KEY`。原生接口仍会读取模型参数定义，自动选用 `size` 或 `aspect_ratio`，轮询异步任务；未开通异步任务时切换到 AIHubMix 同步接口；所选模型失败时重试 `gpt-image-2`。`--no-fallback` 可关闭模型重试。
+
+切换到实现了**同步 OpenAI Images API** `POST /images/generations` 协议的服务时，在 `.env` 中填写：
+
+```dotenv
+IMAGE_PROVIDER=openai-compatible
+IMAGE_API_URL=https://your-service.example/v1/images/generations
+IMAGE_API_KEY=replace-with-your-own-key
+IMAGE_MODEL=your-image-model
+```
+
+此适配器用 Bearer 密钥发送 `{model,prompt,n:1,size}`，只有指定 `--quality` 时才附加 `quality`；接收 `data[0].b64_json` 或 `data[0].url`。它不提供模型参数查询、异步轮询、模型回退，也不适配 Gemini、Flux 等服务商的原生协议。请求或响应格式不同的服务商需要另写适配器，不能只替换 URL。
+
 ```bash
-export AIHUBMIX_API_KEY=...      # 只从环境变量读取，绝不写进 deck
 node scripts/imagegen.js "soft aurora over dark sea, empty left third, no text" deck/assets/cover.jpg --size 2048x1152
 # 在 deck 里以 assets/cover.jpg 引用，然后打包成单个可移动的文件：
 node scripts/inline-assets.js deck/deck.html
 ```
 
-脚本会读取每个模型的参数定义（自动发送 `size` 或最接近的 `aspect_ratio`），轮询异步任务；所选模型失败时自动回退到 `gpt-image-2`。
+运行 `node --test scripts/test/imagegen.test.js`，可用本地模拟服务验证 AIHubMix 默认设置、原生接口和自定义 URL 的调用流程，不会产生真实生图费用；测试还会检查服务端错误信息不会泄漏密钥。`imagegen.js` 不会把密钥写入幻灯片或输出到日志。
 
 <details>
 <summary><b>模型对比</b>：同一提示词，1536×1024，2026-09-30 实测</summary>
@@ -427,7 +448,7 @@ Studio 需要用 HTTP 打开 skill 根目录（`npx serve .`），然后访问 `
 | `node scripts/inline-assets.js deck.html [out.html]` | **单文件 HTML**：本地图片和字体转为 data URI，移动或发邮件都不会丢图 |
 | `node scripts/export-pdf.js deck.html [out.pdf]` | **PDF**，16:9，每页一张 1920×1080 |
 | `node scripts/export-pptx.js deck.html [plan.json] [out.pptx]` | **PPTX**：每页一张整页图片 + 演讲者备注（页面文字不可编辑） |
-| `node scripts/imagegen.js "<prompt>" out.jpg` | 通过 AIHubMix 生成装饰性配图 |
+| `node scripts/imagegen.js "<prompt>" out.jpg` | 通过已配置的服务生成装饰性配图 |
 
 ## 目录结构
 

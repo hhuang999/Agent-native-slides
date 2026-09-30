@@ -17,7 +17,7 @@
  * Speaker notes come from [deck-plan.json] or, if omitted, window.__deckPlan.slides.
  *
  * Environment variables:
- *   AIHUBMIX_API_KEY  — optional, only needed if the deck calls the API at runtime
+ *   Image generation credentials are only needed by imagegen.js, not PPTX export.
  */
 
 import { readFileSync, existsSync } from 'fs'

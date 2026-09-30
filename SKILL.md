@@ -1,6 +1,6 @@
 ---
 name: agent-native-slides
-description: Design and generate animated, 1920x1080 HTML presentation decks from .docx/.md/.txt input — deck planning, style selection from 53 live-preview aesthetics, AI decorative images (AIHubMix), a browser presenter view, and single-file HTML / PDF / PPTX export. Use when the user asks for slides, a presentation, a deck, or PPT.
+description: Design and generate animated, 1920x1080 HTML presentation decks from .docx/.md/.txt input — deck planning, style selection from 53 live-preview aesthetics, optional AI decorative images, a browser presenter view, and single-file HTML / PDF / PPTX export. Use when the user asks for slides, a presentation, a deck, or PPT.
 ---
 
 # Agent-Native Slides
@@ -53,8 +53,9 @@ Review in Studio → Present → Export single-file HTML / PDF / PPTX
 - Only for decorative/atmospheric images (cover background, section divider)
 - If running in Codex: call built-in image tool
 - Otherwise: `node scripts/imagegen.js "<prompt>" <deck-dir>/assets/<name>.jpg [--model id] [--size WxH]`
-  - Key from `AIHUBMIX_API_KEY` env var only — never write it into a deck or file
-  - Default `gpt-image-2.5-sunburst`, auto-fallback `gpt-image-2`; also good: `flux-2-pro` (fastest), `gemini-3.1-flash-image`
+  - Configure the project-root `.env` using `.env.example`: `IMAGE_PROVIDER`, `IMAGE_API_URL`, `IMAGE_API_KEY`, `IMAGE_MODEL`. The process environment overrides `.env`; the original `AIHUBMIX_API_KEY` environment variable still works for AIHubMix. Never write keys into decks or logs.
+  - Default provider: AIHubMix native API, model `gpt-image-2.5-sunburst`, auto-fallback `gpt-image-2`; also good: `flux-2-pro` (fastest), `gemini-3.1-flash-image`
+  - `openai-compatible` supports only synchronous Images API requests returning `data[0].b64_json` or `data[0].url`. Do not use this adapter for a native provider API with a different contract.
   - Ask for a 16:9-ish size (`2048x1152`, `1920x1088`); prompt for empty space where the title sits and say "no text"
   - Save as `.jpg` — several times smaller than PNG once inlined
 - Embed by relative path, then dim it so text stays readable:
