@@ -193,6 +193,7 @@ test("skill build, browser edit and native export across two styles", async () =
       });
       await page.goto("file:///" + html.replaceAll("\\", "/"));
       await page.locator("#ans-edit").click();
+      await page.locator("#ans-ui-language").selectOption("en");
       assert.equal(await page.locator("#ans-pages button").count(), 2);
       await page
         .locator("#ans-layers button")
@@ -291,6 +292,7 @@ test("direct save, conflict guard, and download fallback", async () => {
       });
     });
     await page.locator("#ans-edit").click();
+    await page.locator("#ans-ui-language").selectOption("en");
     await page
       .locator("#ans-layers button")
       .filter({ hasText: "text" })
@@ -357,6 +359,7 @@ test("helper exports unsaved browser snapshot and records matching input hash", 
     const page = await browser.newPage();
     await page.goto("file:///" + html.replaceAll("\\", "/"));
     await page.locator("#ans-edit").click();
+    await page.locator("#ans-ui-language").selectOption("en");
     await page
       .locator("#ans-layers button")
       .filter({ hasText: "text" })
@@ -471,6 +474,7 @@ test("overview, theme, presenter, visual reopen, draft recovery, and explicit im
     const page = await context.newPage();
     await page.goto("file:///" + html.replaceAll("\\", "/"));
     await page.locator("#ans-edit").click();
+    await page.locator("#ans-ui-language").selectOption("en");
     await page.screenshot({ path: join(dir, "workbench.png") });
     await page.locator("#ans-theme").selectOption("warm");
     await page.locator("#ans-overview").click();
@@ -606,6 +610,7 @@ test("flex/grid objects, grouping, and unsupported adapter gate", async () => {
     const page = await browser.newPage();
     await page.goto("file:///" + html.replaceAll("\\", "/"));
     await page.locator("#ans-edit").click();
+    await page.locator("#ans-ui-language").selectOption("en");
     const layers = page.locator("#ans-layers button");
     await layers.first().click();
     await layers.last().click({ modifiers: ["Shift"] });
@@ -655,6 +660,7 @@ test("every content adapter edits, saves, and reopens its source", async () => {
     const page = await browser.newPage();
     await page.goto("file:///" + html.replaceAll("\\", "/"));
     await page.locator("#ans-edit").click();
+    await page.locator("#ans-ui-language").selectOption("en");
     const choose = (type) =>
       page
         .locator("#ans-layers button")
@@ -662,11 +668,10 @@ test("every content adapter edits, saves, and reopens its source", async () => {
         .first()
         .click();
     const change = async (label, value) => {
-      const input = page
-        .locator(".ans-field")
-        .filter({ hasText: label })
-        .locator("input,textarea")
-        .first();
+      const field = page.locator(".ans-field").filter({ hasText: label });
+      const advanced = field.locator("xpath=ancestor::details[1]");
+      if (await advanced.count()) await advanced.locator("summary").click();
+      const input = field.locator("input,textarea").first();
       await input.fill(value);
       await input.dispatchEvent("change");
     };

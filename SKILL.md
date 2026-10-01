@@ -81,8 +81,9 @@ Edit or present in that HTML → save → export PDF / editable PPTX / image PPT
 - All CDN deps must pin version numbers
 
 ### Step 6 — Review and edit in the delivered HTML
-- Open `deck.html` and choose **Edit deck** or use `?edit=1`. Use the page rail, overview, layers, properties, notes, zoom and export controls.
-- Save with `Ctrl+S` after authorizing a file target, **Save as**, or **Download HTML**. Restore a browser draft when offered. A reopened deck can be linked to its file to regain direct writes.
+- Open `deck.html` and choose **编辑文稿** (Edit deck) or use `?edit=1`. The workbench defaults to 简体中文; its 中文/English control changes only UI language, never slide content or the saved model. Use the page rail, canvas, structured chart/table/diagram editors, layers, notes, zoom and export controls.
+- Save with `Ctrl+S` after authorizing a file target, **另存为** (Save as), or **下载 HTML 副本**. The download does not write back the source. Browser drafts and the most recent pre-overwrite backup are separate from saved files. A reopened deck can be linked to its file to regain direct writes.
+- Optional local Git history: run `node scripts/export-helper.js --file <absolute-path-to-deck.html>`, paste its token and click **连接助手**. Confirm the path and document ID, then explicitly enable history. It stores only `deck.html` in a dedicated repository under `~/.agent-native-slides/history/<path-and-document-hash>/`; the selected HTML remains the current file. Manual saves create versions; the optional 60-second idle auto-version switch is off by default. Preview and restore versions from the workbench; restore creates a new commit. Git is required only for this feature, never for ordinary standalone editing.
 - For later AI revisions, first run `node scripts/extract-document.js saved.html current.json`. Treat the user's saved HTML as authoritative; continue from its extracted model and rebuild. Do not use the original Deck Plan as an editing source.
 - `studio/editor.html` remains a separate read-only viewer for legacy decks and generated decks.
 
@@ -96,7 +97,7 @@ Edit or present in that HTML → save → export PDF / editable PPTX / image PPT
 - **PDF 16:9**: `node scripts/export-pdf.js <saved.html>`.
 - **Editable PPTX by default**: `node scripts/export-pptx.js <saved.html> [output.pptx]`. It emits a conversion manifest and source SHA-256. Verify native objects and chart workbook in the package.
 - **Image PPTX**: `node scripts/export-pptx.js <saved.html> [output.pptx] --image`, labeled as full-slide fidelity mode.
-- **Current unsaved snapshot**: start `node scripts/export-helper.js`, paste its token into the workbench, choose PDF/editable PPTX/image PPTX and export. The helper verifies the submitted HTML hash and offers progress, failure and download.
+- **Current unsaved snapshot**: start `node scripts/export-helper.js` (or the same helper with `--file` for history), paste its token into the workbench, choose PDF/editable PPTX/image PPTX and export. The helper verifies the submitted HTML SHA-256 and reports accepted, converting, done or failed states. The task pane offers retry of the identical snapshot or a new export of current edits, with download on completion. No percentage or ETA is shown without trustworthy task data.
 - Validate first: `node scripts/check-deck.js <deck.html>` must pass
 - Run `node scripts/check-deck.js <deck.html> --font-fallback` before delivery to verify offline Latin and local CJK reflow in both screen and print layouts.
 - `check-deck.js` audits text geometry in screen and print layouts after fonts load; PDF/PPTX export also stops if its capture layout has text overflow, clipping, or overlap.

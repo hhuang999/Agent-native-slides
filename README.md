@@ -38,9 +38,9 @@ The style defines the slide design; the workbench is a fixed editing interface. 
 
 <img src="docs/readme/workbench.jpg" width="100%" alt="Current embedded workbench editing the source data of a bar chart">
 
-The screenshot shows the real [standalone example](examples/workflow.html) with a chart selected. The page rail, canvas, layers, properties, notes, undo/redo, file controls, and export controls are bundled into the HTML. Text, code, formula source, images, shapes, connectors, relationship diagrams, tables, charts and their data have object adapters; unknown content types fail build validation. [See the per-object capability matrix and limits.](docs/editable-workbench.md)
+The screenshot shows the real [standalone example](examples/workflow.html) with a chart selected. The workbench now opens in **Simplified Chinese**, with an English UI switch that leaves slide content untouched. The page rail, zoomable canvas, layers, properties, notes, undo/redo, file history and export tasks are bundled into the HTML. Drag, resize, align and group absolute objects; use direct cells, data grids and node/connection controls for tables, charts and diagrams. Text, code, formula source, images, shapes and connectors have their own editors. Unknown content types fail build validation. [See the per-object capability matrix and limits.](docs/editable-workbench.md)
 
-**Saving has explicit states.** In a browser with the File System Access API, link or choose a file and authorize a write; then `Ctrl+S` writes to that associated file. Other browsers can download a new editable HTML copy. IndexedDB stores local drafts and pre-overwrite backups; an associated file is checked for disk changes before replacement. For an unsaved snapshot, start the local export helper and enter its token in the workbench.
+**Saving has explicit states.** In a browser with the File System Access API, authorize a target and use `Ctrl+S` to write it. Other browsers can download a new editable HTML copy; the original is unchanged. IndexedDB holds local drafts and the latest pre-overwrite backup. Optional Git history uses a token-protected local helper bound to one selected HTML file, with manual versions and an off-by-default idle auto-version switch. It stores history outside the deck; the saved HTML remains the next agent input. [Saving and history guide.](docs/editable-workbench.md#saving-and-history)
 
 ### Keep the design freedom
 
@@ -89,7 +89,7 @@ node scripts/build-deck.js examples/workflow.json examples/workflow.html
 node scripts/check-deck.js examples/workflow.html --font-fallback
 ```
 
-Open `examples/workflow.html` in a browser, then click **Edit deck** or add `?edit=1`. Change a chart value, use **Download HTML** (or authorize **Save as**), close the tab, and open the saved copy. To export the saved version:
+Open `examples/workflow.html` in a browser, then click **编辑文稿** (Edit deck) or add `?edit=1`. The UI defaults to Chinese; choose **English** in the top bar if preferred. Change a chart value, use **下载 HTML 副本** (or authorize **另存为**), close the tab, and open the saved copy. To export the saved version:
 
 ```bash
 node scripts/export-pdf.js examples/workflow.html output.pdf
@@ -97,7 +97,15 @@ node scripts/export-pptx.js examples/workflow.html output.pptx
 node scripts/export-pptx.js examples/workflow.html output.image.pptx --image
 ```
 
-To export the **current unsaved workbench snapshot**, run `node scripts/export-helper.js`, paste its printed token into the HTML workbench, and choose **Export current**. The helper listens on localhost and reports task progress and the snapshot hash.
+To export the **current unsaved workbench snapshot**, run `node scripts/export-helper.js`, paste its token into the workbench, and choose **导出当前快照**. The task panel shows acceptance, conversion, completion or failure, with retry of the same snapshot or export of later edits and the exact input SHA-256.
+
+For optional local Git history, install Git and start that same helper with the HTML you intend to save:
+
+```bash
+node scripts/export-helper.js --file /absolute/path/to/deck.html
+```
+
+Paste the token, click **连接助手**, confirm the displayed path and document ID, then explicitly enable history. Versions are stored under `~/.agent-native-slides/history/<path-and-document-hash>/`, separate from the HTML you open. Only that deck is tracked; there is no automatic GitHub push. You can preview or restore a version as a new commit. The 60-second idle auto-version option starts off. Git and the helper are optional for normal editing and browser downloads.
 
 For a new deck, give your coding agent the source document and point it at [SKILL.md](SKILL.md): “Make a 12-slide defense deck from this paper. Show me style previews, then deliver an editable HTML.” The agent follows the planning and design rules, authors a versioned [object document](docs/editable-workbench.md), and must run `build-deck.js` and `check-deck.js` before delivery. AI-generated cover art is [optional](docs/image-generation.md).
 

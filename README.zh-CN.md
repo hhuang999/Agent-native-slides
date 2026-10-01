@@ -38,9 +38,9 @@ Agent 先把资料整理为**论点与证据**，让你从真实预览中选风�
 
 <img src="docs/readme/workbench.jpg" width="100%" alt="内嵌工作台正在编辑柱状图数据的真实截图">
 
-这是[单文件样例](examples/workflow.html)中选中图表时的真实画面。页面栏、画布、图层、属性、备注、撤销重做、文件操作和导出操作都打包在 HTML 内。文字、代码、公式源、图片、形状、连线、语义关系图、表格、图表及数据均有对象编辑适配器；未知内容类型会在构建时失败。[逐对象能力与限制见矩阵。](docs/editable-workbench.md)
+这是[单文件样例](examples/workflow.html)中选中图表时的真实画面。工作台**默认简体中文**，可切换 English；界面语言不改变幻灯片内容。页面栏、可缩放画布、图层、属性、备注、撤销重做、版本历史和导出任务都打包在 HTML 内。自由定位对象可拖动、缩放、对齐和分组；表格可逐格改，图表有数据表，关系图可直接改节点与连接。文字、代码、公式源、图片、形状和连线各有编辑控件；未知内容类型会在构建时失败。[逐对象能力与限制见矩阵。](docs/editable-workbench.md)
 
-**保存状态清楚可见。** 浏览器支持 File System Access API 且用户授权后，可关联文件并用 `Ctrl+S` 写回；其他浏览器可下载新的可编辑 HTML。IndexedDB 保存草稿和覆盖前备份，写入关联文件前会检查磁盘变化。要从当前未保存状态导出，启动本地导出助手并在工作台填写令牌。
+**保存状态清楚可见。** 浏览器支持 File System Access API 且用户授权后，可用 `Ctrl+S` 写回；其他浏览器可下载新的可编辑 HTML，原文件不会被改写。IndexedDB 保存草稿和最近一次覆盖前备份。可选的 Git 历史通过用户主动启动、指定当前 HTML 的本地助手工作：手动保存记录版本，约 60 秒空闲自动记录的开关默认关闭。历史在文稿专属目录，原 HTML 始终是下一轮 AI 的输入。[保存与版本历史说明。](docs/editable-workbench.md#saving-and-history)
 
 ### 保留设计自由
 
@@ -89,7 +89,7 @@ node scripts/build-deck.js examples/workflow.json examples/workflow.html
 node scripts/check-deck.js examples/workflow.html --font-fallback
 ```
 
-在浏览器打开 `examples/workflow.html`，点击 **Edit deck**（或加上 `?edit=1`）。改一个图表数值后，使用 **Download HTML**；若浏览器支持并已授权，也可使用 **Save as**。关闭页面并重新打开保存的副本，即可继续编辑。导出磁盘上的已保存版本：
+在浏览器打开 `examples/workflow.html`，点击 **编辑文稿**（或加上 `?edit=1`）。工作台默认中文，可在顶部切换 English。改一个图表数值后，使用 **下载 HTML 副本**；若浏览器支持并已授权，也可用 **另存为**。关闭页面并重新打开保存的副本，即可继续编辑。导出磁盘上的已保存版本：
 
 ```bash
 node scripts/export-pdf.js examples/workflow.html output.pdf
@@ -97,7 +97,15 @@ node scripts/export-pptx.js examples/workflow.html output.pptx
 node scripts/export-pptx.js examples/workflow.html output.image.pptx --image
 ```
 
-导出**工作台中尚未保存的当前快照**：运行 `node scripts/export-helper.js`，把终端打印的令牌填入工作台，点击 **Export current**。本地助手会显示任务进度并记录快照哈希。
+导出**工作台中尚未保存的当前快照**：运行 `node scripts/export-helper.js`，把终端打印的令牌填入工作台，点击 **导出当前快照**。任务区显示接收、转换、完成或失败，可重试同一快照，也可导出之后的新编辑，并显示准确的输入 SHA-256。
+
+如需可选的本地 Git 历史，先安装 Git，再用同一个助手明确指定要保存的 HTML：
+
+```bash
+node scripts/export-helper.js --file /absolute/path/to/deck.html
+```
+
+在工作台填写令牌、点击 **连接助手**，核对显示的路径和文档 ID，再主动启用历史。历史位于 `~/.agent-native-slides/history/<路径与文档ID哈希>/`；只跟踪这份文稿，不自动推送 GitHub。版本可预览、以新提交恢复；约 60 秒空闲自动记录默认关闭。普通单文件编辑和浏览器下载不需要 Git 或助手。
 
 制作新文稿时，把源资料交给编码 Agent，并让它遵循 [SKILL.md](SKILL.md)，例如：“把这篇论文做成 12 页答辩幻灯片。先给我看风格预览，再交付可编辑 HTML。”Agent 按规划与风格规则编写[版本化对象文档](docs/editable-workbench.md)，交付前必须运行 `build-deck.js` 和 `check-deck.js`。AI 封面配图[完全可选](docs/image-generation.md)。
 

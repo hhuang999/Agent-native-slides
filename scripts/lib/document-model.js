@@ -70,8 +70,13 @@ export function validateDocument(doc) {
         !/^data:image\//.test(doc.resources?.[obj.resourceId]?.data || "")
       )
         bad(`${p}.resourceId`, "embedded image resource required");
-      if (obj.type === "connector" && (!obj.from || !obj.to))
-        bad(p, "from and to coordinates required");
+      if (
+        obj.type === "connector" &&
+        [obj.from?.x, obj.from?.y, obj.to?.x, obj.to?.y].some(
+          (v) => !Number.isFinite(v),
+        )
+      )
+        bad(p, "finite from/to coordinates required");
       if (
         obj.type === "shape" &&
         !["rect", "ellipse"].includes(obj.shape || "rect")
@@ -81,7 +86,24 @@ export function validateDocument(doc) {
         if (!Array.isArray(obj.nodes) || !Array.isArray(obj.edges))
           bad(p, "nodes and edges required");
         else {
-          const nodes = new Set(obj.nodes.map((n) => n.id));
+          const nodes = new Set();
+          for (const n of obj.nodes) {
+            if (
+              !n.id ||
+              nodes.has(n.id) ||
+              [n.x, n.y, n.w ?? 18, n.h ?? 14].some(
+                (v) =>
+                  !Number.isFinite(Number(v)) ||
+                  Number(v) < 0 ||
+                  Number(v) > 100,
+              )
+            )
+              bad(
+                `${p}.nodes`,
+                "unique IDs and finite node positions required",
+              );
+            nodes.add(n.id);
+          }
           for (const e of obj.edges)
             if (!nodes.has(e.from) || !nodes.has(e.to))
               bad(`${p}.edges`, "edge refers to missing node");
@@ -89,19 +111,27 @@ export function validateDocument(doc) {
       }
       if (
         obj.type === "table" &&
-        (!Array.isArray(obj.rows) || !obj.rows.every(Array.isArray))
+        (!Array.isArray(obj.rows) ||
+          !obj.rows.length ||
+          !obj.rows.every(
+            (row) => Array.isArray(row) && row.length === obj.rows[0].length,
+          ))
       )
-        bad(p, "rows matrix required");
+        bad(p, "rectangular rows matrix required");
       if (obj.type === "chart") {
         if (
           !["bar", "line", "pie", "scatter"].includes(obj.chartType) ||
           !Array.isArray(obj.categories) ||
-          !Array.isArray(obj.series)
+          !obj.categories.length ||
+          !Array.isArray(obj.series) ||
+          !obj.series.length
         )
           bad(p, "bar/line/pie/scatter, categories and series required");
         else
           for (const series of obj.series)
             if (
+              typeof series.name !== "string" ||
+              !series.name ||
               !Array.isArray(series.values) ||
               series.values.length !== obj.categories.length ||
               series.values.some((v) => !Number.isFinite(Number(v)))
