@@ -182,11 +182,17 @@ test("skill build, browser edit and native export across two styles", async () =
       ["A01", "zh-CN"],
       ["G01", "en"],
     ]) {
+      const fixture = model(style, language);
+      fixture.pages[0].objects.find((o) => o.id === "diagram").nodes[1].y = 10;
+      fixture.pages[0].objects.find((o) => o.id === "chart").series.push({
+        name: "Second series",
+        values: [2, 4, 7],
+      });
       const source = join(dir, style + ".json"),
         html = join(dir, style + ".html"),
         pptx = join(dir, style + ".pptx"),
         pdf = join(dir, style + ".pdf");
-      writeFileSync(source, JSON.stringify(model(style, language)));
+      writeFileSync(source, JSON.stringify(fixture));
       run("build-deck.js", [source, html]);
       const page = await browser.newPage({
         viewport: { width: 1920, height: 1080 },
@@ -248,6 +254,18 @@ test("skill build, browser edit and native export across two styles", async () =
       assert.match(slide2, /<p:cxnSp>/);
       assert.match(slide2, /<p:pic>/);
       assert.match(slide2, /E = mc\^2/);
+      assert.doesNotMatch(slide1 + slide2, /<a:ext[^>]*(?:cx|cy)="-/);
+      const chartXml = await zip.file("ppt/charts/chart1.xml").async("string");
+      const expectedColor = style === "A01" ? "E9F5F7" : "28323B";
+      for (const sectionName of ["catAx", "valAx", "legend"]) {
+        const section = chartXml.match(
+          new RegExp(`<c:${sectionName}>[\\s\\S]*?<\\/c:${sectionName}>`),
+        )?.[0];
+        assert.ok(section, `${sectionName} missing from native chart`);
+        const textProperties = section.match(/<c:txPr>[\s\S]*?<\/c:txPr>/)?.[0];
+        assert.ok(textProperties, `${sectionName} text formatting missing`);
+        assert.match(textProperties, new RegExp(`<a:srgbClr val="${expectedColor}"`));
+      }
       assert.ok(zip.file("ppt/notesSlides/notesSlide1.xml"));
       assert.ok(zip.file("ppt/embeddings/Microsoft_Excel_Worksheet1.xlsx"));
       const manifest = JSON.parse(readFileSync(pptx + ".manifest.json"));
