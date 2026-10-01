@@ -199,6 +199,26 @@ test("Chinese UI, deterministic snapshots, visual editing, dedicated Git history
       "toolbar fits 1280px",
     );
     await page.setViewportSize({ width: 1440, height: 900 });
+    await page.locator("#ans-zoom").evaluate((input) => {
+      input.value = "70";
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    assert.equal(
+      await page.evaluate(() =>
+        document.documentElement.style.getPropertyValue("--editor-scale"),
+      ),
+      "0.7",
+    );
+    await page.locator("#ans-fit").click();
+    await page.mouse.move(730, 480);
+    await page.mouse.down({ button: "middle" });
+    await page.mouse.move(760, 500, { steps: 3 });
+    await page.mouse.up({ button: "middle" });
+    assert.equal(
+      await page.locator(".ans-canvas").getAttribute("data-pan-x"),
+      "30",
+    );
+    await page.locator("#ans-fit").click();
     await page.locator("#ans-helper-token").fill(helper.token);
     await page.locator("#ans-helper-connect").click();
     await page.waitForFunction(() =>
@@ -209,6 +229,14 @@ test("Chinese UI, deterministic snapshots, visual editing, dedicated Git history
     assert.match(
       await page.locator("#ans-file-info").textContent(),
       /upgrade.html/,
+    );
+    assert.match(
+      await page.locator("#ans-file-info").textContent(),
+      /histories/,
+    );
+    assert.match(
+      await page.locator("#ans-file-info").textContent(),
+      /尚无版本/,
     );
     await page.locator("#ans-history-enable").click();
     await page.waitForFunction(() =>
@@ -316,6 +344,56 @@ test("Chinese UI, deterministic snapshots, visual editing, dedicated Git history
       .filter({ hasText: "文字" })
       .first()
       .click();
+    await page
+      .locator("#ans-layers button")
+      .filter({ hasText: "形状" })
+      .first()
+      .click({ modifiers: ["Shift"] });
+    await page.locator('[data-align="top"]').click();
+    assert.equal(
+      await page.evaluate(
+        () =>
+          ANSWorkbench.document.pages[0].objects.find((o) => o.id === "shape")
+            .box.y,
+      ),
+      120,
+    );
+    await page.locator("#ans-undo").click();
+    assert.equal(
+      await page.evaluate(
+        () =>
+          ANSWorkbench.document.pages[0].objects.find((o) => o.id === "shape")
+            .box.y,
+      ),
+      400,
+    );
+
+    await page
+      .locator("#ans-layers button")
+      .filter({ hasText: "文字" })
+      .first()
+      .click();
+    const snapStart = await page
+      .locator(".slide.is-active [data-object-id=title]")
+      .boundingBox();
+    const stageScale =
+      Number(await page.locator("#ans-zoom").inputValue()) / 100;
+    await page.mouse.move(
+      snapStart.x + snapStart.width / 2,
+      snapStart.y + snapStart.height / 2,
+    );
+    await page.mouse.down();
+    await page.mouse.move(
+      snapStart.x + snapStart.width / 2 + 20 * stageScale,
+      snapStart.y + snapStart.height / 2,
+      { steps: 4 },
+    );
+    assert.ok(
+      await page.locator(".ans-guide.vertical").count(),
+      "snap guide appears beside aligned shape",
+    );
+    await page.mouse.up();
+    await page.locator("#ans-undo").click();
     const before = await page.evaluate(
       () => ANSWorkbench.document.pages[0].objects[0].box,
     );

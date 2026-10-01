@@ -914,6 +914,8 @@ body {
     "to.x": "终点 X",
     "to.y": "终点 Y",
     "Page title": "页面标题",
+    "Export format": "导出格式",
+    "LaTeX source: {source}": "LaTeX 源码：{source}",
     "Advanced source": "高级源数据",
     "Align top": "顶端对齐",
     "Align middle": "垂直居中",
@@ -1054,7 +1056,21 @@ body {
       token.title = t("Local helper token");
     }
     const select = document.querySelector("#ans-ui-language");
-    if (select) select.value = language;
+    if (select) {
+      select.value = language;
+      select.setAttribute("aria-label", t("Language"));
+    }
+    for (const [selector, key] of Object.entries({
+      "#ans-theme": "Theme",
+      "#ans-insert": "Insert",
+      "#ans-export-mode": "Export format",
+      "#ans-zoom": "Canvas zoom",
+      "#ans-notes": "Speaker notes",
+      "#ans-task-close": "Close",
+    })) {
+      const node = document.querySelector(selector);
+      if (node) node.setAttribute("aria-label", t(key));
+    }
     const auto = document.querySelector(".ans-toggle");
     if (auto) auto.lastChild.textContent = " " + t("Auto version");
     for (const button of document.querySelectorAll("[data-align]")) {
@@ -1437,7 +1453,8 @@ body {
     let n;
     if (["text", "code", "formula"].includes(o.type)) {
       n = el(o.type === "code" ? "pre" : "div", "", o.text);
-      if (o.type === "formula") n.title = "LaTeX source: " + o.text;
+      if (o.type === "formula")
+        n.title = T("LaTeX source: {source}", { source: o.text });
     } else if (o.type === "image") {
       n = el("img");
       n.src = doc.resources[o.resourceId].data;
@@ -2321,15 +2338,16 @@ body {
         hash: info.diskSha256?.slice(0, 12),
       },
     );
-    if (info.historyEnabled)
-      $("#ans-file-info").textContent +=
-        "\n" +
-        T("History stored at {path}", { path: info.historyPath }) +
-        "\n" +
-        T("Version {id} · {date}", {
-          id: info.version?.slice(0, 10) || "—",
-          date: info.versionDate || "",
-        });
+    $("#ans-file-info").textContent +=
+      "\n" +
+      T("History stored at {path}", { path: info.historyPath }) +
+      "\n" +
+      (info.version
+        ? T("Version {id} · {date}", {
+            id: info.version.slice(0, 10),
+            date: info.versionDate || "",
+          })
+        : T("No versions yet"));
     $("#ans-history-enable").hidden = !!info.historyEnabled;
     $("#ans-history-auto").disabled = !info.historyEnabled;
   }

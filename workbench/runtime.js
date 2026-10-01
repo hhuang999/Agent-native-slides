@@ -344,7 +344,8 @@
     let n;
     if (["text", "code", "formula"].includes(o.type)) {
       n = el(o.type === "code" ? "pre" : "div", "", o.text);
-      if (o.type === "formula") n.title = "LaTeX source: " + o.text;
+      if (o.type === "formula")
+        n.title = T("LaTeX source: {source}", { source: o.text });
     } else if (o.type === "image") {
       n = el("img");
       n.src = doc.resources[o.resourceId].data;
@@ -1228,15 +1229,16 @@
         hash: info.diskSha256?.slice(0, 12),
       },
     );
-    if (info.historyEnabled)
-      $("#ans-file-info").textContent +=
-        "\n" +
-        T("History stored at {path}", { path: info.historyPath }) +
-        "\n" +
-        T("Version {id} · {date}", {
-          id: info.version?.slice(0, 10) || "—",
-          date: info.versionDate || "",
-        });
+    $("#ans-file-info").textContent +=
+      "\n" +
+      T("History stored at {path}", { path: info.historyPath }) +
+      "\n" +
+      (info.version
+        ? T("Version {id} · {date}", {
+            id: info.version.slice(0, 10),
+            date: info.versionDate || "",
+          })
+        : T("No versions yet"));
     $("#ans-history-enable").hidden = !!info.historyEnabled;
     $("#ans-history-auto").disabled = !info.historyEnabled;
   }

@@ -195,6 +195,8 @@
     "to.x": "终点 X",
     "to.y": "终点 Y",
     "Page title": "页面标题",
+    "Export format": "导出格式",
+    "LaTeX source: {source}": "LaTeX 源码：{source}",
     "Advanced source": "高级源数据",
     "Align top": "顶端对齐",
     "Align middle": "垂直居中",
@@ -335,7 +337,21 @@
       token.title = t("Local helper token");
     }
     const select = document.querySelector("#ans-ui-language");
-    if (select) select.value = language;
+    if (select) {
+      select.value = language;
+      select.setAttribute("aria-label", t("Language"));
+    }
+    for (const [selector, key] of Object.entries({
+      "#ans-theme": "Theme",
+      "#ans-insert": "Insert",
+      "#ans-export-mode": "Export format",
+      "#ans-zoom": "Canvas zoom",
+      "#ans-notes": "Speaker notes",
+      "#ans-task-close": "Close",
+    })) {
+      const node = document.querySelector(selector);
+      if (node) node.setAttribute("aria-label", t(key));
+    }
     const auto = document.querySelector(".ans-toggle");
     if (auto) auto.lastChild.textContent = " " + t("Auto version");
     for (const button of document.querySelectorAll("[data-align]")) {

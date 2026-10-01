@@ -1,7 +1,7 @@
 {
   "mode": "image",
   "source": "examples/workflow.html",
-  "inputSha256": "3a623adf7dbb0894340f6efa7a6108c27914184d7f3275593fc20e291d2b7b46",
+  "inputSha256": "920e2f86abaa9ce8dfce56ed07c6ed39920a0b8816df2ea17b62762685f03658",
   "conversions": [
     {
       "reason": "Every slide captured as one full-slide image; content is not editable"
